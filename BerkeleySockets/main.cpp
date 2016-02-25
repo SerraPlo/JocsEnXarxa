@@ -1,4 +1,4 @@
-#include "UDPSocket.h"
+#include <SocketsLib\UDPSocket.h>
 #include <iostream>
 
 const int MAX_DATA = 1300;
