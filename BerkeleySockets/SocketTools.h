@@ -10,13 +10,14 @@ class SocketTools
 public:
 	static void BuildLibrary() {
 		WSADATA wsaData;
-		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) ShowError("WSAStartup could not initialise WinSock library");
+		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) ThrowError("WSAStartup could not initialise WinSock library.");
 	};
 	static void UnloadLibrary() {
-		if (WSACleanup() != 0) ShowError("WSACleanup could not clear unload WinSock library");
+		if (WSACleanup() != NO_ERROR) ThrowError("WSACleanup could not clear unload WinSock library.");
 	};
-	static void ShowError(const std::string &message) {
-		throw std::exception(message.c_str() + '\n' + WSAGetLastError());
+	static void ThrowError(const std::string &message) {
+		auto temp{ message + "\nError code: " + std::to_string(WSAGetLastError()) };
+		throw std::exception(temp.c_str());
 	};
 };
 

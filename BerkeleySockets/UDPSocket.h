@@ -4,7 +4,7 @@
 class UDPSocket : public GenericSocket
 {
 public:
-	UDPSocket();
+	explicit UDPSocket();
 	~UDPSocket() = default;
 
 	int SendTo(const void* data, int lenData, SocketAddress& to) override;
