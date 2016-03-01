@@ -12,9 +12,12 @@ SocketAddress::SocketAddress(const std::string & inString) {
 	setAddress(inString);
 }
 
-SocketAddress::SocketAddress(SocketAddress &a) {
-	m_address = a.m_address;
-}
+SocketAddress::SocketAddress(const SocketAddress &socketAddress) : 
+	SocketAddress(socketAddress.m_address.sin_addr.S_un.S_un_b.s_b1, 
+				  socketAddress.m_address.sin_addr.S_un.S_un_b.s_b2,
+				  socketAddress.m_address.sin_addr.S_un.S_un_b.s_b3,
+				  socketAddress.m_address.sin_addr.S_un.S_un_b.s_b4,
+				  socketAddress.m_address.sin_port) {}
 
 int SocketAddress::setAddress(const std::string & inString) {
 	//find_last_of returns the last position of the character especified if exists, else returns string::npos

@@ -1,25 +1,29 @@
 #include <SocketsLib\UDPSocket.h>
 #include <iostream>
+#include "ClientList.h"
 
 const int MAX_DATA = 1300;
 
-void server(const char* cinAddress) {
-	GenericSocket* sock = new UDPSocket;
-	SocketAddress socketAddress;
-	socketAddress.setAddress(cinAddress);
+void server(GenericSocket* sock, SocketAddress &socketAddress) {
 	sock->Bind(socketAddress);
 	char data[MAX_DATA];
-	SocketAddress from;
+	ClientList clientList;
 	while (1) {
-		if (sock->ReceiveFrom(data, MAX_DATA, from)) std::cout << data << std::endl;
-		if (!strcmp(data, "exit")) break;
+		SocketAddress from;
+		if (sock->ReceiveFrom(data, MAX_DATA, from)) {
+			int numClient = clientList.CheckAdress(from);
+			if (numClient == ClientList::NOT_FOUND)
+				clientList.push_back(from), numClient = clientList.CheckAdress(from);
+			if (!strcmp(data, "exit"))
+				clientList.erase(clientList.begin() + numClient), printf("Client %i disconnected\n", numClient);
+			else
+				printf("Client %i: %s\n", numClient, data);
+		}
+		if (clientList.empty()) break;
 	}
 }
 
-void client(const char* cinAddress) {
-	GenericSocket* sock = new UDPSocket;
-	SocketAddress socketAddress;
-	socketAddress.setAddress(cinAddress);
+void client(GenericSocket* sock, SocketAddress &socketAddress) {
 	char data[MAX_DATA];
 	while (std::cin >> data) {
 		sock->SendTo(data, MAX_DATA, socketAddress);
@@ -28,7 +32,10 @@ void client(const char* cinAddress) {
 }
 
 void run(const char* appType, const char* cinAddress) {
-	(!strcmp(appType, "server")) ? server(cinAddress) : client(cinAddress);
+	GenericSocket* sock = new UDPSocket;
+	SocketAddress socketAddress(cinAddress);
+	!strcmp(appType, "server") ? server(sock, socketAddress) : client(sock, socketAddress);
+	delete sock;
 }
 
 int main(int argc, const char* argv[]) {
