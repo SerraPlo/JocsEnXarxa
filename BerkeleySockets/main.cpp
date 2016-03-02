@@ -10,15 +10,14 @@ void server(GenericSocket* sock, SocketAddress &socketAddress) {
 	ClientList clientList;
 	while (1) {
 		SocketAddress from;
-		if (sock->ReceiveFrom(data, MAX_DATA, from)) {
-			int numClient = clientList.CheckAdress(from);
-			if (numClient == ClientList::NOT_FOUND)
-				clientList.push_back(from), numClient = clientList.CheckAdress(from);
-			if (!strcmp(data, "exit"))
-				clientList.erase(clientList.begin() + numClient), printf("Client %i disconnected\n", numClient);
-			else
-				printf("Client %i: %s\n", numClient, data);
-		}
+		sock->ReceiveFrom(data, MAX_DATA, from);
+		int numClient = clientList.CheckAdress(from);
+		if (numClient == ClientList::NOT_FOUND)
+			clientList.push_back(from), numClient = clientList.CheckAdress(from);
+		if (!strcmp(data, "exit"))
+			clientList.erase(clientList.begin() + numClient), printf("Client %i disconnected\n", numClient);
+		else
+			printf("Client %i: %s\n", numClient, data);
 		if (clientList.empty()) break;
 	}
 }
