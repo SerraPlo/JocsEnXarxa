@@ -7,7 +7,7 @@ public:
 	explicit UDPSocket();
 	~UDPSocket() = default;
 
-	int SendTo(const void* data, int lenData, SocketAddress& to) override;
-	int ReceiveFrom(void* data, int lenData, SocketAddress& from) override;
+	int SendTo(const void* data, int lenData, SocketAddress& to);
+	int ReceiveFrom(void* data, int lenData, SocketAddress& from);
 };
 

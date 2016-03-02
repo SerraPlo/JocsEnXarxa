@@ -1,2 +1,3 @@
-"C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" server localhost:5000
-"C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" client localhost:5000
+"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" server localhost:5000
+"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" localhost:5000 
+"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" localhost:5000 192.168.1.2:5001

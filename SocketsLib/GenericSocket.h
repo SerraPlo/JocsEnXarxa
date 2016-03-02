@@ -10,6 +10,6 @@ public:
 	explicit GenericSocket(int type);
 	virtual ~GenericSocket();
 	void Bind(SocketAddress& address) const;
-	virtual int SendTo(const void* data, int lenData, SocketAddress& to) = 0;
-	virtual int ReceiveFrom(void* data, int lenData, SocketAddress& from) = 0;
+	//virtual int SendTo(const void* data, int lenData, SocketAddress& to) = 0;
+	//virtual int ReceiveFrom(void* data, int lenData, SocketAddress& from) = 0;
 };
