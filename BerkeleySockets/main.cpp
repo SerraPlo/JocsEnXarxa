@@ -31,21 +31,22 @@ void client(UDPSocket &sock, SocketAddress &socketAddress) {
 }*/
 
 void run(const char* sendAddress, const char* recvAddress) {
-	UDPSocket sock;
 	Sender senderO(recvAddress);
 	Receiver receiverO(sendAddress);
-	std::thread rcv(receiverO);
 	std::thread snd(senderO);
-	rcv.join();
+	std::thread rcv(receiverO);
 	snd.join();
+	rcv.join();
 }
 
 int main(int argc, const char* argv[]) {
 	try {
 		SocketTools::BuildLibrary();
-		auto cinAddressS = argv[1]; //IP:port
-		auto cinAddressR = argv[2]; //IP:port
-		run(cinAddressS, cinAddressR);
+		auto sendAddress = argv[1]; //IP:port
+		auto recvAddress = argv[2]; //IP:port
+		std::cout << sendAddress << std::endl;
+		std::cout << recvAddress << std::endl;
+		run(sendAddress, recvAddress);
 		SocketTools::UnloadLibrary();
 	} 
 	catch (std::exception &e) {
