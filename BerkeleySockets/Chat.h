@@ -12,9 +12,9 @@ protected:
 	std::shared_ptr<UDPSocket> m_socket;
 public:
 	
-	Chat(const std::string &s, MsgManager* m) :
+	Chat(const std::string &s, std::shared_ptr<MsgManager> m) :
 		m_addr(s),
-		m_msgManager(std::make_shared<MsgManager>(*m)),
+		m_msgManager(m),
 		m_socket(std::make_shared<UDPSocket>()) {}
 
 	virtual ~Chat() = default;

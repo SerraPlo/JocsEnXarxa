@@ -58,68 +58,9 @@ VOID MouseEventProc(MOUSE_EVENT_RECORD mer)
 	}
 }*/
 void run(const char* sendAddress, const char* recvAddress) {
-	/*HANDLE hStdin;
-	DWORD fdwSaveOldMode;
-
-	DWORD cNumRead, fdwMode, i;
-	INPUT_RECORD irInBuf[128];
-	int counter = 0;
-
-	// Get the standard input handle. 
-	hStdin = GetStdHandle(STD_INPUT_HANDLE);
-
-	// Save the current input mode, to be restored on exit. 
-	GetConsoleMode(hStdin, &fdwSaveOldMode);
-
-	// Enable the window and mouse input events. 
-
-	fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
-	SetConsoleMode(hStdin, fdwMode);
-
-	// Loop to read and handle the next 100 input events. 
-
-	while (true)
-	{
-		// Wait for the events. 
-
-		ReadConsoleInput(hStdin,irInBuf,128,&cNumRead);
-
-		// Dispatch the events to the appropriate handler. 
-
-		for (i = 0; i < cNumRead; i++)	{
-
-			switch (irInBuf[i].EventType)
-			{
-			case KEY_EVENT: // keyboard input 
-				printf("2");//KeyEventProc(irInBuf[i].Event.KeyEvent);
-				break;
-
-			case MOUSE_EVENT: // mouse input 
-				printf("3");
-				MouseEventProc(irInBuf[i].Event.MouseEvent);
-				break;
-
-			case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing 
-				printf("4");
-				ResizeEventProc(irInBuf[i].Event.WindowBufferSizeEvent);
-				break;
-
-			default:
-				//printf("Unknown event type\n");
-				break;
-			}
-		}
-	}
-
-	// Restore input mode on exit.
-
-	SetConsoleMode(hStdin, fdwSaveOldMode);
-	*/
-	
-	//--------------------------------
 	std::shared_ptr<MsgManager> thePool = std::make_shared<MsgManager>();
-	Sender senderO(recvAddress, thePool.get());
-	Receiver receiverO(sendAddress, thePool.get());
+	Sender senderO(recvAddress, thePool);
+	Receiver receiverO(sendAddress, thePool);
 	std::thread snd(senderO);
 	std::thread rcv(receiverO);
 	snd.join();

@@ -4,7 +4,7 @@
 class Receiver : public Chat
 {
 public:
-	explicit Receiver(const std::string &s, MsgManager* m) : Chat(s, m) {
+	explicit Receiver(const std::string &s, std::shared_ptr<MsgManager> m) : Chat(s, m) {
 		m_socket->Bind(m_addr); 
 	}
 	~Receiver() = default;
@@ -15,7 +15,7 @@ public:
 		while (true) {
 			m_socket->ReceiveFrom(data, MAX_DATA, from);
 			m_msgManager->addMsg(!strcmp(data, "exit") ? "User disconnected" : data);
-			m_msgManager->PrintMsg();
+			m_msgManager->PrintMsg(false);
 			if (!strcmp(data, "exit")) break;
 		}
 	}
