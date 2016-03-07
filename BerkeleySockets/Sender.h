@@ -4,23 +4,18 @@
 class Sender : public Chat
 {
 public:
-	explicit Sender(const std::string &s) : Chat(s) {}
+	explicit Sender(const std::string &s, MsgManager* m) : Chat(s, m) {}
 	~Sender() = default;
 
 	void operator()() override {
 		char data[MAX_DATA];
-		std::mutex m_blocker;
-
+		static std::mutex m_blocker;
 		while (true) {
 			std::cin.getline(data, MAX_DATA);
 			m_socket->SendTo(data, MAX_DATA, m_addr);
-			
-			m_blocker.lock();
 			std::string temp = data;
-			m_msgPool.push_back("Me: " + temp);
-			std::cout << '>' << temp << std::endl;
-			m_blocker.unlock();
-
+			m_msgManager->addMsg("Me: " + temp);
+			m_msgManager->PrintMsg();
 			if (!strcmp(data, "exit")) break;
 		}
 	}

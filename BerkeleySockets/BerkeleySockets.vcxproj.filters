@@ -32,5 +32,8 @@
     <ClInclude Include="Receiver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MsgManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
