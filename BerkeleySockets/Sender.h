@@ -4,7 +4,7 @@
 class Sender : public Chat
 {
 public:
-	explicit Sender(const std::string &s, std::shared_ptr<MsgManager> m) : Chat(s, m) {}
+	explicit Sender(const std::string &s, const std::shared_ptr<MsgManager> &m) : Chat(s, m) {}
 	~Sender() = default;
 
 	void operator()() override {
@@ -15,7 +15,7 @@ public:
 			std::string temp = data;
 			m_msgManager->addMsg("Me: " + temp);
 			m_msgManager->PrintMsg(true);
-			if (!strcmp(data, "exit")) break;
+			if (!strcmp(data, "exit")) exit(0); //trust guillermo
 		}
 	}
 };

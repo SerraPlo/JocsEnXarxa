@@ -166,6 +166,7 @@
     <ClInclude Include="MsgManager.h" />
     <ClInclude Include="Receiver.h" />
     <ClInclude Include="Sender.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

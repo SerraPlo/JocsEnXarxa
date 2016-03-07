@@ -3,15 +3,16 @@
 #include <vector>
 #include <mutex>
 #include <iostream>
+#include "Utils.h"
 
 class MsgManager {
 	std::shared_ptr<std::vector<std::string>> m_msgPool;
-	CONSOLE_SCREEN_BUFFER_INFO c;
+	CONSOLE_SCREEN_BUFFER_INFO m_screenCoords;
 
 public:
-	MsgManager() {
-		m_msgPool = std::make_shared<std::vector<std::string>>();
-	}
+	MsgManager() :
+		m_msgPool(std::make_shared<std::vector<std::string>>())
+	{}
 	~MsgManager() = default;
 
 	void addMsg(const std::string &msg) {
@@ -20,31 +21,31 @@ public:
 		m_msgPool->push_back(msg);
 		m_blocker.unlock();
 	}
+
 	void PrintMsg(bool sender) {
 		int j = 0;
-		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &c);
-		COORD init = c.dwCursorPosition;
+		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &m_screenCoords);
+		COORD init = m_screenCoords.dwCursorPosition;
 		//clean
 		if (sender) {
 			system("cls");
 		}else {
-			std::string  eraseLine = "";
-			for (int k = 0; k <= c.srWindow.Right; k++) eraseLine += " ";
+			std::string eraseLine = "";
+			for (int k = 0; k <= m_screenCoords.srWindow.Right; ++k) eraseLine += ' ';
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 0, 0 });
-			for (auto k = 0; k < c.srWindow.Bottom - 3; ++k) std::cout << eraseLine << std::endl;
+			for (auto k = 0; k < m_screenCoords.srWindow.Bottom - 3; ++k) std::cout << eraseLine;
 		}
 		//print
-		for (int i = (int)min(m_msgPool->size(), c.srWindow.Bottom - 3); i > 0; --i) {
-			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 1, (SHORT)j });
+		for (int i = Utils::Min(m_msgPool->size(), m_screenCoords.srWindow.Bottom - 3); i > 0; --i) {
+			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), COORD{ 1, static_cast<SHORT>(j) });
 			std::cout << m_msgPool->at(m_msgPool->size() - i);
 			j++;
 		}
-		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 1, c.srWindow.Bottom - 1 });
+		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 1, m_screenCoords.srWindow.Bottom - 1 });
 		std::cout << "> ";
-		if(!sender) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (int)max(init.X,3), c.srWindow.Bottom - 1 });
+		if(!sender) SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), COORD{ static_cast<SHORT>(Utils::Max(init.X,3)), static_cast<SHORT>(m_screenCoords.srWindow.Bottom - 1) });
 		//si no sender recolocar cursor
 	}
-
 
 	/*void operator()() {
 		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &c);

@@ -4,7 +4,7 @@
 class Receiver : public Chat
 {
 public:
-	explicit Receiver(const std::string &s, std::shared_ptr<MsgManager> m) : Chat(s, m) {
+	explicit Receiver(const std::string &s, const std::shared_ptr<MsgManager> &m) : Chat(s, m) {
 		m_socket->Bind(m_addr); 
 	}
 	~Receiver() = default;

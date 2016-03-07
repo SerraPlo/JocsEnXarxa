@@ -58,7 +58,7 @@ VOID MouseEventProc(MOUSE_EVENT_RECORD mer)
 	}
 }*/
 void run(const char* sendAddress, const char* recvAddress) {
-	std::shared_ptr<MsgManager> thePool = std::make_shared<MsgManager>();
+	auto thePool = std::make_shared<MsgManager>();
 	Sender senderO(recvAddress, thePool);
 	Receiver receiverO(sendAddress, thePool);
 	std::thread snd(senderO);
@@ -72,8 +72,6 @@ int main(int argc, const char* argv[]) {
 		SocketTools::BuildLibrary();
 		auto sendAddress = argv[1]; //IP:port
 		auto recvAddress = argv[2]; //IP:port
-		std::cout << sendAddress << std::endl;
-		std::cout << recvAddress << std::endl;
 		run(sendAddress, recvAddress);
 		SocketTools::UnloadLibrary();
 	} 
