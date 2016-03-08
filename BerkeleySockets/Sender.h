@@ -1,21 +1,22 @@
 #pragma once
-#include "Chat.h"
+#include "ChatAgent.h"
 
-class Sender : public Chat
+
+class Sender : public ChatAgent
 {
 public:
-	explicit Sender(const std::string &s, const std::shared_ptr<MsgManager> &m) : Chat(s, m) {}
+	explicit Sender(const std::string &s, MsgManager &m) : ChatAgent(s, m) {}
 	~Sender() = default;
 
 	void operator()() override {
 		char data[MAX_DATA];
 		while (true) {
 			std::cin.getline(data, MAX_DATA);
+			//Utils::ReadChar(data);
 			m_socket->SendTo(data, MAX_DATA, m_addr);
-			std::string temp = data;
-			m_msgManager->addMsg("Me: " + temp);
-			m_msgManager->PrintMsg(true);
-			if (!strcmp(data, "exit")) exit(0); //trust guillermo
+			m_msgManager.addMsg("Me: " + std::string(data));
+			m_msgManager.PrintMsg(true);
+			if (!strcmp(data, "exit")) exit(EXIT_SUCCESS); //trust on guillermo
 		}
 	}
 };

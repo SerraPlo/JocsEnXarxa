@@ -58,7 +58,7 @@ VOID MouseEventProc(MOUSE_EVENT_RECORD mer)
 	}
 }*/
 void run(const char* sendAddress, const char* recvAddress) {
-	auto thePool = std::make_shared<MsgManager>();
+	MsgManager thePool;
 	Sender senderO(recvAddress, thePool);
 	Receiver receiverO(sendAddress, thePool);
 	std::thread snd(senderO);

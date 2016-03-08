@@ -161,7 +161,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Chat.h" />
+    <ClInclude Include="ChatAgent.h" />
     <ClInclude Include="ClientList.h" />
     <ClInclude Include="MsgManager.h" />
     <ClInclude Include="Receiver.h" />
