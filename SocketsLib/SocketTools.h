@@ -5,19 +5,18 @@
 #include <exception>
 #include <string>
 
-class SocketTools
+namespace SocketTools
 {
-public:
-	static void BuildLibrary() {
+	extern inline void ThrowError(const std::string &message) {
+		auto temp{ message + "\nError code: " + std::to_string(WSAGetLastError()) };
+		throw std::exception(temp.c_str());
+	};
+	extern inline void BuildLibrary(void) {
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) ThrowError("WSAStartup could not initialise WinSock library.");
 	};
-	static void UnloadLibrary() {
+	extern inline void UnloadLibrary(void) {
 		if (WSACleanup() != NO_ERROR) ThrowError("WSACleanup could not clear unload WinSock library.");
-	};
-	static void ThrowError(const std::string &message) {
-		auto temp{ message + "\nError code: " + std::to_string(WSAGetLastError()) };
-		throw std::exception(temp.c_str());
 	};
 };
 

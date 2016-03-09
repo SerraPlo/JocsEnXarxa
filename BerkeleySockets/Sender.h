@@ -6,8 +6,10 @@ class Sender : public ChatAgent
 {
 public:
 	explicit Sender(const std::string &s, MsgManager &m) : ChatAgent(s, m) {}
+	Sender(const Sender& other) = default;
 	~Sender() = default;
 
+	Sender& operator=(const Sender& other) = default;
 	void operator()() override {
 		char data[MAX_DATA];
 		while (true) {

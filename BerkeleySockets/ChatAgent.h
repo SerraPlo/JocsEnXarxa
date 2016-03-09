@@ -17,9 +17,10 @@ public:
 		m_msgManager(m),
 		m_socket(std::make_shared<UDPSocket>())
 	{}
-
+	ChatAgent(const ChatAgent& other) = default;
 	virtual ~ChatAgent() = default;
 	
+	ChatAgent& operator=(const ChatAgent& other) = default;
 	virtual void operator() () = 0;	
 };
 

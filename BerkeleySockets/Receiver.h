@@ -7,8 +7,10 @@ public:
 	explicit Receiver(const std::string &s, MsgManager &m) : ChatAgent(s, m) {
 		m_socket->Bind(m_addr); 
 	}
+	Receiver(const Receiver& other) = default;
 	~Receiver() = default;
 
+	Receiver& operator=(const Receiver& other) = default;
 	void operator()() override {
 		char data[MAX_DATA];
 		SocketAddress from;

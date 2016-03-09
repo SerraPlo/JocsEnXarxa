@@ -15,6 +15,7 @@ public:
 	void setAddress(const sockaddr &a);
 	sockaddr* getPtrAddress();
 
+	SocketAddress& operator=(const SocketAddress& other) = default;
 	friend std::ostream& operator<<(std::ostream& os, const SocketAddress &sa);
 	bool operator==(SocketAddress& sa) const;
 };

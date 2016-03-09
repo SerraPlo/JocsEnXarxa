@@ -11,9 +11,8 @@ class MsgManager {
 	std::mutex m_blocker;
 
 public:
-	MsgManager() :
-		m_msgPool(std::make_shared<std::vector<std::string>>())
-	{}
+	MsgManager() : m_msgPool(std::make_shared<std::vector<std::string>>()) {}
+	MsgManager(const MsgManager& other) = default;
 	~MsgManager() = default;
 
 	void addMsg(const std::string &msg) {
@@ -49,6 +48,7 @@ public:
 		m_blocker.unlock();
 	}
 
+	MsgManager& operator=(const MsgManager& other) = default;
 	/*void operator()() {
 		GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &c);
 		auto prev = c.srWindow.Bottom;
