@@ -26,7 +26,7 @@ std::shared_ptr<TCPSocket> TCPSocket::Accept(SocketAddress & from){
 }
 
 void TCPSocket::Connect(SocketAddress & addr) {
-	if (connect(m_socket,addr.getPtrAddress(),sizeof(addr)) == SOCKET_ERROR)
+	if (connect(m_socket, addr.getPtrAddress(), sizeof(addr)) == SOCKET_ERROR)
 		SocketTools::ThrowError("Socket: problem with connect.");
 }
 
