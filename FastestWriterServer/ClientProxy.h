@@ -9,7 +9,7 @@ class ClientProxy
 	int m_score = 0;
 	std::shared_ptr<TCPSocket> m_tcpSocket = std::make_shared<TCPSocket>();
 public:
-	ClientProxy();
-	~ClientProxy();
+	ClientProxy() = default;
+	~ClientProxy() = default;
 };
 

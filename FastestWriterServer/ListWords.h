@@ -5,8 +5,9 @@
 class ListWords
 {
 	std::vector<std::string> m_words;
+	int m_indexWord;
 public:
-	ListWords();
-	~ListWords();
+	ListWords() = default;
+	~ListWords() = default;
 };
 

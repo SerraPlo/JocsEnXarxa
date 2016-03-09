@@ -36,10 +36,11 @@ void TCPSocket::Send(const void * data){
 	}
 }
 
-void TCPSocket::Receive(void * data, int lenData){
+int TCPSocket::Receive(void * data, int lenData){
 	int bytesReceived = recv(m_socket, (char*)data, lenData, 0);
 	if (bytesReceived == SOCKET_ERROR)
 		SocketTools::ThrowError("Socket: problem with receive.");
 	else if (bytesReceived == 0)
 		std::cout << "Conexion cerrada" << std::endl;
+	return bytesReceived;
 }

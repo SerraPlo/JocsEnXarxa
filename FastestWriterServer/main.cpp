@@ -1,5 +1,6 @@
 #include <TCPSocket.h>
 #include <iostream>
+#include "ClientProxy.h"
 
 void server(const char* bindAddress, int numPlayers) {
 	TCPSocket tcpSocket;
@@ -12,6 +13,7 @@ void server(const char* bindAddress, int numPlayers) {
 	for (int i = 0; i < numPlayers; i++) {
 		ClientProxy client;
 		SocketAddress from;
+
 	}
 }
 

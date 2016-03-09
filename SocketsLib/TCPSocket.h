@@ -13,6 +13,6 @@ public:
 	void Connect(SocketAddress& addr);
 	std::shared_ptr<TCPSocket> Accept(SocketAddress& from);
 	void Send(const void* data);
-	void Receive(void* data, int lenData);
+	int Receive(void* data, int lenData);
 };
 
