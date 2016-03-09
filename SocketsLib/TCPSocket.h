@@ -6,8 +6,8 @@ class TCPSocket : public GenericSocket
 {
 
 public:
-	explicit TCPSocket(SOCKET a);
 	explicit TCPSocket();
+	explicit TCPSocket(SOCKET a);
 	~TCPSocket();
 	void Listen(int backlog);
 	void Connect(SocketAddress& addr);

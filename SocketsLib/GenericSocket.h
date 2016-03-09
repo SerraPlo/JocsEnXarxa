@@ -1,6 +1,8 @@
 #pragma once
 #include "SocketAddress.h"
 
+#define MAX_DATA 1300
+
 class GenericSocket
 {
 protected:
@@ -12,8 +14,7 @@ public:
 	virtual ~GenericSocket();
 
 	void Bind(SocketAddress& address) const;
-	//virtual int SendTo(const void* data, int lenData, SocketAddress& to) = 0;
-	//virtual int ReceiveFrom(void* data, int lenData, SocketAddress& from) = 0;
+	void NonBlocking(bool isNonBlocking);
 
 	GenericSocket& operator=(const GenericSocket& other) = default;
 };
