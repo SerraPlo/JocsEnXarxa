@@ -1,7 +1,7 @@
 #pragma once
 #include "SocketAddress.h"
 
-#define MAX_DATA 1300
+#define MAX_BYTES 1300
 
 class GenericSocket
 {
@@ -14,7 +14,7 @@ public:
 	virtual ~GenericSocket();
 
 	void Bind(SocketAddress& address) const;
-	void NonBlocking(bool isNonBlocking);
+	void NonBlocking(bool isNonBlocking) const;
 
 	GenericSocket& operator=(const GenericSocket& other) = default;
 };

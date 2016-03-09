@@ -1,3 +1,7 @@
+//////////////
+// TALLER 1 //
+//////////////
+
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" localhost:5000 127.0.0.1:5001
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" 127.0.0.1:5001 localhost:5000 
 
@@ -9,3 +13,11 @@
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" 127.0.0.1:5001 localhost:5000
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\BerkeleySockets.exe" localhost:5000 127.0.0.1:5001
 
+//////////////
+// TALLER 2 //
+//////////////
+
+"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriterServer.exe" localhost:5000 3
+"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Jordi
+"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Pol
+"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Ramona

@@ -11,8 +11,9 @@ void GenericSocket::Bind(SocketAddress & address) const {
 		SocketTools::ThrowError("Address could not be binded to socket.");
 }
 
-void GenericSocket::NonBlocking(bool isNonBlocking) {
-	if (ioctlsocket(m_socket, FIONBIO, (u_long*)isNonBlocking) == SOCKET_ERROR) 
+void GenericSocket::NonBlocking(bool isNonBlocking) const {
+	u_long mode = (isNonBlocking) ? 1 : 0;
+	if (ioctlsocket(m_socket, FIONBIO, &mode) == SOCKET_ERROR) 
 		SocketTools::ThrowError("Socket could not be changed to non-blocking mode.");
 }
 

@@ -1,39 +1,18 @@
 #include <TCPSocket.h>
 #include <iostream>
-
-#define MAX_DATA 1300
-
-void client(const char* bindAddress, const char* nick) {
-	SocketAddress addr;
-	addr.setAddress(bindAddress);
-
-	TCPSocket theSocket;
-	//dispatcher.NonBlocking(true); //non-blocking socket enabled
-	theSocket.Connect(addr);
-
-	char data[MAX_DATA];
-	while (true) {
-		theSocket.Receive(data, MAX_DATA);
-		if (strcmp(data, "BEGIN")) {
-			theSocket.Send((std::string("NICK_") + nick).c_str());
-			std::cout << "holi" << std::endl;
-			break;
-		}
-	}
-
-}
+#include "Client.h"
 
 void run(const char* serverAddress, const char* nick) {
-
-	client(serverAddress, nick);
+	Client client(serverAddress, nick);
+	client.Run();
 }
 
 int main(int argc, const char* argv[]) {
 	try {
 		SocketTools::BuildLibrary();
 		atexit(SocketTools::UnloadLibrary);//no es criden els destructors
-		auto serverAddress = argv[1]; //adress_bind
-		auto nick = argv[2]; //num_players
+		auto serverAddress = argv[1]; //adress_server
+		auto nick = argv[2]; //nick
 		run(serverAddress, nick);
 	} catch (std::exception &e) {
 		std::cout << "----------------" << std::endl;
