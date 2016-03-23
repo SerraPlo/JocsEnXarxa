@@ -1,5 +1,4 @@
 #include "SocketAddress.h"
-#include <ws2tcpip.h>
 
 SocketAddress::SocketAddress(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint16_t port) {
 	m_address.sin_addr.S_un.S_un_b = { byte1 ,byte2, byte3, byte4 };
@@ -58,19 +57,18 @@ int SocketAddress::setAddress(const std::string & inString) {
 		SocketTools::ThrowError("Non valid address found.");
 	}
 
-	//memcpy copia byte a byte la direcci?n v?lida de result en la direcci?n atributo 
-	//de la clase.
+	//memcpy copies each byte of the valid address to the member address of the class
 	memcpy(&m_address, result->ai_addr, sizeof(sockaddr_in));
 	freeaddrinfo(result);
 
 	return 0;
 }
 
-void SocketAddress::setAddress(const sockaddr & a) {
+void SocketAddress::setAddress(const sockaddr &a) {
 	memcpy(&m_address, &a, sizeof(sockaddr_in));
 }
 
-sockaddr* SocketAddress::getPtrAddress() {
+sockaddr* SocketAddress::getSockaddrAddress() {
 	return static_cast<sockaddr*>(static_cast<void*>(&m_address));
 }
 

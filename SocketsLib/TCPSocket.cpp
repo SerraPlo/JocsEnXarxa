@@ -2,8 +2,8 @@
 
 TCPSocket::TCPSocket() : GenericSocket(SOCK_STREAM) {}
 
-TCPSocket::TCPSocket(SOCKET a) : GenericSocket(SOCK_STREAM) {
-	m_socket = a;
+TCPSocket::TCPSocket(SOCKET s) : GenericSocket(SOCK_STREAM) {
+	m_socket = s;
 }
 
 TCPSocket::~TCPSocket(){
@@ -25,7 +25,7 @@ std::shared_ptr<TCPSocket> TCPSocket::Accept(SocketAddress & from) const {
 }
 
 void TCPSocket::Connect(SocketAddress & addr) const {
-	if (connect(m_socket, addr.getPtrAddress(), sizeof(sockaddr)) == SOCKET_ERROR)
+	if (connect(m_socket, addr.getSockaddrAddress(), sizeof(sockaddr)) == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: cannot connect to addr.");
 }
 
@@ -36,7 +36,7 @@ void TCPSocket::Send(const void * data) const {
 }
 
 int TCPSocket::Receive(void * data, int lenData) const {
-	int bytesReceived = recv(m_socket, static_cast<char*>(data), lenData, 0);
+	int bytesReceived = recv(m_socket, static_cast<char*>(data), lenData, 0); //blocks execution until data arrives
 	/*if (bytesReceived == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: error receiving data.");*/
 	/*else if (bytesReceived == 0)

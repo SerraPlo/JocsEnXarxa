@@ -13,7 +13,7 @@ public:
 
 	int setAddress(const std::string &inString);
 	void setAddress(const sockaddr &a);
-	sockaddr* getPtrAddress();
+	sockaddr* getSockaddrAddress();
 
 	SocketAddress& operator=(const SocketAddress& other) = default;
 	friend std::ostream& operator<<(std::ostream& os, const SocketAddress &sa);

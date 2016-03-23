@@ -8,8 +8,8 @@ public:
 	UDPSocket(const UDPSocket& other) = default;
 	~UDPSocket() = default;
 
-	int SendTo(const void* data, int lenData, SocketAddress& to);
-	int ReceiveFrom(void* data, int lenData, SocketAddress& from);
+	int SendTo(const void* data, int lenData, SocketAddress& to) const;
+	int ReceiveFrom(void* data, int lenData, SocketAddress& from) const;
 
 	UDPSocket& operator=(const UDPSocket& other) = default;
 };
