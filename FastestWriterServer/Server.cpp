@@ -33,7 +33,8 @@ bool Server::ProcessMsg(int id, const std::string &data) {
 	if (key == "WRITE") {
 		if (!strcmp(msg.c_str(), m_wordsList.Current().c_str())) {
 			SendToAll("OKWORD_" + m_clientList[id].GetNick());
-			waitingWiner = true;
+			m_clientList[id].SetScore(m_clientList[id].GetScore() + 1);
+			waitingWiner = false;
 			SendRanking();
 			m_wordsList.Next();
 			return true;
@@ -64,7 +65,6 @@ void Server::SetNicks(void) {
 			if (m_clientList[i].CheckNick("")) { //if nick not set, proceed for check
 				if (!m_clientList[i].Receive(tempData)) continue; //if == 0, nothing received, keep looping
 				if (ProcessMsg(i, tempData)) { //if message is of type NICK, set nick
-					m_clientList[i].SetNick(tempData);
 					--incompletes;
 				}
 			}
@@ -78,16 +78,20 @@ void Server::GameLoop(void) {
 	waitingWiner = false;
 	std::string tempData = "";
 	while (true) {
-		if (!waitingWiner) {
+		if (!waitingWiner ) {
+			if (m_wordsList.CurrentI() >= m_wordsList.Size()) {
+				std::cout << "this is the end of this magnificent game yo!" << std::endl;
+				SendToAll("EXIT");
+				system("pause");
+				exit(EXIT_SUCCESS);
+			}
 			SendToAll("WORD_" + m_wordsList.Current());//paraula si hi ha guanyaaoisadsf
 			waitingWiner = true;
 		}
 		else {
 			for (size_t i = 0; i < m_clientList.size(); ++i) {
 				if (m_clientList[i].Receive(tempData)>0) {
-					if (ProcessMsg(i, tempData)) {
-						
-					}
+					ProcessMsg(i, tempData);
 				}
 			}
 		}

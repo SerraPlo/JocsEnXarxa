@@ -12,6 +12,8 @@ public:
 	};
 	~ListWords() = default;
 	std::string Current() { return m_words[m_indexWord]; };
+	int CurrentI() { return m_indexWord; };
+	int Size() { return m_words.size();};
 	void Next() {m_indexWord++;};
 	void LoadFile() {
 		m_words.resize(5);
