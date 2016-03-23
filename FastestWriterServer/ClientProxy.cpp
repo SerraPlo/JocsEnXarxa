@@ -1,4 +1,5 @@
 #include "ClientProxy.h"
+#include <iostream>
 
 ClientProxy::ClientProxy(const std::shared_ptr<TCPSocket> &tcp) :
 	m_tcpSocket(std::shared_ptr<TCPSocket>(tcp))
@@ -27,7 +28,6 @@ void ClientProxy::Send(const std::string &msg) const {
 int ClientProxy::Receive(std::string& msg) const {
 	char data[MAX_BYTES];
 	int bytesReceived = m_tcpSocket->Receive(data, MAX_BYTES);
-	if (bytesReceived < MAX_BYTES) data[bytesReceived] = '\0';
 	msg = data;
 	return bytesReceived;
 }

@@ -1,9 +1,13 @@
 #include <TCPSocket.h>
 #include <iostream>
 #include "Client.h"
+#include "UserInput.h"
 
-void run(const char* serverAddress, const char* nick) {
-	Client client(serverAddress, nick);
+static void run(const char* serverAddress, const char* nick) {
+	UserData userData;
+	UserInput userInput(&userData);
+	std::thread inThread(userInput);
+	Client client(serverAddress, nick, userData);
 	client.Run();
 }
 

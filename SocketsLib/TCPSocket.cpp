@@ -36,7 +36,10 @@ void TCPSocket::Send(const void * data) const {
 }
 
 int TCPSocket::Receive(void * data, int lenData) const {
-	int bytesReceived = recv(m_socket, static_cast<char*>(data), lenData, 0); //blocks execution until data arrives
+	memset(data, 0, MAX_BYTES);
+	char* d = static_cast<char*>(data);
+	int bytesReceived = recv(m_socket, d, lenData, 0); //blocks execution until data arrives
+	if (bytesReceived < MAX_BYTES && bytesReceived > 0) d[bytesReceived] = '\0';
 	/*if (bytesReceived == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: error receiving data.");*/
 	/*else if (bytesReceived == 0)

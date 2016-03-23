@@ -7,25 +7,39 @@ Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayer
 	m_dispatcher.Listen(numPlayers);
 }
 
-void Server::SendToAll(const char* data) {
+void Server::SendToAll(const std::string &data) {
 	for (auto client : m_clientList)
 		client.Send(data);
+}
+void Server::SendTo(int id, const std::string &data) {
+	m_clientList[id].Send(data);
+}
+void Server::SendRanking() {
+	std::string line = "SCORE_";
+	for (size_t i = 0; i < m_clientList.size(); ++i) {
+		line += m_clientList[i].GetNick() + "#" + std::to_string(m_clientList[i].GetScore());
+	}
+	SendToAll(line);
 }
 
 bool Server::ProcessMsg(int id, const std::string &data) {
 	auto pos = data.find_last_of('_');
 	std::string key = data.substr(0, pos);
 	std::string msg = data.substr(pos+1, data.size()-1);
-	std::cout << msg << std::endl;
-
 	if (key == "NICK") {
 		m_clientList[id].SetNick(msg);
 		return true;
 	}
 	if (key == "WRITE") {
-		
+		if (!strcmp(msg.c_str(), m_wordsList.Current().c_str())) {
+			SendToAll("OKWORD_" + m_clientList[id].GetNick());
+			waitingWiner = true;
+			SendRanking();
+			m_wordsList.Next();
+			return true;
+		}
+		else SendTo(id, "KOWORD");
 	}
-	
 	return false;
 }
 
@@ -39,6 +53,7 @@ void Server::InitConnection(void) {
 		m_clientList.emplace_back(tempSocket); //add new player to the list
 		printf("Connected to player %d\n", i + 1);
 	}
+	SendToAll("BEGIN");
 }
 
 void Server::SetNicks(void) {
@@ -55,15 +70,27 @@ void Server::SetNicks(void) {
 			}
 		}
 	}
-	SendToAll("BEGIN");
+	
 	std::cout << "All players connected. Game begins." << std::endl;
 }
 
 void Server::GameLoop(void) {
-	
+	waitingWiner = false;
+	std::string tempData = "";
 	while (true) {
-		std::cout << "game loop" << std::endl;
-		break;
+		if (!waitingWiner) {
+			SendToAll("WORD_" + m_wordsList.Current());//paraula si hi ha guanyaaoisadsf
+			waitingWiner = true;
+		}
+		else {
+			for (size_t i = 0; i < m_clientList.size(); ++i) {
+				if (m_clientList[i].Receive(tempData)>0) {
+					if (ProcessMsg(i, tempData)) {
+						
+					}
+				}
+			}
+		}
 	}
 }
 

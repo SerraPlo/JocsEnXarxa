@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Server.h"
 
-void run(const char* bindAddress, int numPlayers) {
+static void run(const char* bindAddress, int numPlayers) {
 	Server server(bindAddress, numPlayers);
 	server.Run();
 }
