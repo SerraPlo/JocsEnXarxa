@@ -7,41 +7,51 @@ Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayer
 	m_dispatcher.Listen(numPlayers);
 }
 
-void Server::SendToAll(const std::string &data) {
-	for (auto client : m_clientList)
-		client.Send(data);
+void Server::SendToAll(KeyMsg key, const std::string &data) {
+	for (auto client : m_clientList) client.Send((std::to_string(static_cast<int>(key)) + '_' + data).c_str());
 }
-void Server::SendTo(int id, const std::string &data) {
-	m_clientList[id].Send(data);
+
+void Server::SendToAll(KeyMsg key) {
+	for (auto client : m_clientList) client.Send(std::to_string(static_cast<int>(key)));
 }
-void Server::SendRanking() {
-	std::string line = "SCORE_";
-	for (size_t i = 0; i < m_clientList.size(); ++i) {
-		line += m_clientList[i].GetNick() + "#" + std::to_string(m_clientList[i].GetScore());
-	}
-	SendToAll(line);
+
+inline void Server::SendTo(int id, KeyMsg key) {
+	m_clientList[id].Send(std::to_string(static_cast<int>(key)));
+}
+
+void Server::SendRanking(void) {
+	std::string line = m_clientList[0].GetNick();
+	for (size_t i = 1; i < m_clientList.size(); ++i) line += '#' + m_clientList[i].GetNick();
+	SendToAll(KeyMsg::RANKING, line);
+}
+
+inline void Server::SendScore(int id) {
+	m_clientList[id].AddScore();
+	SendToAll(KeyMsg::SCORE, std::to_string(id));
 }
 
 bool Server::ProcessMsg(int id, const std::string &data) {
 	auto pos = data.find_last_of('_');
-	std::string key = data.substr(0, pos);
+	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
 	std::string msg = data.substr(pos+1, data.size()-1);
-	if (key == "NICK") {
-		m_clientList[id].SetNick(msg);
-		return true;
+
+	switch (key) {
+		case KeyMsg::NICK: {
+			m_clientList[id].SetNick(msg);
+		} return true;
+		case KeyMsg::WRITE: {
+			if (msg == "exit") { SendToAll(KeyMsg::DISCONNECT, m_clientList[id].GetNick()); return true; }
+			if (msg == m_wordsList.Current()) {
+				SendToAll(KeyMsg::OKWORD, m_clientList[id].GetNick());
+				SendScore(id);
+				m_wordsList.Next();
+				waitingWiner = false;
+				return true;
+			}
+			SendTo(id, KeyMsg::KOWORD);
+		} return true;
+		default: return false;
 	}
-	if (key == "WRITE") {
-		if (!strcmp(msg.c_str(), m_wordsList.Current().c_str())) {
-			SendToAll("OKWORD_" + m_clientList[id].GetNick());
-			m_clientList[id].SetScore(m_clientList[id].GetScore() + 1);
-			waitingWiner = false;
-			SendRanking();
-			m_wordsList.Next();
-			return true;
-		}
-		else SendTo(id, "KOWORD");
-	}
-	return false;
 }
 
 void Server::InitConnection(void) {
@@ -54,7 +64,7 @@ void Server::InitConnection(void) {
 		m_clientList.emplace_back(tempSocket); //add new player to the list
 		printf("Connected to player %d\n", i + 1);
 	}
-	SendToAll("BEGIN");
+	SendToAll(KeyMsg::BEGIN, std::to_string(m_numPlayers));
 }
 
 void Server::SetNicks(void) {
@@ -64,37 +74,30 @@ void Server::SetNicks(void) {
 		for (size_t i = 0; i < m_clientList.size(); ++i) {
 			if (m_clientList[i].CheckNick("")) { //if nick not set, proceed for check
 				if (!m_clientList[i].Receive(tempData)) continue; //if == 0, nothing received, keep looping
-				if (ProcessMsg(i, tempData)) { //if message is of type NICK, set nick
-					--incompletes;
-				}
+				if (ProcessMsg(i, tempData)) --incompletes; //if message is of type NICK, set nick
 			}
 		}
 	}
-	
 	std::cout << "All players connected. Game begins." << std::endl;
+	SendRanking();
 }
 
 void Server::GameLoop(void) {
 	waitingWiner = false;
 	std::string tempData = "";
 	while (true) {
-		if (!waitingWiner ) {
-			if (m_wordsList.CurrentI() >= m_wordsList.Size()) {
-				std::cout << "this is the end of this magnificent game yo!" << std::endl;
-				SendToAll("EXIT");
+		if (!waitingWiner) {
+			if (m_wordsList.CurrentIndex() >= m_wordsList.Size()) {
+				std::cout << "This is the end of this magnificent game yo!" << std::endl;
+				SendToAll(KeyMsg::EXIT);
 				system("pause");
 				exit(EXIT_SUCCESS);
 			}
-			SendToAll("WORD_" + m_wordsList.Current());//paraula si hi ha guanyaaoisadsf
+			SendToAll(KeyMsg::WORD, m_wordsList.Current());//paraula si hi ha guanyaaoisadsf
 			waitingWiner = true;
 		}
-		else {
-			for (size_t i = 0; i < m_clientList.size(); ++i) {
-				if (m_clientList[i].Receive(tempData)>0) {
-					ProcessMsg(i, tempData);
-				}
-			}
-		}
+		else for (size_t i = 0; i < m_clientList.size(); ++i)
+				if (m_clientList[i].Receive(tempData)>0) ProcessMsg(i, tempData);
 	}
 }
 

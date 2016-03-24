@@ -2,12 +2,15 @@
 #include "Server.h"
 
 static void run(const char* bindAddress, int numPlayers) {
+	if (numPlayers <= 0) SocketTools::ThrowError("Number of players is less or equal to 0");
 	Server server(bindAddress, numPlayers);
 	server.Run();
 }
 
 int main(int argc, const char* argv[]) {
 	try {
+		system("cls");
+		system("title Word Battle Server");
 		SocketTools::BuildLibrary();
 		auto bindAddress = argv[1]; //adress_bind
 		auto numPlayers = argv[2]; //num_players

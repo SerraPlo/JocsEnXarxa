@@ -1,22 +1,24 @@
 #include <TCPSocket.h>
 #include <iostream>
 #include "Client.h"
-#include "UserInput.h"
 
 static void run(const char* serverAddress, const char* nick) {
-	UserData userData;
-	UserInput userInput(&userData);
-	std::thread inThread(userInput);
-	Client client(serverAddress, nick, userData);
-	client.Run();
+	UserData mainUserData;
+	UserInput mainUserInput(mainUserData);
+	std::thread mainUIThread(mainUserInput);
+	mainUIThread.detach();
+	Client mainClient(serverAddress, nick, mainUserData);
+	mainClient.Run();
 }
 
 int main(int argc, const char* argv[]) {
 	try {
+		system("cls");
+		system("title Word Battle Client");
 		SocketTools::BuildLibrary();
-		atexit(SocketTools::UnloadLibrary);//no es criden els destructors
-		auto serverAddress = argv[1]; //adress_server
-		auto nick = argv[2]; //nick
+		atexit(SocketTools::UnloadLibrary); // CAUTION: objects destructors are not called by default
+		auto serverAddress = argv[1]; // adress_server
+		auto nick = argv[2]; // nick
 		run(serverAddress, nick);
 	} catch (std::exception &e) {
 		std::cout << "----------------" << std::endl;

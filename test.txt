@@ -18,6 +18,6 @@
 //////////////
 
 "C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriterServer.exe" localhost:5000 3
-"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Jordi
-"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Pol
-"C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Ramona
+"C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Jordi
+"C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Pol
+"C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Ramona

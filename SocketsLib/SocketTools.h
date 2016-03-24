@@ -19,19 +19,19 @@
 
 namespace SocketTools
 {
-	static void ThrowError(std::string &&message) {
+	inline void ThrowError(std::string &&message) {
 #ifdef _WIN32
 		message.append("\nWin32 error code: " + std::to_string(WSAGetLastError()));
 #endif
 		throw std::exception(message.c_str());
 	};
-	static void BuildLibrary(void) {
+	inline void BuildLibrary(void) {
 #ifdef _WIN32
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) ThrowError("WSAStartup could not initialise WinSock library.");
 #endif
 	};
-	static void UnloadLibrary(void) {
+	inline void UnloadLibrary(void) {
 #ifdef _WIN32
 		if (WSACleanup() != NO_ERROR) ThrowError("WSACleanup could not clear unload WinSock library.");
 #endif

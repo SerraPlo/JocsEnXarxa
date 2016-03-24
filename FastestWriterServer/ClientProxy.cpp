@@ -17,8 +17,8 @@ int ClientProxy::GetScore() const {
 	return m_score;
 }
 
-void ClientProxy::SetScore(int score) {
-	m_score = score;
+void ClientProxy::AddScore() {
+	++m_score;
 }
 
 void ClientProxy::Send(const std::string &msg) const {

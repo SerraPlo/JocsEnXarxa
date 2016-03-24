@@ -30,19 +30,16 @@ void TCPSocket::Connect(SocketAddress & addr) const {
 }
 
 void TCPSocket::Send(const void * data) const {
-	if (send(m_socket, static_cast<const char*>(data), MAX_BYTES, 0) == SOCKET_ERROR) {
+	if (send(m_socket, static_cast<const char*>(data), MAX_BYTES, 0) == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: can't send data.");
-	}
 }
 
 int TCPSocket::Receive(void * data, int lenData) const {
 	memset(data, 0, MAX_BYTES);
-	char* d = static_cast<char*>(data);
+	auto d = static_cast<char*>(data);
 	int bytesReceived = recv(m_socket, d, lenData, 0); //blocks execution until data arrives
 	if (bytesReceived < MAX_BYTES && bytesReceived > 0) d[bytesReceived] = '\0';
-	/*if (bytesReceived == SOCKET_ERROR)
-		SocketTools::ThrowError("TCPSocket: error receiving data.");*/
-	/*else if (bytesReceived == 0)
-		std::cout << "TCPSocket: Connection closed." << std::endl;*/
+	//if (bytesReceived == SOCKET_ERROR) SocketTools::ThrowError("TCPSocket: error receiving data.");
+	//else if (bytesReceived == 0) std::cout << "TCPSocket: Connection closed." << std::endl;
 	return bytesReceived;
 }
