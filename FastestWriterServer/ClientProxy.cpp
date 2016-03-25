@@ -31,6 +31,6 @@ int ClientProxy::Receive(std::string& msg) const {
 	return bytesReceived;
 }
 
-bool ClientProxy::CheckNick(const std::string &str) const {
-	return (str == m_nick);
+bool ClientProxy::EmptyNick() const {
+	return ("" == m_nick);
 }

@@ -4,7 +4,6 @@
 Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayers){
 	m_addr.setAddress(bindAddress);
 	m_dispatcher.Bind(m_addr);
-	m_dispatcher.Listen(numPlayers);
 }
 
 void Server::SendToAll(KeyMsg key, const std::string &data) {
@@ -22,6 +21,7 @@ inline void Server::SendTo(int id, KeyMsg key) {
 void Server::SendRanking(void) {
 	std::string line = m_clientList[0].GetNick();
 	for (size_t i = 1; i < m_clientList.size(); ++i) line += '#' + m_clientList[i].GetNick();
+	std::cout << line;
 	SendToAll(KeyMsg::RANKING, line);
 }
 
@@ -55,8 +55,8 @@ bool Server::ProcessMsg(int id, const std::string &data) {
 
 void Server::InitConnection(void) {
 	m_dispatcher.Listen(m_numPlayers); //establish connection for m_numPlayers clients
-	SocketAddress from;
 	for (int i = 0; i < m_numPlayers; ++i) {
+		SocketAddress from;
 		printf("Waiting for player %d\n", i + 1);
 		std::shared_ptr<TCPSocket> tempSocket = m_dispatcher.Accept(from); //block until client is connected
 		tempSocket->NonBlocking(true); //set non-blocking socket enabled
@@ -71,8 +71,8 @@ void Server::SetNicks(void) {
 	int incompletes = m_numPlayers; //remaining players
 	while (incompletes > 0) {
 		for (size_t i = 0; i < m_clientList.size(); ++i) {
-			if (m_clientList[i].CheckNick("")) { //if nick not set, proceed for check
-				if (!m_clientList[i].Receive(tempData)) continue; //if == 0, nothing received, keep looping
+			if (m_clientList[i].EmptyNick()) { //if nick not set, proceed for check
+				if (m_clientList[i].Receive(tempData) <= 0) continue; //if == 0, nothing received, keep looping
 				if (ProcessMsg(i, tempData)) --incompletes; //if message is of type NICK, set nick
 			}
 		}
@@ -92,7 +92,7 @@ void Server::GameLoop(void) {
 			exit(EXIT_SUCCESS);
 		}
 		for (size_t i = 0; i < m_clientList.size(); ++i)
-			if (m_clientList[i].Receive(tempData)>0) ProcessMsg(i, tempData);
+			if (m_clientList[i].Receive(tempData) > 0) ProcessMsg(i, tempData);
 	}
 }
 

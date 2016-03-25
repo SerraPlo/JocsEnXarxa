@@ -25,6 +25,6 @@ public:
 	void Send(const std::string &msg) const; //send message from socket
 	int Receive(std::string& msg) const; //receive message from socket
 
-	bool CheckNick(const std::string &str) const;
+	bool EmptyNick() const;
 };
 

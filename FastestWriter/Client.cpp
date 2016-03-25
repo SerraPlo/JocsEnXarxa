@@ -18,6 +18,9 @@ inline void Client::SendMsg(KeyMsg key, const std::string& data) const {
 	m_tcpSocket.Send((std::to_string(static_cast<int>(key)) + '_' + data).c_str());
 }
 
+#define PRINT_RANKING() for (const auto &r : m_ranking) std::cout << r << std::endl;
+#define SORT_RANKING() std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
+
 bool Client::ProcessMsg(const std::string & data) {
 	size_t pos = data.find_last_of('_');
 	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
@@ -33,14 +36,18 @@ bool Client::ProcessMsg(const std::string & data) {
 		} return true;
 		// ------ RANKING ------ //
 		case KeyMsg::RANKING: {
-			size_t first = 0, last;
-			for (size_t i = 0; i < m_ranking.size(); ++i) {
+			size_t first = 0, last, p;
+			for (size_t i = 0; i < m_ranking.size()-1; ++i) {
 				m_ranking[i].id = i;
-				last = msg.find('#', first);
+				p = msg.find_first_of('#', first);
+				last = p - first;
 				m_ranking[i].nick = msg.substr(first, last);
-				first = msg.find('#', last) + 1;
+				first = p + 1;
 			}
-			for (const auto &r : m_ranking) std::cout << r << std::endl;
+			int lastID = m_ranking.size() - 1;
+			m_ranking[lastID].id = lastID;
+			m_ranking[lastID].nick = msg.substr(first, msg.size()-1);
+			PRINT_RANKING();
 			std::cout << std::endl;
 		} return true;
 		// ------- WORD ------- //
@@ -62,8 +69,7 @@ bool Client::ProcessMsg(const std::string & data) {
 			std::cout << "------------------------------" << std::endl << "\tRANKING" << std::endl << "------------------------------" << std::endl;
 			int newId = atoi(msg.c_str());
 			++(*std::find_if(m_ranking.begin(), m_ranking.end(), [newId](const UserInfo &a) { return a.id == newId; })).score; //look for same player id
-			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; }); //sort players by score
-			for (const auto &r : m_ranking) std::cout << r << std::endl;
+			SORT_RANKING(); PRINT_RANKING();
 			std::cout << "------------------------------" << std::endl << std::endl;
 		} return true;
 		// ------- EXIT ------- //
@@ -71,17 +77,15 @@ bool Client::ProcessMsg(const std::string & data) {
 			Refresh();
 			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
 			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
-			for (const auto &r : m_ranking) std::cout << r << std::endl;
+			SORT_RANKING(); PRINT_RANKING();
 			exit(EXIT_SUCCESS);
 		} return true;
 		// ---  DISCONNECT --- //
 		case KeyMsg::DISCONNECT: {
 			Refresh();
-			std::cout << "Player " << msg << " has been disconnected" << std::endl;
-			std::cout << "Current game avorted" << std::endl << std::endl;
+			std::cout << "Player " << msg << " has been disconnected" << std::endl << "Current game avorted" << std::endl << std::endl;
 			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
-			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
-			for (const auto &r : m_ranking) std::cout << r << std::endl;
+			SORT_RANKING(); PRINT_RANKING();
 			exit(EXIT_SUCCESS); //provisional exit
 		} return true;
 

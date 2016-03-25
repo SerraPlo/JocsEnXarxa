@@ -2,4 +2,4 @@
   SocketAddress.cpp
   TCPSocket.cpp
   UDPSocket.cpp
-  SocketsLib.vcxproj -> C:\Users\Pol\Documents\GitHub\JocsEnXarxa\Release\SocketsLib.lib
+  SocketsLib.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Release\SocketsLib.lib
