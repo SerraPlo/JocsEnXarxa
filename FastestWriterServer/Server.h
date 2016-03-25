@@ -1,7 +1,31 @@
 #pragma once
-#include <TCPSocket.h>
-#include "ClientProxy.h"
-#include "ListWords.h"
+#include <vector>
+#include <string>
+#include <fstream>
+
+class ListWords
+{
+	std::vector<std::string> m_words;
+	int m_indexWord = 0;
+	void LoadFile() {
+		std::ifstream wordsFile("words.txt");
+		std::string line;
+		if (wordsFile.is_open()) {
+			while (std::getline(wordsFile, line)) m_words.push_back(line);
+			wordsFile.close();
+		}
+	}
+public:
+	ListWords() { LoadFile(); };
+	~ListWords() = default;
+
+	std::string Current() { return m_words[m_indexWord]; };
+	std::string Next() { return m_words[++m_indexWord]; };
+	int CurrentIndex() const { return m_indexWord; };
+
+	int Size() const { return m_words.size(); };
+
+};
 
 //////////////////////////
 //	   MESSAGE KEYS		//
@@ -11,12 +35,14 @@ enum class KeyMsg {
 	NICK, WRITE //server 
 };
 
+#include <TCPSocket.h>
+#include "ClientProxy.h"
+
 //////////////////////////
 //		 SERVER			//
 //////////////////////////
 class Server
 {
-	bool waitingWiner = false;								//bool set to true until a player answers correctly
 	const int m_numPlayers;									//max players to be connected
 	SocketAddress m_addr;									//main address to be binded to socket
 	TCPSocket m_dispatcher;									//main server's socket

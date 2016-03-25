@@ -1,5 +1,4 @@
 #include "ClientProxy.h"
-#include <iostream>
 
 ClientProxy::ClientProxy(const std::shared_ptr<TCPSocket> &tcp) :
 	m_tcpSocket(std::shared_ptr<TCPSocket>(tcp))

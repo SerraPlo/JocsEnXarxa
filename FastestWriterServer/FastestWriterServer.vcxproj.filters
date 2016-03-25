@@ -29,9 +29,6 @@
     <ClInclude Include="ClientProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListWords.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -60,8 +60,9 @@ bool Client::ProcessMsg(const std::string & data) {
 		// ------ SCORE ------ //
 		case KeyMsg::SCORE: {
 			std::cout << "------------------------------" << std::endl << "\tRANKING" << std::endl << "------------------------------" << std::endl;
-			for (auto &r : m_ranking) if (r.id == atoi(msg.c_str())) ++r.score;
-			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
+			int newId = atoi(msg.c_str());
+			++(*std::find_if(m_ranking.begin(), m_ranking.end(), [newId](const UserInfo &a) { return a.id == newId; })).score; //look for same player id
+			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; }); //sort players by score
 			for (const auto &r : m_ranking) std::cout << r << std::endl;
 			std::cout << "------------------------------" << std::endl << std::endl;
 		} return true;
