@@ -13,8 +13,9 @@ class UserData
 	std::mutex m_blocker;
 	bool m_sentToServer = true;
 public:
-	explicit UserData() = default;
+	UserData() = default;
 	~UserData() = default;
+	//static UserData& GetSingleton() { return m_data; }
 	void SetWord(const std::string &str) {
 		m_blocker.lock();
 		m_word = str;
@@ -26,21 +27,6 @@ public:
 		if (m_sentToServer) return false;
 		m_sentToServer = true;
 		return true;
-	}
-};
-
-//////////////////////////
-//		USER INPUT		//
-//////////////////////////
-class UserInput
-{
-	UserData &m_data;
-public:
-	explicit UserInput(UserData &a) : m_data(a) {}
-	~UserInput() = default;
-	void operator()() const {
-		std::string input;
-		while (true) std::getline(std::cin, input), m_data.SetWord(input);
 	}
 };
 
@@ -70,10 +56,8 @@ enum class KeyMsg {
 //////////////////////////
 class Client 
 {
-	SocketAddress m_addr;											//store server address to connect
 	TCPSocket m_tcpSocket;											//main client socket
 	const std::string m_nick;										//client's nickname
-	UserData &m_userData;											//user data reference to main data
 	std::vector<UserInfo> m_ranking;								//ranking of players
 
 	inline void SendMsg(KeyMsg key, const std::string& data) const;	//send a message to the server
@@ -81,7 +65,7 @@ class Client
 	void CheckBegin(void);											//check if game begins, then send the nickname
 	void GameLoop(void);											//main player's game loop
 public:
-	explicit Client(const std::string &serverAddress, const std::string &nick, UserData &uD);
+	explicit Client(const std::string &serverAddress, const std::string &nick);
 	~Client() = default;
 
 	void Run(void);

@@ -2,6 +2,7 @@
 #include <iostream>
 
 Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayers){
+	SocketAddress m_addr; //main address to be binded to socket
 	m_addr.setAddress(bindAddress);
 	m_dispatcher.Bind(m_addr);
 }

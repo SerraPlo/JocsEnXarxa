@@ -1,7 +1,12 @@
 #include "Client.h"
 #include <algorithm>
 
-Client::Client(const std::string &serverAddress, const std::string &nick, UserData &uD) : m_nick(nick), m_userData(uD) {
+//CLIENT STATIC VARIABLES FOR THREADS
+static UserData globalUserData = {};
+static bool globalBeginGame = false;
+
+Client::Client(const std::string &serverAddress, const std::string &nick) : m_nick(nick) {
+	SocketAddress m_addr; //store server address to connect
 	m_addr.setAddress(serverAddress);
 	m_tcpSocket.Connect(m_addr);
 	m_tcpSocket.NonBlocking(true);
@@ -93,20 +98,43 @@ bool Client::ProcessMsg(const std::string & data) {
 	}
 }
 
+static void IgnoreInput() {
+	while (!globalBeginGame) {
+		std::string input;
+		std::getline(std::cin, input);
+	}
+}
+
 void Client::CheckBegin(void) {
 	std::cout << "Waiting for all players to be connected..." << std::endl;
-	while (true) {
+
+	std::thread ignoreInputThread(IgnoreInput);
+	ignoreInputThread.detach();
+
+	while (!globalBeginGame) {
 		char data[MAX_BYTES];
 		if (!m_tcpSocket.Receive(data, MAX_BYTES)) continue;
-		if (ProcessMsg(std::string(data))) break;
+		if (ProcessMsg(std::string(data))) globalBeginGame = true;
+	}
+}
+
+static void GetInput() {
+	while (true) {
+		std::string input;
+		std::getline(std::cin, input);
+		globalUserData.SetWord(input);
 	}
 }
 
 void Client::GameLoop(void) {
 	std::string word = "";
+
+	std::thread getInputThread(GetInput);
+	getInputThread.detach();
+
 	while (true) {
 		char msg[MAX_BYTES];
-		if (m_userData.GetWord(word)) SendMsg(KeyMsg::WRITE, word);
+		if (globalUserData.GetWord(word)) SendMsg(KeyMsg::WRITE, word);
 		if (m_tcpSocket.Receive(msg, MAX_BYTES) > 0) ProcessMsg(msg);
 	}
 }

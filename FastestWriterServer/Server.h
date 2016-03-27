@@ -24,7 +24,6 @@ public:
 	int CurrentIndex() const { return m_indexWord; };
 
 	int Size() const { return m_words.size(); };
-
 };
 
 //////////////////////////
@@ -44,7 +43,6 @@ enum class KeyMsg {
 class Server
 {
 	const int m_numPlayers;									//max players to be connected
-	SocketAddress m_addr;									//main address to be binded to socket
 	TCPSocket m_dispatcher;									//main server's socket
 	ListWords m_wordsList;									//list of words to be displayed for the game
 	std::vector<ClientProxy> m_clientList;					//list of clients with its nickname, score and socket reference

@@ -3,11 +3,7 @@
 #include "Client.h"
 
 static void run(const char* serverAddress, const char* nick) {
-	UserData mainUserData;
-	UserInput mainUserInput(mainUserData);
-	std::thread mainUIThread(mainUserInput);
-	mainUIThread.detach();
-	Client mainClient(serverAddress, nick, mainUserData);
+	Client mainClient(serverAddress, nick);
 	mainClient.Run();
 }
 
