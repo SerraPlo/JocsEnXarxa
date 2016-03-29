@@ -23,7 +23,9 @@ public:
 		m_blocker.unlock();
 	}
 	bool GetWord(std::string &str) {
+		m_blocker.lock();
 		str = m_word;
+		m_blocker.unlock();
 		if (m_sentToServer) return false;
 		m_sentToServer = true;
 		return true;

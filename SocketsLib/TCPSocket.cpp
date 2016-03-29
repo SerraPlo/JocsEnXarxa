@@ -39,7 +39,7 @@ int TCPSocket::Receive(void * data, int lenData) const {
 	memset(data, 0, MAX_BYTES);
 	auto charData = static_cast<char*>(data);
 	int bytesReceived = recv(m_socket, charData, lenData, 0); //blocks execution until data arrives if blocking socket mode
-	if (bytesReceived < MAX_BYTES && bytesReceived > 0) charData[bytesReceived] = '\0';
+	//if (bytesReceived < MAX_BYTES && bytesReceived > 0) charData[bytesReceived] = '\0';
 	//if (bytesReceived == SOCKET_ERROR) SocketTools::ThrowError("TCPSocket: error receiving data.");
 	//else if (bytesReceived == 0) std::cout << "TCPSocket: Connection closed." << std::endl;
 	return bytesReceived;

@@ -3,12 +3,12 @@
 
 //CLIENT STATIC VARIABLES FOR THREADS
 static UserData globalUserData = {};
-static bool globalBeginGame = false;
+bool globalBeginGame = false;
 
 #define REFRESH() system("cls"); \
 std::cout << "//////////////////////////////" << std::endl; \
 std::cout << "\tWORD BATTLE" << std::endl; \
-std::cout << "//////////////////////////////" << std::endl << std::endl; 
+std::cout << "//////////////////////////////" << std::endl << std::endl;
 
 #define PRINT_RANKING() for (const auto &r : m_ranking) std::cout << r << std::endl;
 #define SORT_RANKING() std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
@@ -97,10 +97,14 @@ bool Client::ProcessMsg(const std::string & data) {
 }
 
 static void IgnoreInput() {
+	std::mutex mtx;
+	std::string input;
 	while (!globalBeginGame) {
-		std::string input;
+		mtx.lock();
 		std::getline(std::cin, input);
+		mtx.unlock();
 	}
+	globalUserData.SetWord(input);
 }
 
 void Client::CheckBegin(void) {
@@ -109,17 +113,16 @@ void Client::CheckBegin(void) {
 	std::thread ignoreInputThread(IgnoreInput);
 	ignoreInputThread.detach();
 
+	char data[MAX_BYTES];
 	while (!globalBeginGame) {
-		char data[MAX_BYTES];
 		if (!m_tcpSocket.Receive(data, MAX_BYTES)) continue;
 		if (ProcessMsg(std::string(data))) globalBeginGame = true;
 	}
 }
 
 static void GetInput() {
-	while (true) {
-		std::string input;
-		std::getline(std::cin, input);
+	std::string input;
+	while (std::getline(std::cin, input)) {
 		globalUserData.SetWord(input);
 	}
 }
@@ -130,8 +133,8 @@ void Client::GameLoop(void) {
 	std::thread getInputThread(GetInput);
 	getInputThread.detach();
 
+	char msg[MAX_BYTES];
 	while (true) {
-		char msg[MAX_BYTES];
 		if (globalUserData.GetWord(word)) SendMsg(KeyMsg::WRITE, word);
 		if (m_tcpSocket.Receive(msg, MAX_BYTES) > 0) ProcessMsg(msg);
 	}

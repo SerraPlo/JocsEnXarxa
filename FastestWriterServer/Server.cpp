@@ -22,7 +22,6 @@ inline void Server::SendTo(int id, KeyMsg key) {
 void Server::SendRanking(void) {
 	std::string line = m_clientList[0].GetNick();
 	for (size_t i = 1; i < m_clientList.size(); ++i) line += '#' + m_clientList[i].GetNick();
-	std::cout << line;
 	SendToAll(KeyMsg::RANKING, line);
 }
 
@@ -45,6 +44,12 @@ bool Server::ProcessMsg(int id, const std::string &data) {
 			if (msg == m_wordsList.Current()) {
 				SendToAll(KeyMsg::OKWORD, m_clientList[id].GetNick());
 				SendScore(id);
+				if (m_wordsList.CurrentIndex() >= m_wordsList.Size()-1) {
+					std::cout << "This is the end of this magnificent game yo!" << std::endl;
+					SendToAll(KeyMsg::EXIT);
+					system("pause");
+					exit(EXIT_SUCCESS);
+				}
 				SendToAll(KeyMsg::WORD, m_wordsList.Next());//paraula si hi ha guanyaaoisadsf
 				return true;
 			}
@@ -84,14 +89,8 @@ void Server::SetNicks(void) {
 
 void Server::GameLoop(void) {
 	std::string tempData = "";
-	SendToAll(KeyMsg::WORD, m_wordsList.Current());//paraula si hi ha guanyaaoisadsf
+	SendToAll(KeyMsg::WORD, m_wordsList.Current());
 	while (true) {
-		if (m_wordsList.CurrentIndex() >= m_wordsList.Size()) {
-			std::cout << "This is the end of this magnificent game yo!" << std::endl;
-			SendToAll(KeyMsg::EXIT);
-			system("pause");
-			exit(EXIT_SUCCESS);
-		}
 		for (size_t i = 0; i < m_clientList.size(); ++i)
 			if (m_clientList[i].Receive(tempData) > 0) ProcessMsg(i, tempData);
 	}
