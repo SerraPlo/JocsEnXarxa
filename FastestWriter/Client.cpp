@@ -5,6 +5,14 @@
 static UserData globalUserData = {};
 static bool globalBeginGame = false;
 
+#define REFRESH() system("cls"); \
+std::cout << "//////////////////////////////" << std::endl; \
+std::cout << "\tWORD BATTLE" << std::endl; \
+std::cout << "//////////////////////////////" << std::endl << std::endl; 
+
+#define PRINT_RANKING() for (const auto &r : m_ranking) std::cout << r << std::endl;
+#define SORT_RANKING() std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
+
 Client::Client(const std::string &serverAddress, const std::string &nick) : m_nick(nick) {
 	SocketAddress m_addr; //store server address to connect
 	m_addr.setAddress(serverAddress);
@@ -12,19 +20,9 @@ Client::Client(const std::string &serverAddress, const std::string &nick) : m_ni
 	m_tcpSocket.NonBlocking(true);
 }
 
-static void Refresh(void) {
-	system("cls");
-	std::cout << "//////////////////////////////" << std::endl;
-	std::cout << "\tWORD BATTLE" << std::endl;
-	std::cout << "//////////////////////////////" << std::endl << std::endl;
-}
-
 inline void Client::SendMsg(KeyMsg key, const std::string& data) const {
 	m_tcpSocket.Send((std::to_string(static_cast<int>(key)) + '_' + data).c_str());
 }
-
-#define PRINT_RANKING() for (const auto &r : m_ranking) std::cout << r << std::endl;
-#define SORT_RANKING() std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
 
 bool Client::ProcessMsg(const std::string & data) {
 	size_t pos = data.find_last_of('_');
@@ -35,7 +33,7 @@ bool Client::ProcessMsg(const std::string & data) {
 		// ------ BEGIN ------ //
 		case KeyMsg::BEGIN: {
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2); //change console text color
-			Refresh(); 
+			REFRESH();
 			SendMsg(KeyMsg::NICK, m_nick);
 			m_ranking.resize(atoi(msg.c_str()));
 		} return true;
@@ -61,7 +59,7 @@ bool Client::ProcessMsg(const std::string & data) {
 		} return true;
 		// ------ OKWORD ------ //
 		case KeyMsg::OKWORD: {
-			Refresh();
+			REFRESH();
 			msg == m_nick ?	std::cout << "It's correct! :)" << std::endl << std::endl : 
 							std::cout << msg << " answered correctly, not you soz :(" << std::endl << std::endl;
 		} return true;
@@ -79,7 +77,7 @@ bool Client::ProcessMsg(const std::string & data) {
 		} return true;
 		// ------- EXIT ------- //
 		case KeyMsg::EXIT: {
-			Refresh();
+			REFRESH();
 			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
 			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
 			SORT_RANKING(); PRINT_RANKING();
@@ -87,7 +85,7 @@ bool Client::ProcessMsg(const std::string & data) {
 		} return true;
 		// ---  DISCONNECT --- //
 		case KeyMsg::DISCONNECT: {
-			Refresh();
+			REFRESH();
 			std::cout << "Player " << msg << " has been disconnected" << std::endl << "Current game avorted" << std::endl << std::endl;
 			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
 			SORT_RANKING(); PRINT_RANKING();
@@ -144,3 +142,6 @@ void Client::Run(void) {
 	GameLoop();
 }
 
+#undef REFRESH
+#undef PRINT_RANKING
+#undef SORT_RANKING

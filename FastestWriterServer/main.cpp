@@ -14,6 +14,7 @@ int main(int argc, const char* argv[]) {
 		SocketTools::BuildLibrary();
 		auto bindAddress = argv[1]; //adress_bind
 		auto numPlayers = argv[2]; //num_players
+		SocketTools::ThrowError("holi");
 		run(bindAddress, atoi(numPlayers));
 		SocketTools::UnloadLibrary();
 	} catch (std::exception &e) {

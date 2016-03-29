@@ -19,9 +19,10 @@
 
 namespace SocketTools
 {
-	inline void ThrowError(std::string &&message) {
+#define ThrowError(message) ShowError(message, __FILE__, __LINE__);
+	inline void ShowError(std::string &&message, const std::string& fileName, int line) {
 #ifdef _WIN32
-		message.append("\nWin32 error code: " + std::to_string(WSAGetLastError()));
+		message.append("\nFile: " + fileName + "\nLine: " + std::to_string(line) + "\nWin32 error code: " + std::to_string(WSAGetLastError()));
 #endif
 		throw std::exception(message.c_str());
 	};
