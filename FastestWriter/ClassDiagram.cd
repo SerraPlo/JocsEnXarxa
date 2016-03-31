@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Comment CommentText="pene">
+    <Position X="2.479" Y="1.708" Height="0.354" Width="0.7" />
+  </Comment>
+  <Class Name="UserData" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAABAAAAAAABEAAAAAAAAAgAAAAAAAIIAAA=</HashCode>
+      <FileName>Client.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Client" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAQAAIAAAAAAAAABAAAAgAAAECEY=</HashCode>
+      <FileName>Client.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="UserInfo" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAQAAAAAAAAAgA=</HashCode>
+      <FileName>Client.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="KeyMsg" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAAAAAAAAAAACAAgAAAAAAAAgBUCABAAAAA=</HashCode>
+      <FileName>Client.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
