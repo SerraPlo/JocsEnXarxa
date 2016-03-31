@@ -30,7 +30,7 @@ inline void Server::SendScore(int id) {
 	SendToAll(KeyMsg::SCORE, std::to_string(id));
 }
 
-bool Server::ProcessMsg(int id, const std::string &data) {
+bool Server::ProcessMsg(size_t id, const std::string &data) {
 	auto pos = data.find_last_of('_');
 	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
 	std::string msg = data.substr(pos+1, data.size()-1);

@@ -17,13 +17,14 @@ class GenericSocket
 protected:
 	SOCKET m_socket;
 	unsigned m_type;
+	u_long m_isNonBlocking = 0;
 public:
 	explicit GenericSocket(int type);
 	GenericSocket(const GenericSocket& other) = default;
 	virtual ~GenericSocket();
 
 	void Bind(SocketAddress& address) const;
-	void NonBlocking(bool isNonBlocking) const;
+	void NonBlocking(bool isNonBlocking);
 
 	GenericSocket& operator=(const GenericSocket& other) = default;
 };

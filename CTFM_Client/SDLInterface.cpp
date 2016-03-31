@@ -458,27 +458,6 @@ void SDLInterface::drawText(std::string text, int backgroundColor, int foregroun
 	SDL_DestroyTexture(textTexture);
 }
 
-void SDLInterface::drawText(std::string text, int foregroundColor, int x, int y) {
-	SDL_Surface* textSurface;
-
-	textSurface = TTF_RenderText_Blended(g_font, text.c_str(), colorPalette[foregroundColor]);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, textSurface);
-
-	SDL_Rect TextLocation;
-	TextLocation.h = textSurface->h;
-	TextLocation.w = textSurface->w;
-	TextLocation.x = x;
-	TextLocation.y = y;
-
-	SDL_FreeSurface(textSurface);
-
-	SDL_RenderCopy(_renderer, textTexture, NULL, &TextLocation);
-
-	SDL_DestroyTexture(textTexture);
-}
-
-
-
 /*
 * Draw and blend a text at screen
 * @param text is the text content

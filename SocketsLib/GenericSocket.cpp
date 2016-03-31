@@ -12,9 +12,9 @@ void GenericSocket::Bind(SocketAddress & address) const {
 }
 
 // TODO: cross-paltform
-void GenericSocket::NonBlocking(bool isNonBlocking) const {
-	u_long mode = isNonBlocking ? 1 : 0;
-	if (ioctlsocket(m_socket, FIONBIO, &mode) == SOCKET_ERROR) 
+void GenericSocket::NonBlocking(bool nb) {
+	m_isNonBlocking = nb ? 1 : 0;
+	if (ioctlsocket(m_socket, FIONBIO, &m_isNonBlocking) == SOCKET_ERROR)
 		SocketTools::ThrowError("Socket could not be changed to non-blocking mode.");
 }
 

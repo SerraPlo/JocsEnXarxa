@@ -6,7 +6,7 @@
 class ListWords
 {
 	std::vector<std::string> m_words;
-	int m_indexWord = 0;
+	size_t m_indexWord = 0;
 	void LoadFile() {
 		std::ifstream wordsFile("words.txt");
 		std::string line;
@@ -21,9 +21,9 @@ public:
 
 	std::string Current() { return m_words[m_indexWord]; };
 	std::string Next() { return m_words[++m_indexWord]; };
-	int CurrentIndex() const { return m_indexWord; };
+	size_t CurrentIndex() const { return m_indexWord; };
 
-	int Size() const { return m_words.size(); };
+	size_t Size() const { return m_words.size(); };
 };
 
 //////////////////////////
@@ -52,7 +52,7 @@ class Server
 	inline void SendTo(int id, KeyMsg key);
 	void SendRanking(void);
 	inline void SendScore(int id);
-	bool ProcessMsg(int id, const std::string &data);		//operate according to message key
+	bool ProcessMsg(size_t id, const std::string &data);		//operate according to message key
 	void InitConnection(void);								//initialize connection for all the players
 	void SetNicks(void);									//store nicknames in list of clients
 	void GameLoop(void);									//main server's game loop
