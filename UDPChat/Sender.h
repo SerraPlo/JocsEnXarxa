@@ -11,11 +11,11 @@ public:
 
 	Sender& operator=(const Sender& other) = default;
 	void operator()() override {
-		char data[MAX_DATA];
+		char data[MAX_BYTES];
 		while (true) {
-			std::cin.getline(data, MAX_DATA);
+			std::cin.getline(data, MAX_BYTES);
 			//Utils::ReadChar(data);
-			m_socket->SendTo(data, MAX_DATA, m_addr);
+			m_socket->SendTo(data, MAX_BYTES, m_addr);
 			m_msgManager.addMsg("Me: " + std::string(data));
 			m_msgManager.PrintMsg(true);
 			if (!strcmp(data, "exit")) exit(EXIT_SUCCESS); //trust on guillermo

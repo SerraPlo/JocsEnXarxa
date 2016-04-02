@@ -15,7 +15,7 @@ void run(const char* sendAddress, const char* recvAddress) {
 int main(int argc, const char* argv[]) {
 	try {
 		SocketTools::BuildLibrary();
-		atexit(SocketTools::UnloadLibrary);//no es crida ~ del socket
+		atexit(SocketTools::UnloadLibrary);//no es crida destructor del socket
 		auto sendAddress = argv[1]; //IP:port
 		auto recvAddress = argv[2]; //IP:port
 		run(sendAddress, recvAddress);

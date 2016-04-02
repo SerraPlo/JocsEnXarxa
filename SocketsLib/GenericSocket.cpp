@@ -1,8 +1,7 @@
 #include "GenericSocket.h"
 
 GenericSocket::GenericSocket(int type) : m_type(type) {
-	m_socket = socket(AF_INET, type, IPPROTO_IP);
-	if (m_socket == INVALID_SOCKET) 
+	if ((m_socket = socket(AF_INET, type, IPPROTO_IP)) == INVALID_SOCKET)
 		SocketTools::ThrowError("Socket could not be initialised.");
 }
 
@@ -11,11 +10,15 @@ void GenericSocket::Bind(SocketAddress & address) const {
 		SocketTools::ThrowError("Address could not be binded to socket.");
 }
 
-// TODO: cross-paltform
 void GenericSocket::NonBlocking(bool nb) {
 	m_isNonBlocking = nb ? 1 : 0;
+#if CUR_PLATFORM == PLATFORM_WINDOWS
 	if (ioctlsocket(m_socket, FIONBIO, &m_isNonBlocking) == SOCKET_ERROR)
 		SocketTools::ThrowError("Socket could not be changed to non-blocking mode.");
+#else
+	if (fcntl(handle, F_SETFL, O_NONBLOCK, (int)nonBlocking) == -1)
+		SocketTools::ThrowError("Socket could not be changed to non-blocking mode.");
+#endif
 }
 
 GenericSocket::~GenericSocket() {

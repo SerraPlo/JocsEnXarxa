@@ -31,19 +31,23 @@ void TCPSocket::Connect(SocketAddress & addr) const {
 }
 
 void TCPSocket::Send(const void * data) const {
-	if (send(m_socket, static_cast<const char*>(data), MAX_BYTES, 0) == SOCKET_ERROR)
+	const char* cData = static_cast<const char*>(data);
+	if (send(m_socket, cData, MAX_BYTES, 0) == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: can't send data.");
 }
 
 int TCPSocket::Receive(void * data, int lenData) const {
-	memset(data, 0, MAX_BYTES);
-	auto charData = static_cast<char*>(data);
-	int bytesReceived = recv(m_socket, charData, lenData, 0); //blocks execution until data arrives if blocking socket mode
+	memset(data, NULL, MAX_BYTES);
+
+	auto cData = static_cast<char*>(data);
+	int bytesReceived = recv(m_socket, cData, lenData, 0); //blocks execution until data arrives if blocking socket mode
 	
-	if (bytesReceived < MAX_BYTES && bytesReceived > 0) charData[bytesReceived] = '\0';
-	
-	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) { SocketTools::ThrowError("TCPSocket: error receiving data."); }
-	else if (bytesReceived == 0) std::cout << "TCPSocket: Connection closed." << std::endl;
+	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("TCPSocket: error receiving data.");
+	else if (bytesReceived == 0) std::cout << "TCPSocket: Connection closed." << std::endl, exit(EXIT_SUCCESS);
+
+	if (bytesReceived == MAX_BYTES)
+		for (int i = 0; i < MAX_BYTES; ++i) 
+			if (cData[i] == NULL) { bytesReceived = i; cData[i] = '\0'; break; }
 	
 	return bytesReceived;
 }

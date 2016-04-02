@@ -1,12 +1,12 @@
 #pragma once
 #include "SocketAddress.h"
 
-#ifndef _WIN32
+#if CUR_PLATFORM != PLATFORM_WINDOWS
 	typedef int SOCKET;
 	#define INVALID_SOCKET  (SOCKET)(~0)
 	#define SOCKET_ERROR            (-1)
 	#define NO_ERROR				(0L)
-	#define closesocket(sockdep) close(sockdep)
+	#define closesocket(sockdep)	close(sockdep)
 	#define SD_BOTH					(0x02)
 #endif
 
