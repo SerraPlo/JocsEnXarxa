@@ -2,26 +2,46 @@
 
 UDPSocket::UDPSocket() : GenericSocket(SOCK_DGRAM) {}
 
-int UDPSocket::SendTo(const void* data, int lenData, SocketAddress& to) const {
-	auto bytesSent = sendto(m_socket, static_cast<const char*>(data), lenData, 0, to.getSockaddrAddress(), sizeof(sockaddr_in));
+int UDPSocket::SendTo(const char* data, int lenData, SocketAddress &to) const {
+	auto bytesSent = sendto(m_socket, data, lenData, 0, to.getSockaddrAddress(), sizeof(sockaddr_in));
 	if (bytesSent == SOCKET_ERROR) SocketTools::ThrowError("Data could not be sent.");
 	return bytesSent;
 }
 
-int UDPSocket::ReceiveFrom(void* data, int lenData, SocketAddress & from) const {
+int UDPSocket::SendTo(const std::string &data, SocketAddress &to) const {
+	auto bytesSent = sendto(m_socket, data.c_str(), data.length(), 0, to.getSockaddrAddress(), sizeof(sockaddr_in));
+	if (bytesSent == SOCKET_ERROR) SocketTools::ThrowError("Data could not be sent.");
+	return bytesSent;
+}
+
+int UDPSocket::ReceiveFrom(char* data, int lenData, SocketAddress &from) const {
 	memset(data, NULL, MAX_BYTES);
 
 	sockaddr tempAddr;
 	int addrSize = sizeof(sockaddr_in);
-	auto cData = static_cast<char*>(data);
-	auto bytesReceived = recvfrom(m_socket, cData, lenData, 0, &tempAddr, &addrSize);
+	auto bytesReceived = recvfrom(m_socket, data, lenData, 0, &tempAddr, &addrSize);
 	from.setAddress(tempAddr);
 
 	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("Data could not be received.");
 
-	if (bytesReceived < MAX_BYTES && bytesReceived > 0) cData[bytesReceived] = '\0';
-	else if (bytesReceived == MAX_BYTES)
-		for (int i = 0; i < MAX_BYTES; ++i) if (cData[i] == NULL) { bytesReceived = i; cData[i] = '\0'; break; }
+	/*if (bytesReceived == MAX_BYTES)
+		for (int i = 0; i < MAX_BYTES; ++i) 
+			if (cData[i] == NULL) { bytesReceived = i; break; } //real bytes received*/
+
+	return bytesReceived;
+}
+
+int UDPSocket::ReceiveFrom(std::string &data, SocketAddress &from) const {
+	sockaddr tempAddr;
+	int addrSize = sizeof(sockaddr_in);
+	auto cData = const_cast<char*>(data.c_str());
+
+	auto bytesReceived = recvfrom(m_socket, cData, MAX_BYTES, 0, &tempAddr, &addrSize);
+
+	from.setAddress(tempAddr);
+	data = cData;
+
+	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("Data could not be received.");
 
 	return bytesReceived;
 }

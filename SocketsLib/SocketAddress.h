@@ -3,7 +3,7 @@
 
 class SocketAddress
 {
-	sockaddr_in m_address;
+	sockaddr_in m_address {0};
 public:
 	SocketAddress() = default;
 	SocketAddress(const std::string &inString);

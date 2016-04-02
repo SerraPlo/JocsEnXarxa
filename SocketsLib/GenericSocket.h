@@ -15,9 +15,9 @@
 class GenericSocket
 {
 protected:
-	SOCKET m_socket;
-	unsigned m_type;
-	u_long m_isNonBlocking = 0;
+	SOCKET m_socket {0};
+	unsigned m_type {0};
+	u_long m_isNonBlocking {0};
 public:
 	explicit GenericSocket(int type);
 	GenericSocket(const GenericSocket& other) = default;

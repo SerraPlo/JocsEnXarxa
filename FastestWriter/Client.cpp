@@ -1,33 +1,38 @@
 #include "Client.h"
 #include <algorithm>
+#include <iostream>
+using std::cout;
+using std::endl;
+using std::string;
 
 //CLIENT STATIC VARIABLES FOR THREADS
 static UserData globalUserData = {};
 bool globalBeginGame = false;
 
 #define REFRESH() system("cls"); \
-std::cout << "//////////////////////////////" << std::endl; \
-std::cout << "\tWORD BATTLE" << std::endl; \
-std::cout << "//////////////////////////////" << std::endl << std::endl;
+cout << "//////////////////////////////" << endl; \
+cout << "\tWORD BATTLE" << endl; \
+cout << "//////////////////////////////" << endl << endl;
 
-#define PRINT_RANKING() for (const auto &r : m_ranking) std::cout << r << std::endl;
+#define PRINT_RANKING() for (const auto &r : m_ranking) cout << r << endl;
 #define SORT_RANKING() std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
 
-Client::Client(const std::string &serverAddress, const std::string &nick) : m_nick(nick) {
+Client::Client(const string &serverAddress, const string &nick) : m_nick(nick) {
 	SocketAddress m_addr; //store server address to connect
 	m_addr.setAddress(serverAddress);
 	m_tcpSocket.Connect(m_addr);
 	m_tcpSocket.NonBlocking(true);
+	//m_tcpSocket.DisableDelay();
 }
 
-inline void Client::SendMsg(KeyMsg key, const std::string& data) const {
+inline void Client::SendMsg(KeyMsg key, const string& data) const {
 	m_tcpSocket.Send((std::to_string(static_cast<int>(key)) + '_' + data).c_str());
 }
 
-bool Client::ProcessMsg(const std::string & data) {
+bool Client::ProcessMsg(const string & data) {
 	size_t pos = data.find_last_of('_');
 	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
-	std::string msg = data.substr(pos + 1, data.size() - 1);
+	string msg = data.substr(pos + 1, data.size() - 1);
 
 	switch (key) {
 		// ------ BEGIN ------ //
@@ -51,34 +56,34 @@ bool Client::ProcessMsg(const std::string & data) {
 			m_ranking[lastID].id = lastID;
 			m_ranking[lastID].nick = msg.substr(first, msg.size()-1);
 			PRINT_RANKING();
-			std::cout << std::endl;
+			cout << endl;
 		} return true;
 		// ------- WORD ------- //
 		case KeyMsg::WORD: {
-			std::cout << "==> You have to copy: " << msg << std::endl;
+			cout << "==> You have to copy: " << msg << endl;
 		} return true;
 		// ------ OKWORD ------ //
 		case KeyMsg::OKWORD: {
 			REFRESH();
-			msg == m_nick ?	std::cout << "It's correct! :)" << std::endl << std::endl : 
-							std::cout << msg << " answered correctly, not you soz :(" << std::endl << std::endl;
+			msg == m_nick ?	cout << "It's correct! :)" << endl << endl : 
+							cout << msg << " answered correctly, not you soz :(" << endl << endl;
 		} return true;
 		// ------ KOWORD ------ //
 		case KeyMsg::KOWORD: {
-			std::cout << "N00b... try again" << std::endl;
+			cout << "N00b... try again" << endl;
 		} return true;
 		// ------ SCORE ------ //
 		case KeyMsg::SCORE: {
-			std::cout << "------------------------------" << std::endl << "\tRANKING" << std::endl << "------------------------------" << std::endl;
+			cout << "------------------------------" << endl << "\tRANKING" << endl << "------------------------------" << endl;
 			int newId = atoi(msg.c_str());
 			++(*std::find_if(m_ranking.begin(), m_ranking.end(), [newId](const UserInfo &a) { return a.id == newId; })).score; //look for same player id
 			SORT_RANKING(); PRINT_RANKING();
-			std::cout << "------------------------------" << std::endl << std::endl;
+			cout << "------------------------------" << endl << endl;
 		} return true;
 		// ------- EXIT ------- //
 		case KeyMsg::EXIT: {
 			REFRESH();
-			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
+			cout << "==============================" << endl << "\tGAME OVER" << endl << "==============================" << endl << endl;
 			std::sort(m_ranking.begin(), m_ranking.end(), [](const UserInfo &a, const UserInfo &b) { return a.score > b.score; });
 			SORT_RANKING(); PRINT_RANKING();
 			exit(EXIT_SUCCESS);
@@ -86,8 +91,8 @@ bool Client::ProcessMsg(const std::string & data) {
 		// ---  DISCONNECT --- //
 		case KeyMsg::DISCONNECT: {
 			REFRESH();
-			std::cout << "Player " << msg << " has been disconnected" << std::endl << "Current game avorted" << std::endl << std::endl;
-			std::cout << "==============================" << std::endl << "\tGAME OVER" << std::endl << "==============================" << std::endl << std::endl;
+			cout << "Player " << msg << " has been disconnected" << endl << "Current game avorted" << endl << endl;
+			cout << "==============================" << endl << "\tGAME OVER" << endl << "==============================" << endl << endl;
 			SORT_RANKING(); PRINT_RANKING();
 			exit(EXIT_SUCCESS); //provisional exit
 		} return true;
@@ -98,17 +103,17 @@ bool Client::ProcessMsg(const std::string & data) {
 
 static void IgnoreInput() {
 	std::mutex mtx;
-	std::string input;
+	string input;
 	while (!globalBeginGame) {
 		mtx.lock();
-		std::getline(std::cin, input);
+		getline(std::cin, input);
 		mtx.unlock();
 	}
 	globalUserData.SetWord(input);
 }
 
 void Client::CheckBegin(void) {
-	std::cout << "Waiting for all players to be connected..." << std::endl;
+	cout << "Waiting for all players to be connected..." << endl;
 
 	std::thread ignoreInputThread(IgnoreInput);
 	ignoreInputThread.detach();
@@ -116,19 +121,19 @@ void Client::CheckBegin(void) {
 	char data[MAX_BYTES];
 	while (!globalBeginGame) {
 		if (!m_tcpSocket.Receive(data, MAX_BYTES)) continue;
-		if (ProcessMsg(std::string(data))) globalBeginGame = true;
+		if (ProcessMsg(string(data))) globalBeginGame = true;
 	}
 }
 
 static void GetInput() {
-	std::string input;
-	while (std::getline(std::cin, input)) {
+	string input;
+	while (getline(std::cin, input)) {
 		globalUserData.SetWord(input);
 	}
 }
 
 void Client::GameLoop(void) {
-	std::string word = "";
+	string word = "";
 
 	std::thread getInputThread(GetInput);
 	getInputThread.detach();

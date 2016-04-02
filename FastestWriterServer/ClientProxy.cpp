@@ -4,11 +4,11 @@ ClientProxy::ClientProxy(const std::shared_ptr<TCPSocket> &tcp) :
 	m_tcpSocket(std::shared_ptr<TCPSocket>(tcp))
 {}
 
-const std::string& ClientProxy::GetNick() const {
+const string& ClientProxy::GetNick() const {
 	return m_nick;
 }
 
-void ClientProxy::SetNick(const std::string& str) {
+void ClientProxy::SetNick(const string& str) {
 	m_nick = str;
 }
 
@@ -20,11 +20,11 @@ void ClientProxy::AddScore() {
 	++m_score;
 }
 
-void ClientProxy::Send(const std::string &msg) const {
+void ClientProxy::Send(const string &msg) const {
 	m_tcpSocket->Send(msg.c_str());
 }
 
-int ClientProxy::Receive(std::string& msg) const {
+int ClientProxy::Receive(string& msg) const {
 	char data[MAX_BYTES];
 	int bytesReceived = m_tcpSocket->Receive(data, MAX_BYTES);
 	msg = data;

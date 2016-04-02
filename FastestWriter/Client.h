@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <mutex>
 
@@ -9,13 +8,12 @@
 //////////////////////////
 class UserData
 {
-	std::string m_word;
+	std::string m_word {""};
 	std::mutex m_blocker;
-	bool m_sentToServer = true;
+	bool m_sentToServer {0};
 public:
 	UserData() = default;
 	~UserData() = default;
-	//static UserData& GetSingleton() { return m_data; }
 	void SetWord(const std::string &str) {
 		m_blocker.lock();
 		m_word = str;
@@ -36,9 +34,9 @@ public:
 //		USER INFO		//
 //////////////////////////
 struct UserInfo {
-	int id = 0;
-	int score = 0;
-	std::string nick = "";
+	int id {0};
+	int score {0};
+	std::string nick {""};
 	friend std::ostream& operator<<(std::ostream& os, const UserInfo &ui) { return os << "nick: " << ui.nick << "\tscore: " << ui.score; }
 };
 

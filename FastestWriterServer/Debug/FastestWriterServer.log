@@ -1,1 +1,5 @@
-﻿  FastestWriterServer.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriterServer.exe
+﻿  Server.cpp
+  main.cpp
+  ClientProxy.cpp
+  Generating Code...
+  FastestWriterServer.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriterServer.exe

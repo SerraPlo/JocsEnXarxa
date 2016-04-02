@@ -1,5 +1,7 @@
 #include "Server.h"
 #include <iostream>
+using std::cout;
+using std::endl;
 
 Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayers){
 	SocketAddress m_addr; //main address to be binded to socket
@@ -7,7 +9,7 @@ Server::Server(const char* bindAddress, int numPlayers) : m_numPlayers(numPlayer
 	m_dispatcher.Bind(m_addr);
 }
 
-void Server::SendToAll(KeyMsg key, const std::string &data) {
+void Server::SendToAll(KeyMsg key, const string &data) {
 	for (auto client : m_clientList) client.Send((std::to_string(static_cast<int>(key)) + '_' + data).c_str());
 }
 
@@ -20,7 +22,7 @@ inline void Server::SendTo(int id, KeyMsg key) {
 }
 
 void Server::SendRanking(void) {
-	std::string line = m_clientList[0].GetNick();
+	string line = m_clientList[0].GetNick();
 	for (size_t i = 1; i < m_clientList.size(); ++i) line += '#' + m_clientList[i].GetNick();
 	SendToAll(KeyMsg::RANKING, line);
 }
@@ -30,10 +32,10 @@ inline void Server::SendScore(int id) {
 	SendToAll(KeyMsg::SCORE, std::to_string(id));
 }
 
-bool Server::ProcessMsg(size_t id, const std::string &data) {
+bool Server::ProcessMsg(size_t id, const string &data) {
 	auto pos = data.find_last_of('_');
 	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
-	std::string msg = data.substr(pos+1, data.size()-1);
+	string msg = data.substr(pos+1, data.size()-1);
 
 	switch (key) {
 		case KeyMsg::NICK: {
@@ -45,7 +47,7 @@ bool Server::ProcessMsg(size_t id, const std::string &data) {
 				SendToAll(KeyMsg::OKWORD, m_clientList[id].GetNick());
 				SendScore(id);
 				if (m_wordsList.CurrentIndex() >= m_wordsList.Size()-1) {
-					std::cout << "This is the end of this magnificent game yo!" << std::endl;
+					cout << "This is the end of this magnificent game yo!" << endl;
 					SendToAll(KeyMsg::EXIT);
 					system("pause");
 					exit(EXIT_SUCCESS);
@@ -66,6 +68,7 @@ void Server::InitConnection(void) {
 		printf("Waiting for player %d\n", i + 1);
 		std::shared_ptr<TCPSocket> tempSocket = m_dispatcher.Accept(from); //block until client is connected
 		tempSocket->NonBlocking(true); //set non-blocking socket enabled
+		//tempSocket->DisableDelay();
 		m_clientList.emplace_back(tempSocket); //add new player to the list
 		printf("Connected to player %d\n", i + 1);
 	}
@@ -73,7 +76,7 @@ void Server::InitConnection(void) {
 }
 
 void Server::SetNicks(void) {
-	std::string tempData = "";
+	string tempData = "";
 	int incompletes = m_numPlayers; //remaining players
 	while (incompletes > 0) {
 		for (size_t i = 0; i < m_clientList.size(); ++i) {
@@ -83,12 +86,12 @@ void Server::SetNicks(void) {
 			}
 		}
 	}
-	std::cout << "All players connected. Game begins." << std::endl;
+	cout << "All players connected. Game begins." << endl;
 	SendRanking();
 }
 
 void Server::GameLoop(void) {
-	std::string tempData = "";
+	string tempData = "";
 	SendToAll(KeyMsg::WORD, m_wordsList.Current());
 	while (true) {
 		for (size_t i = 0; i < m_clientList.size(); ++i)

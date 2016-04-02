@@ -1,5 +1,4 @@
 #include "TCPSocket.h"
-#include <iostream>
 
 TCPSocket::TCPSocket() : GenericSocket(SOCK_STREAM) {}
 
@@ -30,24 +29,54 @@ void TCPSocket::Connect(SocketAddress & addr) const {
 		SocketTools::ThrowError("TCPSocket: cannot connect to addr.");
 }
 
-void TCPSocket::Send(const void * data) const {
-	const char* cData = static_cast<const char*>(data);
-	if (send(m_socket, cData, MAX_BYTES, 0) == SOCKET_ERROR)
+int TCPSocket::Send(const char *data) const {
+	int lenData { MAX_BYTES };
+	if (m_isDelayDisabled) lenData = int(strlen(data));
+
+	auto bytesSent = send(m_socket, data, lenData, 0);
+	if (bytesSent == SOCKET_ERROR)
 		SocketTools::ThrowError("TCPSocket: can't send data.");
+	return bytesSent;
 }
 
-int TCPSocket::Receive(void * data, int lenData) const {
-	memset(data, NULL, MAX_BYTES);
+int TCPSocket::Send(const std::string &data) const {
+	int lenData { MAX_BYTES };
+	if (m_isDelayDisabled) lenData = data.length();
 
-	auto cData = static_cast<char*>(data);
-	int bytesReceived = recv(m_socket, cData, lenData, 0); //blocks execution until data arrives if blocking socket mode
+	auto bytesSent = send(m_socket, data.c_str(), lenData, 0);
+	if (bytesSent == SOCKET_ERROR)
+		SocketTools::ThrowError("TCPSocket: can't send data.");
+	return bytesSent;
+}
+
+int TCPSocket::Receive(char *data, int lenData) const {
+	memset(data, NULL, lenData);
+
+	int bytesReceived = recv(m_socket, data, lenData, 0); //blocks execution until data arrives if blocking socket mode
 	
 	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("TCPSocket: error receiving data.");
-	else if (bytesReceived == 0) std::cout << "TCPSocket: Connection closed." << std::endl, exit(EXIT_SUCCESS);
+	else if (bytesReceived == 0) SocketTools::ThrowError("TCPSocket: Connection closed.");
 
-	if (bytesReceived == MAX_BYTES)
-		for (int i = 0; i < MAX_BYTES; ++i) 
-			if (cData[i] == NULL) { bytesReceived = i; cData[i] = '\0'; break; }
+	if (bytesReceived > 0) printf("RECEIVE { data: %s, bytes: %d }\n", data, bytesReceived);
 	
 	return bytesReceived;
+}
+
+int TCPSocket::Receive(std::string &data) const {
+	auto cData = const_cast<char*>(data.c_str());
+	int bytesReceived = recv(m_socket, cData, MAX_BYTES, 0); //blocks execution until data arrives if blocking socket mode
+	data = cData;
+
+	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("TCPSocket: error receiving data.");
+	else if (bytesReceived == 0) SocketTools::ThrowError("TCPSocket: Connection closed.");
+
+	return bytesReceived;
+}
+
+//TODO: cross-platform
+void TCPSocket::DisableDelay() { //CAUTION: doesnt work correctly yet
+	m_isDelayDisabled = true;
+	char flag = 1;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag)) == SOCKET_ERROR)
+		SocketTools::ThrowError("TCPSocket: TCP_NODELAY could not be enabled.");
 }

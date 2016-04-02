@@ -8,8 +8,11 @@ public:
 	UDPSocket(const UDPSocket& other) = default;
 	~UDPSocket() = default;
 
-	int SendTo(const void* data, int lenData, SocketAddress& to) const;
-	int ReceiveFrom(void* data, int lenData, SocketAddress& from) const;
+	int SendTo(const char* data, int lenData, SocketAddress& to) const;
+	int SendTo(const std::string &data, SocketAddress &to) const;
+
+	int ReceiveFrom(char* data, int lenData, SocketAddress& from) const;
+	int ReceiveFrom(std::string  &data, SocketAddress & from) const;
 
 	UDPSocket& operator=(const UDPSocket& other) = default;
 };
