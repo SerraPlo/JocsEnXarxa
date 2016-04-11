@@ -1,5 +1,0 @@
-﻿  GenericSocket.cpp
-  SocketAddress.cpp
-  TCPSocket.cpp
-  UDPSocket.cpp
-  SocketsLib.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Release\SocketsLib.lib

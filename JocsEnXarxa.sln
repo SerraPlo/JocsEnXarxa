@@ -3,32 +3,32 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SocketsLib", "SocketsLib\SocketsLib.vcxproj", "{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPChat", "UDPChat\UDPChat.vcxproj", "{2E89016D-E968-48E2-A99D-30973347AE8F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPChat", "source\UDPChat\UDPChat.vcxproj", "{2E89016D-E968-48E2-A99D-30973347AE8F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973} = {A3B4FCC7-A220-47FF-8150-FF5B2B45C973}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastestWriterServer", "FastestWriterServer\FastestWriterServer.vcxproj", "{8D601775-4419-4947-9712-4AA585B5F2AA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastestWriterServer", "source\FastestWriterServer\FastestWriterServer.vcxproj", "{8D601775-4419-4947-9712-4AA585B5F2AA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973} = {A3B4FCC7-A220-47FF-8150-FF5B2B45C973}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastestWriter", "FastestWriter\FastestWriter.vcxproj", "{6078E58E-E502-44DF-906B-6C79E74D82F4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastestWriter", "source\FastestWriter\FastestWriter.vcxproj", "{6078E58E-E502-44DF-906B-6C79E74D82F4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973} = {A3B4FCC7-A220-47FF-8150-FF5B2B45C973}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Server", "CTFM_Server\CTFM_Server.vcxproj", "{39005781-8D0F-4B51-A998-92404DD0F95C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Server", "source\CTFM_Server\CTFM_Server.vcxproj", "{39005781-8D0F-4B51-A998-92404DD0F95C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973} = {A3B4FCC7-A220-47FF-8150-FF5B2B45C973}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Client", "CTFM_Client\CTFM_Client.vcxproj", "{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Client", "source\CTFM_Client\CTFM_Client.vcxproj", "{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973} = {A3B4FCC7-A220-47FF-8150-FF5B2B45C973}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SocketsLib", "deps\SocketsLib\SocketsLib.vcxproj", "{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,14 +38,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x64.ActiveCfg = Debug|x64
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x64.Build.0 = Debug|x64
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x86.ActiveCfg = Debug|Win32
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x86.Build.0 = Debug|Win32
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x64.ActiveCfg = Release|x64
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x64.Build.0 = Release|x64
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x86.ActiveCfg = Release|Win32
-		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x86.Build.0 = Release|Win32
 		{2E89016D-E968-48E2-A99D-30973347AE8F}.Debug|x64.ActiveCfg = Debug|x64
 		{2E89016D-E968-48E2-A99D-30973347AE8F}.Debug|x64.Build.0 = Debug|x64
 		{2E89016D-E968-48E2-A99D-30973347AE8F}.Debug|x86.ActiveCfg = Debug|Win32
@@ -86,6 +78,14 @@ Global
 		{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}.Release|x64.Build.0 = Release|x64
 		{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}.Release|x86.ActiveCfg = Release|Win32
 		{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}.Release|x86.Build.0 = Release|Win32
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x64.ActiveCfg = Debug|x64
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x64.Build.0 = Debug|x64
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x86.ActiveCfg = Debug|Win32
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Debug|x86.Build.0 = Debug|Win32
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x64.ActiveCfg = Release|x64
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x64.Build.0 = Release|x64
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x86.ActiveCfg = Release|Win32
+		{A3B4FCC7-A220-47FF-8150-FF5B2B45C973}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
