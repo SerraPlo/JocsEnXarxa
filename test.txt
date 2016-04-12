@@ -7,6 +7,7 @@
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\build\Win32Debug\UDPChatWin32Debug.exe" 127.0.0.1:32000 localhost:5000 
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\build\Win32Debug\UDPChatWin32Debug.exe" localhost:5000 127.0.0.1:5001 
 
+
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" 127.0.0.1:5001 localhost:5000
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" localhost:5000 127.0.0.1:5001
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\Release\UDPChat.exe" 127.0.0.1:5001 localhost:5000
@@ -23,3 +24,8 @@
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Jordi
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Pol
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Ramona
+
+3
+
+"C:\Users\Pol\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ClientWin32Debug.exe" localhost:5000
+"C:\Users\Pol\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ServerWin32Debug.exe" localhost:5000

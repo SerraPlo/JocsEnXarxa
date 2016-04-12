@@ -20,9 +20,9 @@
 */
 class Game {
 	public:						
-		Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress addr, SocketAddress addr2);	//Constructor
-		~Game();															//Destructor
-		void run();															//Game execution	
+		Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress addr);	//Constructor
+		~Game();																				//Destructor
+		void run();																				//Game execution	
 
 	private:
 			//Attributes	
@@ -33,9 +33,9 @@ class Game {
 		SDLInterface _graphic;			//Manage the SDL graphic library		
 		ListOfMonsters _monsters;		//It manages the data regarding to the monsters
 		int _lastTimeMonsterWasUpdated;				//Counter to compute the time
-		SocketAddress _address;
 		SocketAddress _server;
 		UDPSocket _socket;
+		int _id;
 		
 			//Internal methods for the game execution
 		void init();

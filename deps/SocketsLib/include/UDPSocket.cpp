@@ -39,9 +39,8 @@ int UDPSocket::ReceiveFrom(std::string &data, SocketAddress &from) const {
 	auto bytesReceived = recvfrom(m_socket, cData, MAX_BYTES, 0, &tempAddr, &addrSize);
 	if (bytesReceived >= 0) {
 		from.setAddress(tempAddr);
-		data = cData;
+		data = std::string(cData).substr(0, bytesReceived);
 	}
-
 	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("Data could not be received.");
 
 	return bytesReceived;

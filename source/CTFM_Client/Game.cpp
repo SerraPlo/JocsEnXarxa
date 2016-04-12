@@ -6,29 +6,52 @@
 * @param screenWidth is the window width
 * @param screenHeight is the window height
 */
-Game::Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress sA, SocketAddress cA) :
+Game::Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress sA) :
 	_windowTitle(windowTitle),
 	_screenWidth(screenWidth),
 	_screenHeight(screenHeight),
 	_gameState(GameState::INIT),
 	_monsters(MAX_MONSTERS),
-	_server(sA),
-	_address(cA){
-	
+	_server(sA){
+	_id = -1;
 }
 
-/**
-* Destructor
-*/
-Game::~Game()
-{
+Game::~Game(){
 }
 
-/*
-* Game execution
-*/
+bool ProcessFirstMsg(const std::string &data, SocketAddress &from, UDPSocket &_sock, int &id) {
+	auto pos = data.find_last_of('_');
+	std::string key = data.substr(0, pos);
+	std::string msg = data.substr(pos + 1, pos + 2 /*data.size() - 1*/);
 
-void Listen(SocketAddress &_address, UDPSocket &_socket) {
+	std::cout << key << "---1----" << std::endl;
+	if (strcmp(key.c_str(), "WELCOME") == 0) {
+		id = atoi(msg.c_str());
+		return true;
+	}
+}
+
+bool ProcessMsg(const std::string &data, UDPSocket &_sock) {
+	auto pos = data.find_last_of('_');
+	std::string key = data.substr(0, pos);
+	std::string msg = data.substr(pos + 1, data.size() - 1);
+	std::cout << data << "---2----" << std::endl;
+	if (strcmp(key.c_str(), "TIME") == 0) {
+		
+		return true;
+	}
+	if (strcmp(key.c_str(), "MONSTERS") == 0) {
+
+		return true;
+	}
+	if (strcmp(key.c_str(), "FIN") == 0) {
+
+		return true;
+	}
+	return false;
+}
+
+void Listen(UDPSocket &_socket) {
 	SocketAddress from;
 	while (true) {
 		std::string data;
@@ -38,9 +61,17 @@ void Listen(SocketAddress &_address, UDPSocket &_socket) {
 }
 
 void Game::run() {
-	//Prepare the game components
 	init();
-	std::thread orejaThread(Listen,_address,_socket);
+	while (_id < 0) {
+		std::string hi = "HELLO_";
+		_socket.SendTo(hi, _server);
+		std::string data;
+		_socket.ReceiveFrom(data, _server);
+		ProcessFirstMsg(data, _server, _socket, _id);
+		//std::cout << "id ->" << _id << std::endl;
+	}
+	std::cout << _id << std::endl;
+	std::thread orejaThread(Listen,_socket);
 	//Start the game if everything is ready
 	gameLoop();
 	orejaThread.join();
@@ -74,7 +105,6 @@ void Game::gameLoop() {
 	while (_gameState != GameState::EXIT) {		
 			//Detect keyboard and/or mouse events
 		_graphic.detectInputEvents();
-		_socket.SendTo("CLICK", _address);
 			//Execute the player commands 
 		executePlayerCommands();
 			//Update the game physics
@@ -114,6 +144,7 @@ void Game::doPhysics() {
 		_monsters.nextAnimationFrame(_graphic.getCurrentTicks());
 			//Update the random positions based on the MONSTER_REFRESH_FREQUENCY
 		if (clock() > _lastTimeMonsterWasUpdated + MONSTER_REFRESH_FREQUENCY) {
+			_socket.SendTo("CLICK", _server);
 			_monsters.setRandomPosition(_screenWidth, _screenHeight);
 			_lastTimeMonsterWasUpdated = clock();
 		}

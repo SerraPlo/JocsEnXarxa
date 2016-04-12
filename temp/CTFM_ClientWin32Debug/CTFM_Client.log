@@ -1,19 +1,10 @@
-﻿Build started 12/04/2016 19:57:52.
-     1>Project "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\CTFM_Client.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\glm /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SocketsLib\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_image\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_ttf\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_mixer\include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\\" /Fd"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt Game.cpp
-         Game.cpp
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SocketsLib\lib\x86 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_mixer\lib\x86 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_ttf\lib\x86 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2_image\lib\x86 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\..\..\deps\SDL2\lib\x86 SocketsLib.lib d3d11.lib dxguid.lib winmm.lib comctl32.lib Ws2_32.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib SDL2main.lib SocketsLib.lib SDL2_image.lib SDL2_ttf.lib SDL2_mixer.lib SDL2.lib SDL2main.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.lib" /MACHINE:X86 C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\ErrorManagement.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\Game.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\InputManager.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\ListOfMonsters.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\Main.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\SDLInterface.obj
-         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\CTFM_ClientWin32Debug\Sprite.obj
-         CTFM_Client.vcxproj -> C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.exe
-     1>Done Building Project "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\CTFM_Client\CTFM_Client.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:01.07
+﻿  Sprite.cpp
+  SDLInterface.cpp
+  Main.cpp
+  ListOfMonsters.cpp
+  InputManager.cpp
+  Game.cpp
+  ErrorManagement.cpp
+  Generando código...
+c:\users\pol\documents\github\jocsenxarxa\source\ctfm_client\game.cpp(32): warning C4715: 'ProcessFirstMsg': no todas las rutas de acceso de control devuelven un valor
+  CTFM_Client.vcxproj -> C:\Users\Pol\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.exe

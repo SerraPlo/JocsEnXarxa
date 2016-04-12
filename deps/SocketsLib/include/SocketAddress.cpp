@@ -1,5 +1,4 @@
 #include "SocketAddress.h"
-#include <iostream>
 
 SocketAddress::SocketAddress(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint16_t port) {
 	m_address.sin_addr.S_un.S_un_b = { byte1 ,byte2, byte3, byte4 };
@@ -34,7 +33,6 @@ int SocketAddress::setAddress(const std::string & inString) {
 		host = inString;
 		service = "0"; //0 is default port
 	}
-	std::cout << service << std::endl;
 
 	//Forces all memory corresponding to hint to be 0, in order to avoid misunderstandings at getaddrinfo.
 	//hint's function will be filtering the results that returns getaddrinfor 
