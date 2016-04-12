@@ -1,6 +1,5 @@
 #include <iostream>
 #include <UDPSocket.h>
-
 /*
 Genera posiciones monstruo
 Valida s le damos a monstruo
@@ -9,45 +8,84 @@ Control # monstruos -> fins de partida
 Control score x player
 
 
-WELCOME
-BEGIN
+WELCOME_id
 FIN_puntuacio
 MONSTERS_nMonsters#x:y#x:y...
 TIME_h
+
+HELLO
+CLICK_id#x,y
+EXIT_id
+
 */
 
-
+#define MAX_PLAYERS 15
 enum class KeyMsg {
-	WELCOME = 1, BEGIN, FIN, MONSTERS, TIME
+	WELCOME = 1, FIN, MONSTERS, TIME,
+	HELLO, CLICK, EXIT
 };
-bool ProcessMsg(int id, const std::string &data) {
+
+int scores[15]; //save score/player
+SocketAddress pAdress[15];
+bool id[15];	//know if some score is occuped
+
+void initArrays() {
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		scores[i] = 0;
+		id[i] = false;
+	}
+}
+
+bool ProcessMsg(const std::string &data, SocketAddress from, UDPSocket &_sock) {
 	auto pos = data.find_last_of('_');
-	KeyMsg key = KeyMsg(atoi(data.substr(0, pos).c_str()));
+	std::string key = data.substr(0,pos);
 	std::string msg = data.substr(pos + 1, data.size() - 1);
 
-	switch (key) {
-		case KeyMsg::WELCOME: {
-
-		} return true;
-		case KeyMsg::BEGIN: {
-
-		} return true;
-		case KeyMsg::FIN: {
-
-		} return true;
-		case KeyMsg::MONSTERS: {
-
-		} return true;
-		case KeyMsg::TIME: {
-
-		} return true;
+	if (strcmp(key.c_str(),"HELLO")==0){
+		int assignedId;
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			if (!id[i]) {
+				assignedId = i;
+				id[i] = true;
+				pAdress[i] = from;
+				scores[i] = 0;
+				break;
+			}
+		}
+		std::cout << assignedId << std::endl;
+		_sock.SendTo("asdfasdfa"+assignedId, MAX_BYTES, from);
+		return true;
+	}
+	if (strcmp(key.c_str(), "CLICK") == 0) {
+		//test if its ok
+		//if yes
+		scores[atoi(msg.c_str())] += 1;
+		//killmonster
+		std::cout << "2" << std::endl;
+		for (int i = 0; i < MAX_PLAYERS; i++) {
+			if (id[i]) _sock.SendTo("MONSTERS_", MAX_BYTES, pAdress[i]);
+		}
+		return true;
+	}
+	if (strcmp(key.c_str(), "EXIT") == 0) {
+		std::cout << "atoi(msg.c_str())" << std::endl;
+		id[atoi(msg.c_str())] = false;
+		return true;
 	}
 	return false;
 }
 
-void Listen() {
-	while (true) {
+void Listen(const char* bindAddress) {
+	initArrays();
+	SocketAddress addr(bindAddress);
+	UDPSocket socket;
+	socket.Bind(addr);
 
+	while (true) {
+		char data[MAX_BYTES];
+		SocketAddress from;
+		socket.ReceiveFrom(data, MAX_BYTES, from);
+		ProcessMsg(data, from, socket);
 	}
 }
 
@@ -57,7 +95,7 @@ int main(int argc, const char* argv[]) {
 		system("title CTFM");
 		SocketTools::BuildLibrary();
 		auto bindAddress = argv[1]; //adress_bind
-		Listen();
+		Listen(bindAddress);
 		SocketTools::UnloadLibrary();
 	}
 	catch (std::exception &e) {
