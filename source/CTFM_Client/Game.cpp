@@ -6,12 +6,15 @@
 * @param screenWidth is the window width
 * @param screenHeight is the window height
 */
-Game::Game(std::string windowTitle, int screenWidth, int screenHeight) :
+Game::Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress sA, SocketAddress cA) :
 	_windowTitle(windowTitle),
 	_screenWidth(screenWidth),
 	_screenHeight(screenHeight),
 	_gameState(GameState::INIT),
-	_monsters(MAX_MONSTERS){
+	_monsters(MAX_MONSTERS),
+	_server(sA),
+	_address(cA){
+	
 }
 
 /**
@@ -24,11 +27,23 @@ Game::~Game()
 /*
 * Game execution
 */
+
+void Listen(SocketAddress &_address, UDPSocket &_socket) {
+	SocketAddress from;
+	while (true) {
+		std::string data;
+		_socket.ReceiveFrom(data, from);
+		std::cout << data << std::endl;
+	}
+}
+
 void Game::run() {
-		//Prepare the game components
+	//Prepare the game components
 	init();
-		//Start the game if everything is ready
+	std::thread orejaThread(Listen,_address,_socket);
+	//Start the game if everything is ready
 	gameLoop();
+	orejaThread.join();
 }
 
 /*
@@ -40,7 +55,7 @@ void Game::init() {
 	_graphic.createWindow(_windowTitle, _screenWidth, _screenHeight, false);	
 	_graphic.setWindowBackgroundColor(255, 255, 255, 255);
 		//Load the sprites associated to the different game elements
-	_graphic.loadTexture(SPRITE_FIRE, "../sharedResources/images/characters/fireSprite.png");
+	_graphic.loadTexture(SPRITE_FIRE, "../assets/images/characters/fireSprite.png");
 		//Set the font style
 	_graphic.setFontStyle(TTF_STYLE_NORMAL);
 		//Initialize the game elements
@@ -56,10 +71,10 @@ void Game::init() {
 */
 void Game::gameLoop() {	
 	_gameState = GameState::PLAY;
-
 	while (_gameState != GameState::EXIT) {		
 			//Detect keyboard and/or mouse events
 		_graphic.detectInputEvents();
+		_socket.SendTo("CLICK", _address);
 			//Execute the player commands 
 		executePlayerCommands();
 			//Update the game physics

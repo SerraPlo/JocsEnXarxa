@@ -34,12 +34,13 @@ int UDPSocket::ReceiveFrom(char* data, int lenData, SocketAddress &from) const {
 int UDPSocket::ReceiveFrom(std::string &data, SocketAddress &from) const {
 	sockaddr tempAddr;
 	int addrSize = sizeof(sockaddr_in);
-	auto cData = const_cast<char*>(data.c_str());
-
+	const int sizeData = data.length();
+	char cData[MAX_BYTES];
 	auto bytesReceived = recvfrom(m_socket, cData, MAX_BYTES, 0, &tempAddr, &addrSize);
-
-	from.setAddress(tempAddr);
-	data = cData;
+	if (bytesReceived >= 0) {
+		from.setAddress(tempAddr);
+		data = cData;
+	}
 
 	if (bytesReceived == SOCKET_ERROR && !m_isNonBlocking) SocketTools::ThrowError("Data could not be received.");
 

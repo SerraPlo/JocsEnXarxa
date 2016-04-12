@@ -4,6 +4,8 @@
 
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" localhost:5000 127.0.0.1:5001
 "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" 127.0.0.1:5001 localhost:5000 
+"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\build\Win32Debug\UDPChatWin32Debug.exe" 127.0.0.1:32000 localhost:5000 
+"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\build\Win32Debug\UDPChatWin32Debug.exe" localhost:5000 127.0.0.1:5001 
 
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" 127.0.0.1:5001 localhost:5000
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\Debug\UDPChat.exe" localhost:5000 127.0.0.1:5001

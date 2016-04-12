@@ -1,0 +1,18 @@
+﻿Build started 12/04/2016 18:00:33.
+     1>Project "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\FastestWriter.vcxproj" on node 4 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\glm /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SocketsLib\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_image\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_ttf\include /IC:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_mixer\include /ZI /nologo /W3 /WX- /sdl /Od /D _DEBUG /D _CONSOLE /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\FastestWriterx64Debug\\" /Fd"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\FastestWriterx64Debug\vc140.pdb" /Gd /TP /errorReport:prompt Client.cpp main.cpp
+         main.cpp
+         Client.cpp
+     1>c:\users\pdemiguel\documents\github\jocsenxarxa\source\fastestwriter\client.cpp(49): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+     1>c:\users\pdemiguel\documents\github\jocsenxarxa\source\fastestwriter\client.cpp(55): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\x64Debug\FastestWriterx64Debug.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SocketsLib\lib\x64 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_mixer\lib\x64 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_ttf\lib\x64 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2_image\lib\x64 /LIBPATH:C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\..\..\deps\SDL2\lib\x64 SocketsLib.lib d3d11.lib dxguid.lib winmm.lib comctl32.lib Ws2_32.lib SocketsLib.lib SDL2_image.lib SDL2_ttf.lib SDL2_mixer.lib SDL2.lib SDL2main.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\x64Debug\FastestWriterx64Debug.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\x64Debug\FastestWriterx64Debug.lib" /MACHINE:X64 C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\FastestWriterx64Debug\Client.obj
+         C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\temp\FastestWriterx64Debug\main.obj
+         FastestWriter.vcxproj -> C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\\build\x64Debug\FastestWriterx64Debug.exe
+     1>Done Building Project "C:\Users\pdemiguel\Documents\GitHub\JocsEnXarxa\source\FastestWriter\FastestWriter.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.30

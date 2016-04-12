@@ -10,6 +10,9 @@
 #include "InputManager.h"
 #include "Sprite.h"
 #include "ListOfMonsters.h"
+#include <SocketTools.h>
+#include <UDPSocket.h>
+#include <thread>
 
 
 /*
@@ -17,7 +20,7 @@
 */
 class Game {
 	public:						
-		Game(std::string windowTitle, int screenWidth, int screenHeight);	//Constructor
+		Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress addr, SocketAddress addr2);	//Constructor
 		~Game();															//Destructor
 		void run();															//Game execution	
 
@@ -30,6 +33,9 @@ class Game {
 		SDLInterface _graphic;			//Manage the SDL graphic library		
 		ListOfMonsters _monsters;		//It manages the data regarding to the monsters
 		int _lastTimeMonsterWasUpdated;				//Counter to compute the time
+		SocketAddress _address;
+		SocketAddress _server;
+		UDPSocket _socket;
 		
 			//Internal methods for the game execution
 		void init();

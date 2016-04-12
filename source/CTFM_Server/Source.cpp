@@ -36,10 +36,12 @@ void initArrays() {
 	}
 }
 
-bool ProcessMsg(const std::string &data, SocketAddress from, UDPSocket &_sock) {
+bool ProcessMsg(const std::string &data, SocketAddress &from, UDPSocket &_sock) {
 	auto pos = data.find_last_of('_');
 	std::string key = data.substr(0,pos);
 	std::string msg = data.substr(pos + 1, data.size() - 1);
+
+	SocketAddress temp("127.0.0.1:32000");
 
 	if (strcmp(key.c_str(),"HELLO")==0){
 		int assignedId;
@@ -53,7 +55,7 @@ bool ProcessMsg(const std::string &data, SocketAddress from, UDPSocket &_sock) {
 			}
 		}
 		std::cout << assignedId << std::endl;
-		_sock.SendTo("asdfasdfa"+assignedId, MAX_BYTES, from);
+		_sock.SendTo("asdfsdfafasdfa", from);
 		return true;
 	}
 	if (strcmp(key.c_str(), "CLICK") == 0) {
@@ -61,14 +63,14 @@ bool ProcessMsg(const std::string &data, SocketAddress from, UDPSocket &_sock) {
 		//if yes
 		scores[atoi(msg.c_str())] += 1;
 		//killmonster
-		std::cout << "2" << std::endl;
+		std::cout << from << std::endl;
 		for (int i = 0; i < MAX_PLAYERS; i++) {
-			if (id[i]) _sock.SendTo("MONSTERS_", MAX_BYTES, pAdress[i]);
+			if (id[i]) _sock.SendTo("exit", MAX_BYTES, pAdress[i]);
 		}
 		return true;
 	}
 	if (strcmp(key.c_str(), "EXIT") == 0) {
-		std::cout << "atoi(msg.c_str())" << std::endl;
+		std::cout << atoi(msg.c_str()) << std::endl;
 		id[atoi(msg.c_str())] = false;
 		return true;
 	}
@@ -80,12 +82,13 @@ void Listen(const char* bindAddress) {
 	SocketAddress addr(bindAddress);
 	UDPSocket socket;
 	socket.Bind(addr);
-
+	SocketAddress from;
 	while (true) {
-		char data[MAX_BYTES];
-		SocketAddress from;
-		socket.ReceiveFrom(data, MAX_BYTES, from);
+		std::string data;
+		socket.ReceiveFrom(data, from);
+		std::cout << from << std::endl;
 		ProcessMsg(data, from, socket);
+
 	}
 }
 

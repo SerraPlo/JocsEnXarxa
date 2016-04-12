@@ -16,7 +16,7 @@ SDLInterface::SDLInterface() 	{
 
 		//Initialize TTF fonts from SDL_ttf. Return 0 if it is successful
 	if (TTF_Init() == 0){
-		g_font = TTF_OpenFont("../sharedResources/fonts/arial.ttf", 20);
+		g_font = TTF_OpenFont("../assets/fonts/arial.ttf", 20);
 		if (g_font == 0){
 			ErrorManagement::errorRunTime("[SDLInterface] The font file cannot be loaded");
 		}
