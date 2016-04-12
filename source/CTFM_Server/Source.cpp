@@ -49,7 +49,7 @@ bool ProcessMsg(const std::string &data, SocketAddress &from, UDPSocket &_sock) 
 				id[i - 1] = true;
 				pAdress[i - 1] = from;
 				scores[i - 1] = 0;
-				std::string temp = std::string("WELCOME_%d",assignedId);
+				std::string temp = std::string("WELCOME_"+ std::to_string(assignedId));
 				std::cout << temp << std::endl;
 				_sock.SendTo(temp, from);
 				return true;
@@ -83,7 +83,6 @@ void Listen(const char* bindAddress) {
 		std::string data;
 		socket.ReceiveFrom(data, from);
 		ProcessMsg(data, from, socket);
-
 	}
 }
 
