@@ -23,8 +23,6 @@ bool ProcessFirstMsg(const std::string &data, SocketAddress &from, UDPSocket &_s
 	auto pos = data.find_last_of('_');
 	std::string key = data.substr(0, pos);
 	std::string msg = data.substr(pos + 1, pos + 2 /*data.size() - 1*/);
-
-	std::cout << key << "---1----" << std::endl;
 	if (strcmp(key.c_str(), "WELCOME") == 0) {
 		id = atoi(msg.c_str());
 		return true;
@@ -35,7 +33,6 @@ bool ProcessMsg(const std::string &data, UDPSocket &_sock) {
 	auto pos = data.find_last_of('_');
 	std::string key = data.substr(0, pos);
 	std::string msg = data.substr(pos + 1, data.size() - 1);
-	std::cout << data << "---2----" << std::endl;
 	if (strcmp(key.c_str(), "TIME") == 0) {
 		
 		return true;
@@ -70,7 +67,7 @@ void Game::run() {
 		ProcessFirstMsg(data, _server, _socket, _id);
 		//std::cout << "id ->" << _id << std::endl;
 	}
-	std::cout << _id << std::endl;
+	std::cout << "id-> " << _id << std::endl;
 	std::thread orejaThread(Listen,_socket);
 	//Start the game if everything is ready
 	gameLoop();
