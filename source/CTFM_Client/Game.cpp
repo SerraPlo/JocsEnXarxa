@@ -130,7 +130,6 @@ void Game::init() {
 	_lastTimeMonsterWasUpdated = clock();
 }
 
-
 //Game execution: Gets input events, processes game logic and draws sprites on the screen
 void Game::gameLoop() {	
 	_gameState = GameState::PLAY;

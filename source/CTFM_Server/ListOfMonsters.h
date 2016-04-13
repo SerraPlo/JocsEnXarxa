@@ -2,13 +2,12 @@
 #include <iostream>
 #include <glm.hpp>
 #include <string>
-#include "Sprite.h"
-#include "GameConstants.h"
-
+#include <GameConstants.h>
+#include <vector>
 
 class ListOfMonsters
 {
-	Sprite *_arrayMonsters = 0;
+	std::vector<std::pair<int, int>> monsters;
 	int _numMonsters;
 	glm::ivec2 _mouseCoordinates;
 	void removeMonster(int id);

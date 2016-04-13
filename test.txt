@@ -25,7 +25,11 @@
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Pol
 "C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\Debug\FastestWriter.exe" localhost:5000 Ramona
 
-3
+//////////////
+// TALLER 3 //
+//////////////
 
 "C:\Users\Pol\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ClientWin32Debug.exe" localhost:5000
 "C:\Users\Pol\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ServerWin32Debug.exe" localhost:5000
+
+"C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ClientWin32Debug.exe" localhost:5000

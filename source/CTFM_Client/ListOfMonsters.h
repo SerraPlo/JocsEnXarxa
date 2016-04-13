@@ -3,7 +3,7 @@
 #include <glm.hpp>
 #include <string>
 #include "Sprite.h"
-#include "GameConstants.h"
+#include <GameConstants.h>
 
 
 class ListOfMonsters

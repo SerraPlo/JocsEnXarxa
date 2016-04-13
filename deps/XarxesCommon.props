@@ -9,12 +9,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\deps\glm;$(ProjectDir)..\..\deps\SocketsLib\include;$(ProjectDir)..\..\deps\SDL2\include;$(ProjectDir)..\..\deps\SDL2_image\include;$(ProjectDir)..\..\deps\SDL2_ttf\include;$(ProjectDir)..\..\deps\SDL2_mixer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\deps\CTFM_Lib\include;$(ProjectDir)..\..\deps\glm;$(ProjectDir)..\..\deps\SocketsLib\include;$(ProjectDir)..\..\deps\SDL2\include;$(ProjectDir)..\..\deps\SDL2_image\include;$(ProjectDir)..\..\deps\SDL2_ttf\include;$(ProjectDir)..\..\deps\SDL2_mixer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\deps\SocketsLib\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_mixer\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_ttf\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_image\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SocketsLib.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\deps\CTFM_Lib\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SocketsLib\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_mixer\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_ttf\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2_image\lib\$(PlatformTarget);$(ProjectDir)..\..\deps\SDL2\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CTFM_Lib.lib;SocketsLib.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

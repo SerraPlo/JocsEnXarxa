@@ -23,5 +23,4 @@
 
 
 //Game has four possible states: INIT (Preparing environment), PLAY (Playing), EXIT (Exit from the game) or MENU (Game menu)
-enum class GameState{ INIT, PLAY, EXIT, MENU };
-
+enum class GameState { INIT, PLAY, EXIT, MENU };

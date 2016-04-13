@@ -5,7 +5,7 @@
 #include <glm.hpp>			//OpenGL Mathematics 
 #include <iostream>
 #include <time.h>
-#include "GameConstants.h"
+#include <GameConstants.h>
 #include "SDLInterface.h"
 #include "InputManager.h"
 #include "Sprite.h"
