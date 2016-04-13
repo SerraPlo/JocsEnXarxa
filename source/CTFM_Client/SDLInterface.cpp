@@ -4,6 +4,13 @@
 #include "ErrorManagement.h"
 
 
+std::string SDLInterface::GetAssetsPath(const std::string &subDir) {
+	static std::string basePath = SDL_GetBasePath();
+	if (basePath == "") ErrorManagement::errorRunTime("[SDLInterface] Cannot get resource path for subdirectory: " + subDir);
+	size_t pos = basePath.rfind("build");
+	return basePath.substr(0, pos) + "assets/" + subDir;
+}
+
 /**
 * Initialize the game engine
 */
@@ -16,7 +23,7 @@ SDLInterface::SDLInterface() 	{
 
 		//Initialize TTF fonts from SDL_ttf. Return 0 if it is successful
 	if (TTF_Init() == 0){
-		g_font = TTF_OpenFont("../assets/fonts/arial.ttf", 20);
+		g_font = TTF_OpenFont(GetAssetsPath("fonts/ARIAL.TTF").c_str(),20);
 		if (g_font == 0){
 			ErrorManagement::errorRunTime("[SDLInterface] The font file cannot be loaded");
 		}

@@ -80,10 +80,6 @@ void ListOfMonsters::setRandomPosition(int screenWidth, int screenHeight) {
 	}
 }
 
-void ListOfMonsters::setPosition(int i, int x, int y){
-	_arrayMonsters[i].setPositionAtWorld(x, y);
-}
-
 /*
 * Update the frame of all monsters
 * @param curTicks is the current tick
@@ -97,12 +93,14 @@ void ListOfMonsters::nextAnimationFrame(int curTicks) {
 /*
 * Check if user has killed a monster
 */
-void ListOfMonsters::checkIfSomeMonsterDies() {
+bool ListOfMonsters::checkIfSomeMonsterDies(int x, int y) {
 	for (int i = 0; i < _numMonsters; i++) {
-		if (_mouseCoordinates.x >= _arrayMonsters[i].getXAtWorld() && _mouseCoordinates.x <= _arrayMonsters[i].getXAtWorld() + SPRITE_DEFAULT_WIDTH &&
-			_mouseCoordinates.y >= _arrayMonsters[i].getYAtWorld() && _mouseCoordinates.y <= _arrayMonsters[i].getYAtWorld() + SPRITE_DEFAULT_HEIGHT)
+		if (x >= _arrayMonsters[i].getXAtWorld() && x <= _arrayMonsters[i].getXAtWorld() + SPRITE_DEFAULT_WIDTH &&
+			y >= _arrayMonsters[i].getYAtWorld() && y <= _arrayMonsters[i].getYAtWorld() + SPRITE_DEFAULT_HEIGHT){
 			removeMonster(i);
-	}
+			return true;
+		}
+	}return false;
 }
 
 /*

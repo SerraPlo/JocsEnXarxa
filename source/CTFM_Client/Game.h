@@ -21,9 +21,9 @@
 class Game {
 	public:						
 		Game(std::string windowTitle, int screenWidth, int screenHeight, SocketAddress addr);	//Constructor
-		~Game();																				//Destructor
+		~Game();
+		//Destructor
 		void run();																				//Game execution	
-
 	private:
 			//Attributes	
 		std::string _windowTitle;		//SDLInterface Title
@@ -36,6 +36,9 @@ class Game {
 		SocketAddress _server;
 		UDPSocket _socket;
 		int _id;
+		int _time = 0;
+		int _nPlayers;
+		std::string _score;
 		
 			//Internal methods for the game execution
 		void init();

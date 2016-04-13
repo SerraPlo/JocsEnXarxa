@@ -11,7 +11,7 @@ class ListOfMonsters
 	Sprite *_arrayMonsters = 0;
 	int _numMonsters;
 	glm::ivec2 _mouseCoordinates;
-	
+	void removeMonster(int id);
 public:
 	ListOfMonsters(int n);
 	~ListOfMonsters();
@@ -23,9 +23,7 @@ public:
 		//Functions
 	void initMonsters(int screenWidth, int screenHeight);
 	void setRandomPosition(int screenWidth, int screenHeight);
-	void setPosition(int i, int x, int y);
 	void nextAnimationFrame(int curTicks);
-	void checkIfSomeMonsterDies();	
-	void removeMonster(int id);
+	bool checkIfSomeMonsterDies(int x, int y);	
 };
 

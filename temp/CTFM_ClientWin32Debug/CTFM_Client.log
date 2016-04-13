@@ -6,5 +6,4 @@
   Game.cpp
   ErrorManagement.cpp
   Generando código...
-c:\users\pol\documents\github\jocsenxarxa\source\ctfm_client\game.cpp(32): warning C4715: 'ProcessFirstMsg': no todas las rutas de acceso de control devuelven un valor
   CTFM_Client.vcxproj -> C:\Users\Pol\Documents\GitHub\JocsEnXarxa\\build\Win32Debug\CTFM_ClientWin32Debug.exe

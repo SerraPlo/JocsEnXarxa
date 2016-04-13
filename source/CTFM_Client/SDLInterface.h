@@ -13,6 +13,8 @@ public:
 	SDLInterface();
 	~SDLInterface();
 
+	static std::string SDLInterface::GetAssetsPath(const std::string &subDir);
+
 		//Window methods
 	int getWindowWidth();
 	int getWindowHeight();
