@@ -1,3 +1,2 @@
 ﻿  main.cpp
-c:\users\pol\documents\github\jocsenxarxa\source\udpchat\msgmanager.h(39): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
-  UDPChat.vcxproj -> C:\Users\Pol\Documents\GitHub\JocsEnXarxa\\build\x64Debug\UDPChatx64Debug.exe
+  UDPChat.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\\build\x64Debug\UDPChatx64Debug.exe

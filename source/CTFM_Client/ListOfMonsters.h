@@ -1,10 +1,11 @@
 #pragma once
 #include <iostream>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include "Sprite.h"
-#include <GameConstants.h>
+#include <CTFM_Lib/GameConstants.h>
 
+#pragma comment(lib, "CTFM_Lib")
 
 class ListOfMonsters
 {

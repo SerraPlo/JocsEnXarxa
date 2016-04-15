@@ -2,18 +2,19 @@
 
 //Third-party libraries
 #define GLM_FORCE_RADIANS
-#include <glm.hpp>			//OpenGL Mathematics 
+#include <glm/glm.hpp>			//OpenGL Mathematics 
 #include <iostream>
 #include <time.h>
-#include <GameConstants.h>
+#include <CTFM_Lib/GameConstants.h>
 #include "SDLInterface.h"
 #include "InputManager.h"
 #include "Sprite.h"
 #include "ListOfMonsters.h"
-#include <SocketTools.h>
-#include <UDPSocket.h>
+#include <SocketLib/UDPSocket.h>
 #include <thread>
 
+#pragma comment(lib, "CTFM_Lib")
+#pragma comment(lib, "SocketLib")
 
 /*
 * The Game class manages the game execution

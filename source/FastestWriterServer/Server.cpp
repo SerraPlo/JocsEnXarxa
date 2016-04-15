@@ -45,7 +45,7 @@ bool Server::ProcessMsg(size_t id, const string &data) {
 			if (msg == "exit") { SendToAll(KeyMsg::DISCONNECT, m_clientList[id].GetNick()); return true; }
 			if (msg == m_wordsList.Current()) {
 				SendToAll(KeyMsg::OKWORD, m_clientList[id].GetNick());
-				SendScore(id);
+				SendScore(int(id));
 				if (m_wordsList.CurrentIndex() >= m_wordsList.Size()-1) {
 					cout << "This is the end of this magnificent game yo!" << endl;
 					SendToAll(KeyMsg::EXIT);
@@ -55,7 +55,7 @@ bool Server::ProcessMsg(size_t id, const string &data) {
 				SendToAll(KeyMsg::WORD, m_wordsList.Next());//paraula si hi ha guanyaaoisadsf
 				return true;
 			}
-			SendTo(id, KeyMsg::KOWORD);
+			SendTo(int(id), KeyMsg::KOWORD);
 		} return true;
 		default: return false;
 	}

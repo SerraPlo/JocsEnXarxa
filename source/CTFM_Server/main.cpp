@@ -1,8 +1,10 @@
 #include <iostream>
-#include <UDPSocket.h>
+#include <SocketLib/UDPSocket.h>
 #include "ListOfMonsters.h"
 #include <time.h>
 #include <thread>
+
+#pragma comment(lib, "SocketLib")
 
 /*
 Genera posiciones monstruo

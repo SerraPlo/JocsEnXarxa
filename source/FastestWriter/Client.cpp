@@ -46,14 +46,14 @@ bool Client::ProcessMsg(const string & data) {
 		case KeyMsg::RANKING: {
 			size_t first = 0, last, p;
 			for (size_t i = 0; i < m_ranking.size()-1; ++i) {
-				m_ranking[i].id = i;
+				m_ranking[i].id = int(i);
 				p = msg.find_first_of('#', first);
 				last = p - first;
 				m_ranking[i].nick = msg.substr(first, last);
 				first = p + 1;
 			}
-			int lastID = m_ranking.size() - 1;
-			m_ranking[lastID].id = lastID;
+			size_t lastID = m_ranking.size() - 1;
+			m_ranking[lastID].id = int(lastID);
 			m_ranking[lastID].nick = msg.substr(first, msg.size()-1);
 			PRINT_RANKING();
 			cout << endl;

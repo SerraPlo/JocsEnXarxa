@@ -48,8 +48,11 @@ enum class KeyMsg {
 	NICK, WRITE //server 
 };
 
-#include <TCPSocket.h>
+//#pragma comment(lib, "SocketLib")
+#include <SocketLib/TCPSocket.h>
 #include <vector>
+
+#pragma comment(lib, "SocketLib")
 
 //////////////////////////
 //		 CLIENT			//

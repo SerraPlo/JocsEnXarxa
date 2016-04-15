@@ -1,7 +1,9 @@
 #pragma once
-#include <UDPSocket.h>
+#include <SocketLib/UDPSocket.h>
 #include <memory>
 #include "MsgManager.h"
+
+#pragma comment(lib, "SocketLib")
 
 class ChatAgent
 {

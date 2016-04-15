@@ -1,13 +1,16 @@
 #pragma once
 #include <iostream>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
-#include <GameConstants.h>
+#include <CTFM_Lib/GameConstants.h>
 #include <vector>
+#include "Sprite.h"
+
+#pragma comment(lib, "CTFM_Lib")
 
 class ListOfMonsters
 {
-	std::vector<std::pair<int, int>> monsters;
+	Sprite* _arrayMonsters;
 	int _numMonsters;
 	glm::ivec2 _mouseCoordinates;
 	void removeMonster(int id);

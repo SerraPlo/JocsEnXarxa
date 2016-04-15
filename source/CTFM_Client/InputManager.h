@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 /*
  * Input manager stores a key map that maps SDL_Keys to booleans.

@@ -36,9 +36,9 @@ public:
 		}
 		//print
 		int j = 0;
-		for (int i = Utils::Min(m_msgPool->size(), m_screenCoords.srWindow.Bottom - 3); i > 0; --i) {
+		for (int i = Utils::Min(int(m_msgPool->size()), m_screenCoords.srWindow.Bottom - 3); i > 0; --i) {
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), COORD{ 1, static_cast<SHORT>(j) });
-			std::cout << m_msgPool->at(m_msgPool->size() - i);
+			std::cout << m_msgPool->at(m_msgPool->size() - size_t(i));
 			++j;
 		}
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { 1, m_screenCoords.srWindow.Bottom - 1 });

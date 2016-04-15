@@ -1,3 +1,9 @@
-﻿  Game.cpp
-c:\users\pol\documents\github\jocsenxarxa\source\ctfm_client\game.cpp(31): warning C4715: 'ProcessFirstMsg': no todas las rutas de acceso de control devuelven un valor
-  CTFM_Client.vcxproj -> C:\Users\Pol\Documents\GitHub\JocsEnXarxa\\build\x64Debug\CTFM_Clientx64Debug.exe
+﻿  Sprite.cpp
+  SDLInterface.cpp
+  Main.cpp
+  ListOfMonsters.cpp
+  InputManager.cpp
+  Game.cpp
+  ErrorManagement.cpp
+  Generating Code...
+  CTFM_Client.vcxproj -> C:\Users\Jordi S\Documents\GitHub\JocsEnXarxa\\build\x64Debug\CTFM_Clientx64Debug.exe

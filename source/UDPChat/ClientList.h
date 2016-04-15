@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
-#include <SocketsLib/SocketAddress.h>
+#include <SocketLib/SocketAddress.h>
+
+#pragma comment(lib, "SocketLib")
 
 class ClientList : public std::vector<SocketAddress>
 {

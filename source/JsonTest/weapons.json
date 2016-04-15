@@ -1,0 +1,13 @@
+{
+	"weapon_dagger": {
+		"name": "Dagger",
+		"damage": 2,
+		"description": "A small blade, probably made of iron."
+	},
+
+	"weapon_sawass": {
+		"name": "Sawass",
+		"damage": 500,
+		"description": "A legendary sword made of valyrian steel."
+	}
+}

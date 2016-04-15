@@ -1,8 +1,10 @@
 #pragma once
-#include <TCPSocket.h>
+#include <SocketLib/TCPSocket.h>
 #include <string>
 #include <memory>
 using std::string;
+
+#pragma comment(lib, "SocketLib")
 
 class ClientProxy
 {
