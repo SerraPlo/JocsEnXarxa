@@ -11,6 +11,6 @@ public:
 	Armor(const std::string &id, JsonBox::Value& v, EntityManager* mgr);
 
 	// Load the armor from the Json value
-	void load(JsonBox::Value& v, EntityManager* mgr) override;
+	void Load(JsonBox::Value& v, EntityManager* mgr) override;
 };
 

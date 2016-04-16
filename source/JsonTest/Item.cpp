@@ -7,10 +7,10 @@ Item::Item(const std::string &id, const std::string &name, const std::string &de
 }
 
 Item::Item(const std::string &id, JsonBox::Value& v, EntityManager* mgr) : Entity(id) {
-	this->Item::load(v, mgr);
+	this->Item::Load(v, mgr);
 }
 
-void Item::load(JsonBox::Value& v, EntityManager* mgr) {
+void Item::Load(JsonBox::Value& v, EntityManager* mgr) {
 	JsonBox::Object o = v.getObject();
 	this->name = o["name"].getString();
 	this->description = o["description"].getString();
@@ -20,6 +20,6 @@ void Item::load(JsonBox::Value& v, EntityManager* mgr) {
 template <> std::string entityToString<Item>() { return "item"; }
 
 // Instantiation
-template void EntityManager::loadJson<Item>(std::string);
-template Item* EntityManager::getEntity<Item>(std::string);
+template void EntityManager::LoadJson<Item>(std::string);
+template Item* EntityManager::GetEntity<Item>(std::string);
 

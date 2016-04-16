@@ -11,8 +11,8 @@
 class EntityManager;
 class Entity {
 public:
-	std::string id;
+	std::string id {"empty"};
 	explicit Entity(const std::string &id) { this->id = id; }
 	virtual ~Entity() {} //enable polimorphism
-	virtual void load(JsonBox::Value& v, EntityManager* mgr) = 0; //enable pure virtual class (disable instantiation)
+	virtual void Load(JsonBox::Value& v, EntityManager* mgr) = 0; //enable pure virtual class (disable instantiation)
 };

@@ -10,5 +10,5 @@ public:
 	Item(const std::string &id, const std::string &name, const std::string &description);
 	Item(const std::string &id, JsonBox::Value& v, EntityManager* mgr);
 
-	virtual void load(JsonBox::Value& v, EntityManager* mgr) override; // Load item information from JSON value
+	virtual void Load(JsonBox::Value& v, EntityManager* mgr) override; // Load item information from JSON value
 };

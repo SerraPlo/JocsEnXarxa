@@ -5,18 +5,22 @@
 #include "Weapon.hpp"
 #include "Armor.hpp"
 
+#define PRINTLN(p) std::cout << (p) << std::endl
+
 int main() {
 	EntityManager entityManager;
-	entityManager.loadJson<Item>("items.json");
-	entityManager.loadJson<Weapon>("weapons.json");
-	entityManager.loadJson<Armor>("armors.json");
+	entityManager.LoadJson<Item>("items.json");
+	entityManager.LoadJson<Weapon>("weapons.json");
+	entityManager.LoadJson<Armor>("armors.json");
 
 	std::srand(unsigned(std::time(nullptr)));
 
-	Weapon* sawassWeapon = entityManager.getEntity<Weapon>("weapon_sawass");
+	/*Weapon* sawassWeapon = entityManager.getEntity<Weapon>("weapon_sawass");
 	std::cout << "Name: " << sawassWeapon->name << std::endl;
 	std::cout << "Description: " << sawassWeapon->description << std::endl;
-	std::cout << "Damage: " << sawassWeapon->damage << std::endl;
+	std::cout << "Damage: " << sawassWeapon->damage << std::endl;*/
+	Item* test = entityManager.GetRandEntity<Item>();
+	PRINTLN(test->id);
 
 	system("pause");
 

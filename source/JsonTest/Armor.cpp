@@ -7,15 +7,15 @@ Armor::Armor(const std::string &id, const std::string &name, const std::string &
 }
 
 Armor::Armor(const std::string &id, JsonBox::Value& v, EntityManager* mgr) : Item(id, v, mgr) {
-	this->Armor::load(v, mgr);
+	this->Armor::Load(v, mgr);
 }
 
-void Armor::load(JsonBox::Value& v, EntityManager* mgr) {
+void Armor::Load(JsonBox::Value& v, EntityManager* mgr) {
 	JsonBox::Object o = v.getObject();
 	this->defense = o["defense"].getInteger();
 }
 
-template <> std::string entityToString<Armor>() { return "weapon"; }
+template <> std::string entityToString<Armor>() { return "armor"; }
 
-template void EntityManager::loadJson<Armor>(std::string);
-template Armor* EntityManager::getEntity<Armor>(std::string);
+template void EntityManager::LoadJson<Armor>(std::string);
+template Armor* EntityManager::GetEntity<Armor>(std::string);
