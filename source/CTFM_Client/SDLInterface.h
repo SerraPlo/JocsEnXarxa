@@ -2,12 +2,9 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
-#include <SDL2_ttf/SDL_ttf.h>
-#include <CTFM_Lib/GameConstants.h>
+#include <SDL2/SDL_ttf.h>
+#include "GameConstants.h"
 #include "InputManager.h"
-
-#pragma comment(lib, "CTFM_Lib")
-
 
 //This class manages the window input/output using the SDL library
 class SDLInterface 	{

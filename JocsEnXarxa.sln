@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPChat", "source\UDPChat\UDPChat.vcxproj", "{2E89016D-E968-48E2-A99D-30973347AE8F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -20,21 +20,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastestWriter", "source\Fas
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Server", "source\CTFM_Server\CTFM_Server.vcxproj", "{39005781-8D0F-4B51-A998-92404DD0F95C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A} = {0D6AA21F-6416-48DA-937A-2756BF6C658A}
 		{905DA6F6-728C-4377-89BA-380CC2B2F441} = {905DA6F6-728C-4377-89BA-380CC2B2F441}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Client", "source\CTFM_Client\CTFM_Client.vcxproj", "{68979EE8-386B-4C1D-88A0-12B1E04E2AC4}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A} = {0D6AA21F-6416-48DA-937A-2756BF6C658A}
 		{905DA6F6-728C-4377-89BA-380CC2B2F441} = {905DA6F6-728C-4377-89BA-380CC2B2F441}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SocketLib", "deps\internal\include\SocketLib\SocketLib.vcxproj", "{905DA6F6-728C-4377-89BA-380CC2B2F441}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTFM_Lib", "deps\internal\include\CTFM_Lib\CTFM_Lib.vcxproj", "{0D6AA21F-6416-48DA-937A-2756BF6C658A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonTest", "source\JsonTest\JsonTest.vcxproj", "{D1425D26-349E-4D16-AA03-AB68644ADF01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloTest", "source\SerraPloTest\SerraPloTest.vcxproj", "{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloEngine", "deps\internal\include\SerraPloEngine\SerraPloEngine.vcxproj", "{704970AF-EFF9-46F3-8490-90F0E40C2A14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,14 +92,6 @@ Global
 		{905DA6F6-728C-4377-89BA-380CC2B2F441}.Release|x64.Build.0 = Release|x64
 		{905DA6F6-728C-4377-89BA-380CC2B2F441}.Release|x86.ActiveCfg = Release|Win32
 		{905DA6F6-728C-4377-89BA-380CC2B2F441}.Release|x86.Build.0 = Release|Win32
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Debug|x64.ActiveCfg = Debug|x64
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Debug|x64.Build.0 = Debug|x64
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Debug|x86.ActiveCfg = Debug|Win32
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Debug|x86.Build.0 = Debug|Win32
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Release|x64.ActiveCfg = Release|x64
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Release|x64.Build.0 = Release|x64
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Release|x86.ActiveCfg = Release|Win32
-		{0D6AA21F-6416-48DA-937A-2756BF6C658A}.Release|x86.Build.0 = Release|Win32
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Debug|x64.ActiveCfg = Debug|x64
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Debug|x64.Build.0 = Debug|x64
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Debug|x86.ActiveCfg = Debug|Win32
@@ -108,6 +100,22 @@ Global
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Release|x64.Build.0 = Release|x64
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Release|x86.ActiveCfg = Release|Win32
 		{D1425D26-349E-4D16-AA03-AB68644ADF01}.Release|x86.Build.0 = Release|Win32
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Debug|x64.ActiveCfg = Debug|x64
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Debug|x64.Build.0 = Debug|x64
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Debug|x86.ActiveCfg = Debug|Win32
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Debug|x86.Build.0 = Debug|Win32
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Release|x64.ActiveCfg = Release|x64
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Release|x64.Build.0 = Release|x64
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Release|x86.ActiveCfg = Release|Win32
+		{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}.Release|x86.Build.0 = Release|Win32
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Debug|x64.ActiveCfg = Debug|x64
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Debug|x64.Build.0 = Debug|x64
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Debug|x86.ActiveCfg = Debug|Win32
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Debug|x86.Build.0 = Debug|Win32
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x64.ActiveCfg = Release|x64
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x64.Build.0 = Release|x64
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x86.ActiveCfg = Release|Win32
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

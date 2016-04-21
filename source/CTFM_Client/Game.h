@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>			//OpenGL Mathematics 
 #include <iostream>
 #include <time.h>
-#include <CTFM_Lib/GameConstants.h>
+#include "GameConstants.h"
 #include "SDLInterface.h"
 #include "InputManager.h"
 #include "Sprite.h"
@@ -13,7 +13,6 @@
 #include <SocketLib/UDPSocket.h>
 #include <thread>
 
-#pragma comment(lib, "CTFM_Lib")
 #pragma comment(lib, "SocketLib")
 
 /*

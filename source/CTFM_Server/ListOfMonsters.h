@@ -2,11 +2,9 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <string>
-#include <CTFM_Lib/GameConstants.h>
+#include "GameConstants.h"
 #include <vector>
 #include "Sprite.h"
-
-#pragma comment(lib, "CTFM_Lib")
 
 class ListOfMonsters
 {

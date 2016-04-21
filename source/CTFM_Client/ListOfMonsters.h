@@ -3,9 +3,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "Sprite.h"
-#include <CTFM_Lib/GameConstants.h>
-
-#pragma comment(lib, "CTFM_Lib")
+#include "GameConstants.h"
 
 class ListOfMonsters
 {

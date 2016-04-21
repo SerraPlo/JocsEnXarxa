@@ -139,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GenericSocket.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="SocketAddress.h" />
     <ClInclude Include="SocketTools.h" />
     <ClInclude Include="TCPSocket.h" />
