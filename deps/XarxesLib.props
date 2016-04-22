@@ -4,13 +4,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir>$(ProjectDir)..\..\lib\$(PlatformTarget)\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\..\temp\$(ProjectName)$(PlatformName)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\external\include;</AdditionalIncludeDirectories>
     </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\deps\external\lib\$(PlatformTarget);</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

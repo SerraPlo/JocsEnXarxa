@@ -66,16 +66,17 @@ namespace SerraPlo {
 
 	SpriteBatch::SpriteBatch(const SpriteBatch& sb): m_vbo(sb.m_vbo), m_vao(sb.m_vao), m_sortType(sb.m_sortType)
 	{
-		m_glyphPointers.clear();
-		for (auto gp : sb.m_glyphPointers) m_glyphPointers.push_back(new Glyph(*gp));
 		m_glyphs.clear();
 		for (auto g : sb.m_glyphs) m_glyphs.push_back(g);
+		m_glyphPointers.clear();
+		for (auto gp : m_glyphs) m_glyphPointers.push_back(&gp);
 		m_renderBatches.clear();
 		for (auto rb : sb.m_renderBatches) m_renderBatches.push_back(rb);
 	}
 
+	// TODO: revisar com eliminar y introduir glyphs correctament
 	SpriteBatch::~SpriteBatch() {
-		for (auto g : m_glyphPointers) if(g) delete g, g = nullptr;
+		//for (auto g : m_glyphPointers) if(g != nullptr) delete g, g = nullptr;
 	}
 
 	void SpriteBatch::init() {

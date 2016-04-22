@@ -1,7 +1,5 @@
 #include "GLSLManager.h"
-#include "ErrorManager.h"
 #include "IOManager.h"
-#include <vector>
 #include <iostream>
 
 namespace SerraPlo {
@@ -32,7 +30,7 @@ namespace SerraPlo {
 			glGetShaderInfoLog(id, maxLength, &maxLength, &errorLog[0]);
 			glDeleteShader(id);
 			std::cout << &errorLog[0] << std::endl;
-			ThrowError("Shader " + name + " failed to be compiled.");
+			SP_THROW_ERROR("Shader " + name + " failed to be compiled.");
 		}
 	}
 
@@ -50,9 +48,9 @@ void GLSLManager::compileShadersFromSource(const char* vertexSource, const char*
 		m_programID = glCreateProgram();
 		//if (m_programID == 0) fatalError("GLProgram failed to be created.");
 		m_vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-		if (m_vertexShaderID == 0) ThrowError("Vertex shader failed to be created.");
+		if (m_vertexShaderID == 0) SP_THROW_ERROR("Vertex shader failed to be created.");
 		m_fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		if (m_fragmentShaderID == 0) ThrowError("Fragment shader failed to be created.");
+		if (m_fragmentShaderID == 0) SP_THROW_ERROR("Fragment shader failed to be created.");
 
 		compileShader(vertexSource, "Vertex Shader", m_vertexShaderID);
 		compileShader(fragmentSource, "Fragment Shader", m_fragmentShaderID);
@@ -75,7 +73,7 @@ void GLSLManager::linkShaders() const
 			glDeleteShader(m_vertexShaderID);
 			glDeleteShader(m_fragmentShaderID);
 			std::cout << &errorLog[0] << std::endl;
-			ThrowError("Program failed to be compiled.");
+			SP_THROW_ERROR("Program failed to be compiled.");
 		}
 
 		glDetachShader(m_programID, m_vertexShaderID);
@@ -92,7 +90,7 @@ void GLSLManager::linkShaders() const
 	{
 		auto location = glGetUniformLocation(m_programID, uniformName.c_str());
 		if (location == GL_INVALID_INDEX) {
-			ThrowError("Uniform " + uniformName + " not found on shader");
+			SP_THROW_ERROR("Uniform " + uniformName + " not found on shader");
 			return 0;
 		}
 		return location;

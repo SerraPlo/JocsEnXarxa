@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPChat", "source\UDPChat\UDPChat.vcxproj", "{2E89016D-E968-48E2-A99D-30973347AE8F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -33,6 +33,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonTest", "source\JsonTest\JsonTest.vcxproj", "{D1425D26-349E-4D16-AA03-AB68644ADF01}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloTest", "source\SerraPloTest\SerraPloTest.vcxproj", "{D2AC2174-D6F5-491C-8D9A-33DE4C328A9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14} = {704970AF-EFF9-46F3-8490-90F0E40C2A14}
+		{905DA6F6-728C-4377-89BA-380CC2B2F441} = {905DA6F6-728C-4377-89BA-380CC2B2F441}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloEngine", "deps\internal\include\SerraPloEngine\SerraPloEngine.vcxproj", "{704970AF-EFF9-46F3-8490-90F0E40C2A14}"
 EndProject

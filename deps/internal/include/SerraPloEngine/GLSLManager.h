@@ -1,7 +1,8 @@
 #pragma once
-#include <string>
+#include "ErrorManager.h"
 #include <GL\glew.h>
-#pragma comment(lib, "glew32s.lib")
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glew32.lib")
 
 namespace SerraPlo {
 	class GLSLManager

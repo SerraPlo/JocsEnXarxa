@@ -14,9 +14,9 @@ namespace SerraPlo {
 			std::vector<unsigned char> out, in;
 			unsigned long width, height;
 
-			if (IOManager::loadFileToBuffer(filePath, in) == false) ThrowError("Failed to load PNG file to buffer");
+			if (IOManager::loadFileToBuffer(filePath, in) == false) SP_THROW_ERROR("Failed to load PNG file to buffer");
 			auto errorCode = decodePNG(out, width, height, &(in[0]), in.size());
-			if (errorCode != 0) ThrowError("decodePNG failed with error" + std::to_string(errorCode));
+			if (errorCode != 0) SP_THROW_ERROR("decodePNG failed with error" + std::to_string(errorCode));
 
 			glGenTextures(1, &(texture.id));
 			glBindTexture(GL_TEXTURE_2D, texture.id);
