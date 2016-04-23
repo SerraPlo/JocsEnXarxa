@@ -163,11 +163,11 @@
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GLSLManager.h" />
     <ClInclude Include="GLTexture.h" />
-    <ClInclude Include="IGameScreen.h" />
-    <ClInclude Include="IMainGame.h" />
+    <ClInclude Include="IScreen.h" />
+    <ClInclude Include="IApp.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IOManager.h" />
-    <ClInclude Include="Light.h" />
+    <ClInclude Include="Light2D.h" />
     <ClInclude Include="ParticleBatch2D.h" />
     <ClInclude Include="ParticleEngine2D.h" />
     <ClInclude Include="picoPNG.h" />
@@ -187,7 +187,7 @@
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="GLSLManager.cpp" />
-    <ClCompile Include="IMainGame.cpp" />
+    <ClCompile Include="IApp.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ParticleBatch2D.cpp" />
     <ClCompile Include="ParticleEngine2D.cpp" />

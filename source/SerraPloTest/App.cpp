@@ -10,9 +10,9 @@ App::~App() {
 void App::onInit() {}
 
 void App::addScreens() {
-	m_gameplayScreen = std::make_unique<GameplayScreen>(&m_window);
-	m_screenList->addScreen(m_gameplayScreen.get());
-	m_screenList->setScreen(m_gameplayScreen->getScreenIndex());
+	m_testScreen = std::make_unique<PlaygroundScreen>();
+	m_screenList->addScreen(m_testScreen.get());
+	m_screenList->setScreen(m_testScreen->getScreenIndex());
 }
 
 void App::onExit() {}

@@ -1,10 +1,10 @@
 #pragma once
-#include <SerraPloEngine//IMainGame.h>
-#include "GameplayScreen.h"
+#include <SerraPloEngine/IApp.h>
+#include "PlaygroundScreen.h"
 
-class App : public SerraPlo::IMainGame
+class App : public SerraPlo::IApp
 {
-	std::unique_ptr<GameplayScreen> m_gameplayScreen = nullptr;
+	std::unique_ptr<PlaygroundScreen> m_testScreen = nullptr;
 public:
 	App();
 	~App();

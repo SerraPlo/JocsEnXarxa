@@ -12,12 +12,14 @@ class Camera2D
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_orthoMatrix;
 public:
+	glm::vec2 m_mouseScreenCoords;
+
 	explicit Camera2D();
 	explicit Camera2D(int screenWidth, int screenHeight);
 	~Camera2D() = default;
 
 	void init(int screenWidth, int screenHeight);
-	void update();
+	void update(glm::vec2 screenCoords = {0,0});
 	glm::vec2 convertScreenToWorld(glm::vec2 screenCoords) const;
 	bool isBoxInView(const glm::vec2 &position, const glm::vec2 &dimensions) const;
 

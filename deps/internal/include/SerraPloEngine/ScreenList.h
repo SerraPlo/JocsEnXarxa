@@ -3,28 +3,28 @@
 
 namespace SerraPlo {
 
-class IMainGame;
-class IGameScreen;
+class IApp;
+class IScreen;
 
 class ScreenList
 {
 protected:
-	std::vector<IGameScreen*> m_screens;
-	IMainGame* m_game = nullptr;
+	std::vector<IScreen*> m_screens;
+	IApp* m_game = nullptr;
 	int m_currentScreenIndex;
 public:
-	explicit ScreenList(IMainGame* game);
+	explicit ScreenList(IApp* game);
 	~ScreenList();
 
-	IGameScreen* moveNext();
-	IGameScreen* movePrev();
+	IScreen* moveNext();
+	IScreen* movePrev();
 
 	void setScreen(int nextScreen);
-	void addScreen(IGameScreen* newScreen);
+	void addScreen(IScreen* newScreen);
 
 	void destroy();
 
-	IGameScreen* getCurScreen() const;;
+	IScreen* getCurScreen() const;;
 };
 
 }

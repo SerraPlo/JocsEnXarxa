@@ -1,9 +1,9 @@
 #include "ScreenList.h"
-#include "IGameScreen.h"
+#include "IScreen.h"
 
 namespace SerraPlo {
 
-ScreenList::ScreenList(IMainGame* game) :
+ScreenList::ScreenList(IApp* game) :
 	m_game(game),
 	m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
 
@@ -11,7 +11,7 @@ ScreenList::~ScreenList() {
 	destroy();
 }
 
-IGameScreen* ScreenList::moveNext() {
+IScreen* ScreenList::moveNext() {
 	auto currentScreen = getCurScreen();
 	if(currentScreen->getNextScreenIndex() != SCREEN_INDEX_NO_SCREEN) {
 		m_currentScreenIndex = currentScreen->getNextScreenIndex();
@@ -19,7 +19,7 @@ IGameScreen* ScreenList::moveNext() {
 	return getCurScreen();
 }
 
-IGameScreen* ScreenList::movePrev() {
+IScreen* ScreenList::movePrev() {
 	auto currentScreen = getCurScreen();
 	if (currentScreen->getPrevScreenIndex() != SCREEN_INDEX_NO_SCREEN) {
 		m_currentScreenIndex = currentScreen->getPrevScreenIndex();
@@ -31,7 +31,7 @@ void ScreenList::setScreen(int nextScreen) {
 	m_currentScreenIndex = nextScreen;
 }
 
-void ScreenList::addScreen(IGameScreen* newScreen) {
+void ScreenList::addScreen(IScreen* newScreen) {
 	newScreen->m_screenIndex = m_screens.size();
 	m_screens.push_back(newScreen);
 	newScreen->build();
@@ -44,7 +44,7 @@ void ScreenList::destroy() {
 	m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN;
 }
 
-IGameScreen* ScreenList::getCurScreen() const {
+IScreen* ScreenList::getCurScreen() const {
 	if (m_currentScreenIndex == SCREEN_INDEX_NO_SCREEN) return nullptr;
 	return m_screens[m_currentScreenIndex];
 }

@@ -31,12 +31,13 @@ void Camera2D::init(int screenWidth, int screenHeight) {
 	m_orthoMatrix = glm::ortho(0.0f, static_cast<float>(m_screenWidth), 0.0f, static_cast<float>(m_screenHeight));
 }
 
-void Camera2D::update() {
+void Camera2D::update(glm::vec2 screenCoords) {
 	if (m_needsMatrixUpdate) {
 		m_cameraMatrix = glm::translate(m_orthoMatrix, glm::vec3(-m_position.x+ m_screenWidth / 2, -m_position.y+ m_screenHeight / 2, 0.0f));
 		m_cameraMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(m_scale, m_scale, 0.0f))*m_cameraMatrix;
 		m_needsMatrixUpdate = false;
 	}
+	m_mouseScreenCoords = convertScreenToWorld(screenCoords);
 }
 
 glm::vec2 Camera2D::convertScreenToWorld(glm::vec2 screenCoords) const

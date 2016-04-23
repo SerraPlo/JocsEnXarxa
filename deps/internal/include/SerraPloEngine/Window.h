@@ -19,6 +19,7 @@ namespace SerraPlo {
 		virtual void create(const ColorRGBA8& c = ColorRGBA8{ 255, 255, 255, 255 }, const unsigned &curFlags = 0);
 		virtual void create(const std::string &name = "", int sw = 600, int sh = 600, const unsigned &curFlags = 0);
 		void changeSize(const int &sw, const int &sh) const { SDL_SetWindowSize(m_SDLWindow, sw, sh); };
+		void changeName(const std::string &name) const { SDL_SetWindowTitle(m_SDLWindow, name.c_str()); };
 		SDL_Window* getWindow() const { return m_SDLWindow; };
 		void swapBuffer() const { SDL_GL_SwapWindow(m_SDLWindow); };
 		int getScreenWidth() const { return m_screenWidth; };
