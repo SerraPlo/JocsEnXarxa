@@ -1,5 +1,4 @@
 #include "PlaygroundScreen.h"
-#include <SDL2/SDL.h>
 #include <SerraPloEngine/IApp.h>
 #include <SerraPloEngine/ResourceManager.h>
 #include <ctime>
@@ -7,7 +6,7 @@
 
 void PlaygroundScreen::checkInput() const {
 	SDL_Event evnt;
-	while (SDL_PollEvent(&evnt)) m_game->onSDLEvent(evnt);
+	while (SDL_PollEvent(&evnt)) m_gameApp->OnSDLEvent(evnt);
 }
 
 PlaygroundScreen::PlaygroundScreen() : m_mouseLight(nullptr) {}
@@ -16,15 +15,15 @@ PlaygroundScreen::~PlaygroundScreen() {
 	delete m_mouseLight;
 }
 
-void PlaygroundScreen::build() {
+void PlaygroundScreen::Build() {
+	
+}
+
+void PlaygroundScreen::Destroy() {
 
 }
 
-void PlaygroundScreen::destroy() {
-
-}
-
-void PlaygroundScreen::onEntry() {
+void PlaygroundScreen::OnEntry() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_spriteBatch.init(); //Initialize spritebatch
@@ -44,8 +43,8 @@ void PlaygroundScreen::onEntry() {
 	m_lightProgram.linkShaders();
 
 	SDL_ShowCursor(0);
-	m_game->m_window.changeName("SerraPlo Test");
-	m_camera.init(m_game->m_window.getScreenWidth(), m_game->m_window.getScreenHeight());
+	m_gameApp->m_window.changeName("SerraPlo Test");
+	m_camera.init(m_gameApp->m_window.getScreenWidth(), m_gameApp->m_window.getScreenHeight());
 	m_camera.setScale(32.0f);
 
 	//Render light
@@ -55,17 +54,17 @@ void PlaygroundScreen::onEntry() {
 	m_mouseLight->size = 50.0f;
 }
 
-void PlaygroundScreen::onExit() {
+void PlaygroundScreen::OnExit() {
 	m_debugRenderer.dispose();
 }
 
-void PlaygroundScreen::update() {
-	m_camera.update(m_game->m_inputManager.m_mouseCoords);
+void PlaygroundScreen::Update() {
+	m_camera.update(m_gameApp->m_inputManager.m_mouseCoords);
 	m_camera.setPosition({0,0});
 	checkInput();
 }
 
-void PlaygroundScreen::draw() {
+void PlaygroundScreen::Draw() {
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glActiveTexture(GL_TEXTURE0);
@@ -111,10 +110,10 @@ void PlaygroundScreen::draw() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
 }
 
-int PlaygroundScreen::getNextScreenIndex() const {
+int PlaygroundScreen::GetNextScreenIndex() const {
 	return SCREEN_INDEX_NO_SCREEN;
 }
 
-int PlaygroundScreen::getPrevScreenIndex() const {
+int PlaygroundScreen::GetPrevScreenIndex() const {
 	return SCREEN_INDEX_NO_SCREEN;
 }

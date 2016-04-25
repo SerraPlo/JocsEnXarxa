@@ -5,35 +5,48 @@
 
 namespace SerraPlo {
 
-class ScreenList;
-class IScreen;
-class IApp
-{
-protected:
-	std::unique_ptr<ScreenList> m_screenList = nullptr;
-	IScreen* m_currentScreen = nullptr;
-	bool m_isRunning = false;
+	class ScreenList;	// Forward declaration of the list of screens
+	class IScreen;		// Forward declaration of the game screen interface
 
-	void init();
-	void initSystems();
+	// Game app interface to the store the main runing game engine as a template
+	class IApp {
+	protected:
+		std::unique_ptr<ScreenList> m_screenList;	// Unique pointer instance to the list of screens of the game
+		IScreen *m_currentScreen;					// Reference pointer to the screen running at the moment
+		bool m_isRunning;							// Whether game is running or not
 
-	virtual void update();
-	virtual void draw();
-public:
-	float m_fps = 0;
-	GLWindow m_window;
-	InputManager m_inputManager;
+		// Initialize everything related to game internals
+		void Init();
+		// Initialize SDKs, window, audio, events...
+		void InitSystems();
 
-	explicit IApp();
-	virtual ~IApp() = default;
+		// Main update function of the game
+		virtual void Update();
+		// Main draw function of the game
+		virtual void Draw();
+	public:
+		float const m_targetFPS;		// How many fps do we wish to have
+		float m_fps;					// How many frames per second the game is running to
+		GLWindow m_window;				// Main instance of the OpenGL window
+		InputManager m_inputManager;	// Main instance of the input manager class
 
-	void run();
-	void exitGame();
+		explicit IApp(float tfps);
+		virtual ~IApp() = default;
 
-	virtual void onInit() = 0;
-	virtual void addScreens() = 0;
-	virtual void onExit() = 0;
-	void onSDLEvent(SDL_Event &evnt);
-};
+		// Manage main SDL event types
+		void OnSDLEvent(SDL_Event &evnt);
+
+		// Where magic occurs, to be used to play the whole game
+		void Run();
+		// Destroy screen list and set game running to false
+		void ExitGame();
+
+		// Initialize specific game attributes in derived app class
+		virtual void OnInit() = 0;
+		// Push and store the app screens
+		virtual void AddScreens() = 0;
+		// Destroy specific game attributes in derived app class
+		virtual void OnExit() = 0;
+	};
 
 }

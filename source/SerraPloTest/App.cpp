@@ -1,18 +1,20 @@
 #include <SerraPloEngine/ScreenList.h>
 #include "App.h"
 
-App::App() {
+App::App() : IApp(TARGET_FPS) {
 }
 
 App::~App() {
 }
 
-void App::onInit() {}
+void App::OnInit() {}
 
-void App::addScreens() {
+void App::AddScreens() {
 	m_testScreen = std::make_unique<PlaygroundScreen>();
-	m_screenList->addScreen(m_testScreen.get());
-	m_screenList->setScreen(m_testScreen->getScreenIndex());
+	m_screenList->AddScreen(m_testScreen.get());
+	m_screenList->SetScreen(m_testScreen->m_screenIndex);
 }
 
-void App::onExit() {}
+void App::OnExit() {}
+
+#undef TARGET_FPS

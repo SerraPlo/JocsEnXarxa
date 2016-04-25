@@ -15,14 +15,14 @@ public:
 	explicit PlaygroundScreen();
 	~PlaygroundScreen();
 
-	virtual void build() override;
-	virtual void destroy() override;
-	virtual void onEntry() override;
-	virtual void onExit() override;
-	virtual void update() override;
-	virtual void draw() override;
-	virtual int getNextScreenIndex() const override;
-	virtual int getPrevScreenIndex() const override;
+	virtual void Build() override;
+	virtual void Destroy() override;
+	virtual void OnEntry() override;
+	virtual void OnExit() override;
+	virtual void Update() override;
+	virtual void Draw() override;
+	virtual int GetNextScreenIndex() const override;
+	virtual int GetPrevScreenIndex() const override;
 private:
 	void checkInput() const;
 

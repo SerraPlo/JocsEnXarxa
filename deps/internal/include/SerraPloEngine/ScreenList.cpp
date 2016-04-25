@@ -3,49 +3,48 @@
 
 namespace SerraPlo {
 
-ScreenList::ScreenList(IApp* game) :
-	m_game(game),
-	m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
+	ScreenList::ScreenList(IApp* game) :
+		m_gameApp(game),
+		m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
 
-ScreenList::~ScreenList() {
-	destroy();
-}
-
-IScreen* ScreenList::moveNext() {
-	auto currentScreen = getCurScreen();
-	if(currentScreen->getNextScreenIndex() != SCREEN_INDEX_NO_SCREEN) {
-		m_currentScreenIndex = currentScreen->getNextScreenIndex();
+	ScreenList::~ScreenList() {
+		Destroy(); // Remove each screen when leaving the game
 	}
-	return getCurScreen();
-}
 
-IScreen* ScreenList::movePrev() {
-	auto currentScreen = getCurScreen();
-	if (currentScreen->getPrevScreenIndex() != SCREEN_INDEX_NO_SCREEN) {
-		m_currentScreenIndex = currentScreen->getPrevScreenIndex();
+	void ScreenList::Destroy() {
+		for (auto s : m_screens) s->Destroy(); // Remove each
+		m_screens.resize(0); // Keep the capacity of the list removing the elements whithout deallocating memory
+		m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN; // Set current screen index to -1
 	}
-	return getCurScreen();
-}
 
-void ScreenList::setScreen(int nextScreen) {
-	m_currentScreenIndex = nextScreen;
-}
+	IScreen* ScreenList::MoveNext() {
+		auto currentScreen = GetCurScreen();
+		if (currentScreen->GetNextScreenIndex() != SCREEN_INDEX_NO_SCREEN) // Check if the next screen in list exists
+			m_currentScreenIndex = currentScreen->GetNextScreenIndex(); // Then move to the next screen by changing the index
+		return GetCurScreen(); // Return the new screen
+	}
 
-void ScreenList::addScreen(IScreen* newScreen) {
-	newScreen->m_screenIndex = m_screens.size();
-	m_screens.push_back(newScreen);
-	newScreen->build();
-	newScreen->setParentGame(m_game);
-}
+	IScreen* ScreenList::MovePrev() {
+		auto currentScreen = GetCurScreen();
+		if (currentScreen->GetPrevScreenIndex() != SCREEN_INDEX_NO_SCREEN) // Check if the previous screen in list exists
+			m_currentScreenIndex = currentScreen->GetPrevScreenIndex(); // Then move to the previous screen by changing the index
+		return GetCurScreen(); // Return the new screen
+	}
 
-void ScreenList::destroy() {
-	for (auto s : m_screens) s->destroy();
-	m_screens.resize(0);
-	m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN;
-}
+	void ScreenList::SetScreen(int nextScreen) {
+		m_currentScreenIndex = nextScreen;
+	}
 
-IScreen* ScreenList::getCurScreen() const {
-	if (m_currentScreenIndex == SCREEN_INDEX_NO_SCREEN) return nullptr;
-	return m_screens[m_currentScreenIndex];
-}
+	void ScreenList::AddScreen(IScreen* newScreen) {
+		newScreen->m_screenIndex = m_screens.size(); // Assign the size of the list as the index of the new screen
+		m_screens.push_back(newScreen); // Add the new screen into the list
+		newScreen->Build(); // Initialize the new screen
+		newScreen->m_gameApp = m_gameApp; // Set the game app reference parent of the new screen
+	}
+
+	IScreen* ScreenList::GetCurScreen() const {
+		if (m_currentScreenIndex == SCREEN_INDEX_NO_SCREEN) return nullptr; // Check if current screen exists
+		return m_screens[m_currentScreenIndex]; // If exists, return the current running screen
+	}
+
 }

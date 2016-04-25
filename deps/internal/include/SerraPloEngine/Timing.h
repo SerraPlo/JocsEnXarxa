@@ -3,27 +3,25 @@
 
 namespace SerraPlo {
 
-class FPSLimiter
-{
-	float m_fps;
-	float m_targetFPS;
-	Uint32 m_startTicks;
-	Uint32 m_frameTicks;
-	static const int NUM_SAMPLES;
+	class FPSLimiter {
+		float m_targetFPS;
+		Uint32 m_startTicks;
+		Uint32 m_frameTicks;
 
-	void calculateFPS();
-public:
-	explicit FPSLimiter();
-	explicit FPSLimiter(float targetFPS);
-	~FPSLimiter() = default;
+		void calculateFPS();
+	public:
+		float m_fps;
 
-	void setTargetFPS(float targetFPS) { m_targetFPS = targetFPS; };
-	void printFPS() const;
-	float getFPS() const { return m_fps; };
+		explicit FPSLimiter();
+		explicit FPSLimiter(float targetFPS);
+		~FPSLimiter() = default;
 
-	void begin() { m_startTicks = SDL_GetTicks(); };
-	void end();
-};
+		void setTargetFPS(float targetFPS) { m_targetFPS = targetFPS; };
+		void printFPS() const;
+
+		void begin();
+		void end();
+	};
 
 }
 
