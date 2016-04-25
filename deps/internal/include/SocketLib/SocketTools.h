@@ -32,7 +32,7 @@
 
 namespace SocketTools
 {
-#define ThrowError(message) ShowError(message, __FILE__, __LINE__)
+#define SL_THROW_ERROR(message) ShowError(message, __FILE__, __LINE__)
 	inline void ShowError(std::string &&message, const std::string& fileName, int line) {
 #if CUR_PLATFORM == PLATFORM_WINDOWS
 		message.append("\nFile: " + fileName + "\nLine: " + std::to_string(line) + "\nWin32 error code: " + std::to_string(WSAGetLastError()));
@@ -42,12 +42,12 @@ namespace SocketTools
 	inline void BuildLibrary(void) {
 #if CUR_PLATFORM == PLATFORM_WINDOWS
 		WSADATA wsaData;
-		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) ThrowError("WSAStartup could not initialise WinSock library.");
+		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) SL_THROW_ERROR("WSAStartup could not initialise WinSock library.");
 #endif
 	};
 	inline void UnloadLibrary(void) {
 #if CUR_PLATFORM == PLATFORM_WINDOWS
-		if (WSACleanup() != NO_ERROR) ThrowError("WSACleanup could not clear unload WinSock library.");
+		if (WSACleanup() != NO_ERROR) SL_THROW_ERROR("WSACleanup could not clear unload WinSock library.");
 #endif
 	};
 };

@@ -6,7 +6,7 @@
 
 void PlaygroundScreen::checkInput() const {
 	SDL_Event evnt;
-	while (SDL_PollEvent(&evnt)) m_gameApp->OnSDLEvent(evnt);
+	while (SDL_PollEvent(&evnt)) gameApp->OnSDLEvent(evnt);
 }
 
 PlaygroundScreen::PlaygroundScreen() : m_mouseLight(nullptr) {}
@@ -43,14 +43,14 @@ void PlaygroundScreen::OnEntry() {
 	m_lightProgram.linkShaders();
 
 	SDL_ShowCursor(0);
-	m_gameApp->m_window.changeName("SerraPlo Test");
-	m_camera.init(m_gameApp->m_window.getScreenWidth(), m_gameApp->m_window.getScreenHeight());
+	gameApp->window.changeName("SerraPlo Test");
+	m_camera.init(gameApp->window.getScreenWidth(), gameApp->window.getScreenHeight());
 	m_camera.setScale(32.0f);
 
 	//Render light
 	m_mouseLight = new SerraPlo::Light2D();
 	m_mouseLight->color = SerraPlo::ColorRGBA8{50, 50, 255, 150};
-	m_mouseLight->position = &m_camera.m_mouseScreenCoords;
+	m_mouseLight->position = &m_camera.mouseScreenCoords;
 	m_mouseLight->size = 50.0f;
 }
 
@@ -59,7 +59,7 @@ void PlaygroundScreen::OnExit() {
 }
 
 void PlaygroundScreen::Update() {
-	m_camera.update(m_gameApp->m_inputManager.m_mouseCoords);
+	m_camera.update(gameApp->inputManager.m_mouseCoords);
 	m_camera.setPosition({0,0});
 	checkInput();
 }
@@ -86,7 +86,7 @@ void PlaygroundScreen::Draw() {
 				glm::vec4 destRect((i%20) - 10 + sin(float(clock()/500.0f))*5.0f, ((i/20) - 10 + cos(float(clock()/500.0f))*5.0f), 1, 1);
 				m_spriteBatch.pushBatch(destRect, uvRect, textureID, 0.0f, SerraPlo::ColorRGBA8 { 255, 255, 255, 255 });
 			}
-			glm::vec4 destRect(m_camera.m_mouseScreenCoords.x, m_camera.m_mouseScreenCoords.y, 1, 1);
+			glm::vec4 destRect(m_camera.mouseScreenCoords.x, m_camera.mouseScreenCoords.y, 1, 1);
 			m_spriteBatch.pushBatch(destRect, uvRect, textureID, 0.0f, SerraPlo::ColorRGBA8 { 255, 255, 255, 255 });
 		m_spriteBatch.end();
 		m_spriteBatch.renderBatches();

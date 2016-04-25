@@ -37,7 +37,7 @@ void Camera2D::update(glm::vec2 screenCoords) {
 		m_cameraMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(m_scale, m_scale, 0.0f))*m_cameraMatrix;
 		m_needsMatrixUpdate = false;
 	}
-	m_mouseScreenCoords = convertScreenToWorld(screenCoords);
+	mouseScreenCoords = convertScreenToWorld(screenCoords);
 }
 
 glm::vec2 Camera2D::convertScreenToWorld(glm::vec2 screenCoords) const

@@ -3,36 +3,36 @@
 
 namespace SerraPlo {
 
-	int AudioManager::curChannel = 0;
+#define MAX_CHANNELS 16
 
-	void SoundEffect::play(int loops) const {
+	void SoundEffect::Play(int loops) const {
 		if (Mix_PlayChannel(-1, m_chunk, loops) == -1) {
-			if (AudioManager::curChannel == AudioManager::maxChannels) AudioManager::curChannel = 0;
+			if (AudioManager::curChannel == MAX_CHANNELS) AudioManager::curChannel = 0;
 			if (Mix_PlayChannel(AudioManager::curChannel, m_chunk, loops) == -1) SP_THROW_ERROR("Mix_PlayChannel error: " + std::string(Mix_GetError()));
-			AudioManager::curChannel++;
+			++AudioManager::curChannel;
 		}
 	}
 
-	void Music::play(int loops) const {
+	void Music::Play(int loops) const {
 		if (Mix_PlayMusic(m_music, loops) == -1) SP_THROW_ERROR("Mix_PlayMusic error: " + std::string(Mix_GetError()));
 	}
 
+	int AudioManager::curChannel{ 0 };
+
 	AudioManager::~AudioManager() {
-		destroy();
+		Destroy();
 	}
 
-	void AudioManager::init()
-	{
+	void AudioManager::Init() {
 		if (m_isInitialized) SP_THROW_ERROR("Audio Manager error: Trying to initialize Audio Manager twice!");
 		//Can be bitwise combination of: MIX_INIT_FAC, MIX_INIT_MOD, MIX_INIT_MP3, MIX_INIT_OGG
 		if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) == -1) SP_THROW_ERROR("Mix_Init error: " + std::string(Mix_GetError()));
 		if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) == -1) SP_THROW_ERROR("Mix_OpenAudio error: " + std::string(Mix_GetError()));
 		m_isInitialized = true;
-		Mix_AllocateChannels(maxChannels);
+		Mix_AllocateChannels(MAX_CHANNELS);
 	}
 
-	void AudioManager::destroy()
-	{
+	void AudioManager::Destroy() {
 		if (m_isInitialized) {
 			m_isInitialized = false;
 			Mix_AllocateChannels(0);
@@ -45,18 +45,15 @@ namespace SerraPlo {
 		}
 	}
 
-	void AudioManager::setEffectsVolume(int v)
-	{
+	void AudioManager::SetEffectsVolume(int v) {
 		for (auto e = m_effectMap.begin(), end = m_effectMap.end(); e != end; ++e) Mix_VolumeChunk(e->second, v);
 	}
 
-	void AudioManager::setMusicVolume(int v)
-	{
+	void AudioManager::SetMusicVolume(int v) {
 		Mix_VolumeMusic(v);
 	}
 
-	SoundEffect AudioManager::loadSoundEffect(const std::string& filePath)
-	{
+	SoundEffect AudioManager::LoadSoundEffect(const std::string& filePath) {
 		auto it = m_effectMap.find(filePath); //try find audio in cache
 		SoundEffect effect;
 		if (it == m_effectMap.end()) {
@@ -69,8 +66,7 @@ namespace SerraPlo {
 		return effect;
 	}
 
-	Music AudioManager::loadMusic(const std::string & filePath)
-	{
+	Music AudioManager::LoadMusic(const std::string & filePath) {
 		auto it = m_musicMap.find(filePath); //try find audio in cache
 		Music mus;
 		if (it == m_musicMap.end()) {
@@ -83,5 +79,7 @@ namespace SerraPlo {
 		else mus.m_music = it->second;
 		return mus;
 	}
+
+#undef MAX_CHANNELS
 
 }

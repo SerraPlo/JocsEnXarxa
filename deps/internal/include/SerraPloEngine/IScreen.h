@@ -20,9 +20,9 @@ namespace SerraPlo {
 		//friend class ScreenList;	// Enable ScreenList class to use IScreen protected attributes
 		//friend class IApp;			// Enable IApp class to use IScreen protected attributes
 	public:
-		ScreenState m_currentState	{ ScreenState::NONE };		// Current state of the screen, NONE by default
-		IApp* m_gameApp				{ nullptr };				// Reference pointer to current game app
-		int m_screenIndex			{ SCREEN_INDEX_NO_SCREEN };	// Self screen index in game app, -1 by default
+		ScreenState currentState	{ ScreenState::NONE };		// Current state of the screen, NONE by default
+		IApp* gameApp				{ nullptr };				// Reference pointer to current game app
+		int screenIndex				{ SCREEN_INDEX_NO_SCREEN };	// Self screen index in game app, -1 by default
 
 		explicit IScreen() = default;
 		virtual ~IScreen() = default;

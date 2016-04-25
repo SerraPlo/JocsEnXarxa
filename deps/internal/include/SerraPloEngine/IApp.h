@@ -25,10 +25,10 @@ namespace SerraPlo {
 		// Main draw function of the game
 		virtual void Draw();
 	public:
-		float const m_targetFPS;		// How many fps do we wish to have
-		float m_fps;					// How many frames per second the game is running to
-		GLWindow m_window;				// Main instance of the OpenGL window
-		InputManager m_inputManager;	// Main instance of the input manager class
+		float const targetFPS;		// How many fps do we wish to have
+		float fps;					// How many frames per second the game is running to
+		GLWindow window;				// Main instance of the OpenGL window
+		InputManager inputManager;	// Main instance of the input manager class
 
 		explicit IApp(float tfps);
 		virtual ~IApp() = default;

@@ -46,7 +46,7 @@ int SocketAddress::setAddress(const std::string & inString) {
 	auto error = getaddrinfo(host.c_str(), service.c_str(), &hint, &result);
 	if (error != 0 && result != nullptr) {
 		freeaddrinfo(result);
-		SocketTools::ThrowError("List of IP:port addresses could not be stored.");
+		SocketTools::SL_THROW_ERROR("List of IP:port addresses could not be stored.");
 	}
 
 	//Go through addresses of result in search of a valid one
@@ -54,7 +54,7 @@ int SocketAddress::setAddress(const std::string & inString) {
 		result = result->ai_next;
 	if (!result->ai_addr) {
 		freeaddrinfo(result);
-		SocketTools::ThrowError("Non valid address found.");
+		SocketTools::SL_THROW_ERROR("Non valid address found.");
 	}
 
 	//memcpy copies each byte of the valid address to the member address of the class

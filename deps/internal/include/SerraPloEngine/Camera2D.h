@@ -12,7 +12,7 @@ class Camera2D
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_orthoMatrix;
 public:
-	glm::vec2 m_mouseScreenCoords;
+	glm::vec2 mouseScreenCoords;
 
 	explicit Camera2D();
 	explicit Camera2D(int screenWidth, int screenHeight);

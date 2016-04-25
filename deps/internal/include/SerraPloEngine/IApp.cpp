@@ -9,8 +9,8 @@ namespace SerraPlo {
 		m_screenList(std::make_unique<ScreenList>(this)),
 		m_currentScreen(nullptr),
 		m_isRunning(true),
-		m_targetFPS(tfps),
-		m_fps(0)
+		targetFPS(tfps),
+		fps(0)
 	{}
 
 	void IApp::Init() {
@@ -19,7 +19,7 @@ namespace SerraPlo {
 		AddScreens();	// Add the screens of the derived app into the list
 		m_currentScreen = m_screenList->GetCurScreen(); // Set the current screen reference
 		m_currentScreen->OnEntry(); // Initialize the first screen when enter
-		m_currentScreen->m_currentState = ScreenState::RUNNING; // Then set the screen to the running state
+		m_currentScreen->currentState = ScreenState::RUNNING; // Then set the screen to the running state
 	}
 
 	void IApp::InitSystems() {
@@ -29,19 +29,19 @@ namespace SerraPlo {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-		m_window.create("Default", 1600, 900); // Create default window 
+		window.create("Default", 1600, 900); // Create default window 
 	}
 
 #define CHANGE_TO(MoveTo)	m_currentScreen->OnExit(); /* Call the leaving method of the current screen */ \
 							m_currentScreen = m_screenList->MoveTo(); /* Set the current screen to the next one in the list */ \
 							if (m_currentScreen) { /* If the new screen exists */ \
-								m_currentScreen->m_currentState = ScreenState::RUNNING; /* Set the state of the new screen to running */ \
+								m_currentScreen->currentState = ScreenState::RUNNING; /* Set the state of the new screen to running */ \
 								m_currentScreen->OnEntry(); /* Then call the function to initialize the scene */ \
 							}
 
 	void IApp::Update() {
 		if (m_currentScreen) { // If current screen exists
-			switch(m_currentScreen->m_currentState) { // Check for the state of the screen
+			switch(m_currentScreen->currentState) { // Check for the state of the screen
 			case ScreenState::RUNNING:
 				m_currentScreen->Update(); // Update the current screen if running
 				break;
@@ -60,11 +60,11 @@ namespace SerraPlo {
 		else ExitGame(); // Call exit function if screen doesn't exist
 	}
 
-#undef CHANGE_TO(MoveTo)
+#undef CHANGE_TO
 
 	void IApp::Draw() {
-		glViewport(0, 0, m_window.getScreenWidth(), m_window.getScreenHeight()); // Set the OpenGL viewport to window dimensions
-		if (m_currentScreen && m_currentScreen->m_currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
+		glViewport(0, 0, window.getScreenWidth(), window.getScreenHeight()); // Set the OpenGL viewport to window dimensions
+		if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
 			m_currentScreen->Draw(); // Then call the draw method of the screen
 		}
 	}
@@ -72,22 +72,22 @@ namespace SerraPlo {
 	void IApp::OnSDLEvent(SDL_Event& evnt) {
 		switch (evnt.type) { // Check for SDL event type
 		case SDL_QUIT:
-			m_currentScreen->m_currentState = ScreenState::EXIT_APP; // Set screen state to exit application
+			m_currentScreen->currentState = ScreenState::EXIT_APP; // Set screen state to exit application
 			break;
 		case SDL_MOUSEMOTION:
-			m_inputManager.m_mouseCoords = {static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y)}; // Store the mouse coordinates each time mouse moves through the screen
+			inputManager.m_mouseCoords = {static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y)}; // Store the mouse coordinates each time mouse moves through the screen
 			break;
 		case SDL_KEYDOWN:
-			m_inputManager.pressKey(evnt.key.keysym.sym); // Store which key has been pressed
+			inputManager.pressKey(evnt.key.keysym.sym); // Store which key has been pressed
 			break;
 		case SDL_KEYUP:
-			m_inputManager.releaseKey(evnt.key.keysym.sym); // Store which key has been released
+			inputManager.releaseKey(evnt.key.keysym.sym); // Store which key has been released
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			m_inputManager.pressKey(evnt.button.button); // Store when mouse button is pressed
+			inputManager.pressKey(evnt.button.button); // Store when mouse button is pressed
 			break;
 		case SDL_MOUSEBUTTONUP:
-			m_inputManager.releaseKey(evnt.button.button); // Store when mouse button is released
+			inputManager.releaseKey(evnt.button.button); // Store when mouse button is released
 			break;
 		}
 	}
@@ -95,17 +95,17 @@ namespace SerraPlo {
 	void IApp::Run() {
 		Init(); // Call the init everything function
 		FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
-		fpsLimiter.setTargetFPS(m_targetFPS); // Set the frames per second we whish to have, ideally 60-120
+		fpsLimiter.setTargetFPS(targetFPS); // Set the frames per second we whish to have, ideally 60-120
 
 		while(m_isRunning) { // While game is running
 			fpsLimiter.begin();				// Init FPS counter
-				m_inputManager.update();	// Update the input manager instance
+				inputManager.update();	// Update the input manager instance
 				Update();					// Main update function
 				if (!m_isRunning) break;	// Break main game loop if running attribute set to false
 				Draw();						// Main draw function
-				m_fps = fpsLimiter.m_fps;	// Get the current fps of the class instance
+				fps = fpsLimiter.m_fps;	// Get the current fps of the class instance
 			fpsLimiter.end();				// Calculate and restore FPS
-			m_window.swapBuffer();			// Swap OpenGL buffers if double-buffering is supported
+			window.swapBuffer();			// Swap OpenGL buffers if double-buffering is supported
 		}
 	}
 
