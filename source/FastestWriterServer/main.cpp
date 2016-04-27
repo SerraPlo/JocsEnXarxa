@@ -2,7 +2,7 @@
 #include "Server.h"
 
 static void run(const char* bindAddress, int numPlayers) {
-	if (numPlayers <= 0) SocketTools::ThrowError("Number of players is less or equal to 0");
+	if (numPlayers <= 0) SocketTools::SL_THROW_ERROR("Number of players is less or equal to 0");
 	Server server(bindAddress, numPlayers);
 	server.Run();
 }

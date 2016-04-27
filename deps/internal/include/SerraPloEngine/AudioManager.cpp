@@ -1,4 +1,5 @@
 #include "AudioManager.h"
+#include "AudioManager.h"
 #include "ErrorManager.h"
 
 namespace SerraPlo {
@@ -49,7 +50,7 @@ namespace SerraPlo {
 		for (auto e = m_effectMap.begin(), end = m_effectMap.end(); e != end; ++e) Mix_VolumeChunk(e->second, v);
 	}
 
-	void AudioManager::SetMusicVolume(int v) {
+	void AudioManager::SetMusicVolume(int v) const {
 		Mix_VolumeMusic(v);
 	}
 

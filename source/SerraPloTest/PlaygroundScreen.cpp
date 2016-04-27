@@ -3,6 +3,7 @@
 #include <SerraPloEngine/ResourceManager.h>
 #include <ctime>
 #include <iostream>
+#include <glm/gtx/rotate_vector.hpp>
 
 void PlaygroundScreen::checkInput() const {
 	SDL_Event evnt;
@@ -13,14 +14,21 @@ PlaygroundScreen::PlaygroundScreen() : m_mouseLight(nullptr) {}
 
 PlaygroundScreen::~PlaygroundScreen() {
 	delete m_mouseLight;
+	//delete m_particleBatch;
 }
 
 void PlaygroundScreen::Build() {
-	
+	m_particleBatch = new ParticleBatch2D;
+	m_particleBatch->init(1000, 0.05f, ResourceManager::GetTexture("images/tank-hero/exp1.png").id,
+		[](Particle2D& particle, float deltaTime) {
+		particle.position += particle.velocity*deltaTime;
+		particle.color.a = static_cast<GLubyte>(particle.life * 255.0f);
+	});
+	m_particleEngine.addParticleBatch(m_particleBatch);
 }
 
 void PlaygroundScreen::Destroy() {
-
+	
 }
 
 void PlaygroundScreen::OnEntry() {
@@ -62,6 +70,10 @@ void PlaygroundScreen::Update() {
 	m_camera.update(gameApp->inputManager.m_mouseCoords);
 	m_camera.setPosition({0,0});
 	checkInput();
+
+	for (auto i = 0; i < 50; i++)
+		m_particleBatch->addParticle({ sin(float(clock() / 300.0f))*10.0f , cos(float(clock() / 300.0f))*10.0f }, glm::rotate(glm::vec2(2.0f, 0.0f), float((rand() % 3600) / 10.0f)), 5.0f, ColorRGBA8{ GLubyte(rand() % 255), GLubyte(rand() % 255),GLubyte(rand() % 255), 255 });
+	m_particleEngine.update(1.0f);
 }
 
 void PlaygroundScreen::Draw() {
@@ -88,6 +100,7 @@ void PlaygroundScreen::Draw() {
 			}
 			glm::vec4 destRect(m_camera.mouseScreenCoords.x, m_camera.mouseScreenCoords.y, 1, 1);
 			m_spriteBatch.pushBatch(destRect, uvRect, textureID, 0.0f, SerraPlo::ColorRGBA8 { 255, 255, 255, 255 });
+			m_particleEngine.draw(m_spriteBatch);
 		m_spriteBatch.end();
 		m_spriteBatch.renderBatches();
 

@@ -5,7 +5,10 @@
 #include <SerraPloEngine/SpriteBatch.h>
 #include <SerraPloEngine/IScreen.h>
 #include <SerraPloEngine/Light2D.h>
+#include <SerraPloEngine/ParticleBatch2D.h>
+#include <SerraPloEngine/ParticleEngine2D.h>
 #pragma comment(lib, "SerraPloEngine.lib")
+using namespace SerraPlo;
 
 #define RENDER_DEBUG_MODE
 
@@ -26,10 +29,12 @@ public:
 private:
 	void checkInput() const;
 
-	SerraPlo::GLSLManager m_textureProgram;
-	SerraPlo::GLSLManager m_lightProgram;
-	SerraPlo::Camera2D m_camera;
-	SerraPlo::SpriteBatch m_spriteBatch;
-	SerraPlo::Light2D* m_mouseLight;
-	SerraPlo::DebugRenderer m_debugRenderer;
+	GLSLManager m_textureProgram;
+	GLSLManager m_lightProgram;
+	Camera2D m_camera;
+	SpriteBatch m_spriteBatch;
+	Light2D *m_mouseLight;
+	ParticleBatch2D *m_particleBatch;
+	ParticleEngine2D m_particleEngine;
+	DebugRenderer m_debugRenderer;
 };
