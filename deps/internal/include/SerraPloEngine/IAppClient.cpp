@@ -3,9 +3,11 @@
 
 namespace SerraPlo {
 	
-	IAppClient::IAppClient(const char* ipport) :
+	IAppClient::IAppClient(int sw, int sh, const char* ipport) :
 		m_screenList(std::make_unique<ScreenList>(this)),
 		m_currentScreen(nullptr),
+		screenWidth(sw),
+		screenHeight(sh),
 		serverAddress(ipport)
 	{}
 
@@ -16,7 +18,14 @@ namespace SerraPlo {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-		window.create("Default", 1600, 900); // Create default window 
+		const SDL_MessageBoxButtonData buttons[] = { { 0, 0, "NO" }, { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "YES" } };
+		const SDL_MessageBoxColorScheme colorScheme = { { { 255,   0,   0 }, { 0, 255,   0 }, { 255, 255,   0 }, { 0,   0, 255 }, { 255,   0, 255 } } };
+		const SDL_MessageBoxData messageboxdata = { SDL_MESSAGEBOX_INFORMATION, nullptr, "Select an option", "Do you want to play on full screen mode?", SDL_arraysize(buttons), buttons, &colorScheme };
+		int buttonid;
+		SDL_ShowMessageBox(&messageboxdata, &buttonid); // Whether to play on fullscreen mode or default normal mode
+
+		if (buttonid == 0) window.create("Default", screenWidth, screenHeight, WindowFlags::RESIZABLE); // Create default window resizable
+		else window.create("Default", screenWidth, screenHeight, WindowFlags::FULLSCREEN); // Create default window fullscreen
 	}
 
 	void IAppClient::Init() {
@@ -39,6 +48,8 @@ namespace SerraPlo {
 		if (m_currentScreen) { // If current screen exists
 			switch (m_currentScreen->currentState) { // Check for the state of the screen
 				case ScreenState::RUNNING:
+					if (inputManager.isKeyDown(SDLK_ESCAPE)) m_currentScreen->currentState = ScreenState::EXIT_APP;
+					inputManager.update();	// Update the input manager instance
 					m_currentScreen->Update(); // Update the current screen if running
 					break;
 				case ScreenState::CHANGE_NEXT:
@@ -56,7 +67,8 @@ namespace SerraPlo {
 	}
 
 	void IAppClient::Draw() const {
-		glViewport(0, 0, window.getScreenWidth(), window.getScreenHeight()); // Set the OpenGL viewport to window dimensions
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color and depth buffer
 		if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
 			m_currentScreen->Draw(); // Then call the draw method of the screen
 		}
@@ -69,14 +81,14 @@ namespace SerraPlo {
 		fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
 		while (m_isRunning) { // While game is running
-			fpsLimiter.begin();				// Init FPS counter
-			inputManager.update();	// Update the input manager instance
-			Update();					// Main update function
-			if (!m_isRunning) break;	// Break main game loop if running attribute set to false
-			Draw();						// Main draw function
-			fps = fpsLimiter.m_fps;	// Get the current fps of the class instance
-			fpsLimiter.end();				// Calculate and restore FPS
-			window.swapBuffer();			// Swap OpenGL buffers if double-buffering is supported
+			fpsLimiter.begin();					// Init FPS counter
+			Update();							// Main update function
+			if (!m_isRunning) break;			// Break main game loop if running attribute set to false
+			Draw();								// Main draw function
+			fps = fpsLimiter.fps;				// Get the current fps of the class instance
+			deltaTime = fpsLimiter.deltaTime;			// Get the current fps of the class instance
+			fpsLimiter.end();					// Calculate and restore FPS
+			window.swapBuffer();				// Swap OpenGL buffers if double-buffering is supported
 		}
 	}
 
@@ -108,6 +120,17 @@ namespace SerraPlo {
 				break;
 			case SDL_MOUSEBUTTONUP:
 				inputManager.releaseKey(evnt.button.button); // Store when mouse button is released
+				break;
+			case SDL_MOUSEWHEEL:
+				inputManager.zoom = evnt.wheel.y;
+				break;
+			case SDL_WINDOWEVENT:
+				switch (evnt.window.event) {
+					case SDL_WINDOWEVENT_RESIZED:
+						glViewport(0, 0, screenWidth, screenHeight); // Set the OpenGL viewport to window dimensions
+						//m_camera.ComputeProjectionMatrix();
+						break;
+				}
 				break;
 		}
 	}

@@ -10,6 +10,7 @@ class InputManager
 	std::unordered_map<unsigned int, bool> m_prevKeyMap;
 public:
 	glm::vec2 m_mouseCoords;
+	int zoom{ 0 };
 
 	explicit InputManager();
 	~InputManager() = default;

@@ -27,12 +27,13 @@ namespace SerraPlo {
 		void Draw() const;
 		
 	public:
+		int screenWidth, screenHeight;
 		UDPStream clientSocket;
 		sockaddr serverAddress;
 		GLWindow window;			// Main instance of the OpenGL window
 		InputManager inputManager;	// Main instance of the input manager class
 
-		explicit IAppClient(const char* ipport);
+		explicit IAppClient(int sw, int sh, const char* ipport);
 		virtual ~IAppClient() = default;
 
 		// Manage main SDL event types

@@ -9,6 +9,7 @@ namespace SerraPlo {
 		for (auto &it : m_keyMap) {
 			m_prevKeyMap[it.first] = it.second;
 		}
+		zoom = 0;
 	}
 
 	void InputManager::pressKey(unsigned keyID) {

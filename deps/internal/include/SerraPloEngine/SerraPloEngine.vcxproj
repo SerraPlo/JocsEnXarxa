@@ -159,9 +159,12 @@
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera2D.h" />
+    <ClInclude Include="Camera3D.h" />
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="ErrorManager.h" />
-    <ClInclude Include="GLSLManager.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="GLTexture.h" />
     <ClInclude Include="IAppClient.h" />
     <ClInclude Include="IAppServer.h" />
@@ -174,6 +177,7 @@
     <ClInclude Include="ParticleBatch2D.h" />
     <ClInclude Include="ParticleEngine2D.h" />
     <ClInclude Include="picoPNG.h" />
+    <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ScreenList.h" />
     <ClInclude Include="SpriteBatch.h" />
@@ -188,14 +192,16 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Camera2D.cpp" />
+    <ClCompile Include="Camera3D.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
-    <ClCompile Include="GLSLManager.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="IAppClient.cpp" />
     <ClCompile Include="IAppServer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ParticleBatch2D.cpp" />
     <ClCompile Include="ParticleEngine2D.cpp" />
     <ClCompile Include="picoPNG.cpp" />
+    <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="ScreenList.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="SpriteFont.cpp" />

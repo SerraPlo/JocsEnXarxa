@@ -1,12 +1,10 @@
 #pragma once
-#include <SerraPloEngine/Camera2D.h>
-#include <SerraPloEngine/GLSLManager.h>
-#include <SerraPloEngine/DebugRenderer.h>
-#include <SerraPloEngine/SpriteBatch.h>
+#include <SerraPloEngine/Renderer3D.h>
 #include <SerraPloEngine/IScreen.h>
-#include <SerraPloEngine/Light2D.h>
-#include <SerraPloEngine/ParticleBatch2D.h>
-#include <SerraPloEngine/ParticleEngine2D.h>
+#include <SerraPloEngine/Camera3D.h>
+#include <SerraPloEngine/ShaderProgram.h>
+#include <SOIL/SOIL.h>
+#pragma comment(lib, "SOIL.lib")
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -27,14 +25,11 @@ public:
 	virtual int GetNextScreenIndex() const override;
 	virtual int GetPrevScreenIndex() const override;
 private:
-	void checkInput() const;
+	void checkInput();
 
-	GLSLManager m_textureProgram;
-	GLSLManager m_lightProgram;
-	Camera2D m_camera;
-	SpriteBatch m_spriteBatch;
-	Light2D *m_mouseLight;
-	ParticleBatch2D *m_particleBatch;
-	ParticleEngine2D m_particleEngine;
-	DebugRenderer m_debugRenderer;
+	ShaderProgram m_textureProgram;
+	Renderer3D m_renderer;
+	Camera3D m_camera;
+
+	GLuint texture1;
 };

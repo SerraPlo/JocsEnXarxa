@@ -14,7 +14,8 @@ namespace SerraPlo {
 		// Main update function of the game
 		virtual void Update() = 0;
 	public:
-		float fps{ 0 };						// How many frames per second the game is running to
+		float fps{ 0 };			// How many frames per second the game is running to
+		float deltaTime{ 0 };	// Difference between last frame and new frame
 
 		explicit IApp() = default;
 		virtual ~IApp() = default;

@@ -12,7 +12,7 @@ namespace SerraPlo {
 	public:
 		GLuint texture;
 		float depth;
-		Vertex topLeft, bottomLeft, topRight, bottomRight;
+		Vertex2D topLeft, bottomLeft, topRight, bottomRight;
 
 		explicit Glyph() = default;
 		explicit Glyph(GLuint texture_, float depth_, const glm::vec4 & destRect, const glm::vec4 & uvRect, const ColorRGBA8 &color);
@@ -28,8 +28,7 @@ namespace SerraPlo {
 			texture(texture_) {};
 	};
 
-	class SpriteBatch
-	{
+	class SpriteBatch {
 		GLuint m_vbo;
 		GLuint m_vao;
 		GlyphSortType m_sortType;

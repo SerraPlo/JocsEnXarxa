@@ -123,7 +123,7 @@ namespace SerraPlo {
 	void SpriteBatch::createRenderBatches() {
 		if (m_glyphPointers.empty()) return;
 
-		std::vector<Vertex> vertices;
+		std::vector<Vertex2D> vertices;
 		vertices.resize(m_glyphPointers.size() * 6); //6 vertices for each glyph
 
 		auto offset = 0; //current offset
@@ -153,9 +153,9 @@ namespace SerraPlo {
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		//orphan the buffer
-		glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(Vertex2D), nullptr, GL_DYNAMIC_DRAW);
 		//upload the data
-		glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size()*sizeof(Vertex), vertices.data());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size()*sizeof(Vertex2D), vertices.data());
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -176,11 +176,11 @@ namespace SerraPlo {
 		glEnableVertexAttribArray(2);
 
 		//position attribute pointer
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), reinterpret_cast<void*>(offsetof(Vertex2D, position)));
 		//color attribute pointer
-		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, color)));
+		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex2D), reinterpret_cast<void*>(offsetof(Vertex2D, color)));
 		//uv attribute pointer
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, uv)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), reinterpret_cast<void*>(offsetof(Vertex2D, uv)));
 
 		glBindVertexArray(0);
 	}

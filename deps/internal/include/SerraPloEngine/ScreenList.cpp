@@ -38,8 +38,8 @@ namespace SerraPlo {
 	void ScreenList::AddScreen(IScreen* newScreen) {
 		newScreen->screenIndex = m_screens.size(); // Assign the size of the list as the index of the new screen
 		m_screens.push_back(newScreen); // Add the new screen into the list
-		newScreen->Build(); // Initialize the new screen
 		newScreen->gameApp = m_gameApp; // Set the game app reference parent of the new screen
+		newScreen->Build(); // Initialize the new screen
 	}
 
 	IScreen* ScreenList::GetCurScreen() const {

@@ -158,6 +158,10 @@
     <ClInclude Include="AppClient.h" />
     <ClInclude Include="PlaygroundScreen.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\assets\shaders\textureShading.frag" />
+    <None Include="..\..\assets\shaders\textureShading.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

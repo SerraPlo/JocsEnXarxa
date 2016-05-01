@@ -23,7 +23,8 @@ namespace SerraPlo {
 		while (m_isRunning) { // While game is running
 			fpsLimiter.begin();			// Init FPS counter
 			Update();					// Main update function
-			fps = fpsLimiter.m_fps;		// Get the current fps of the class instance
+			fps = fpsLimiter.fps;		// Get the current fps of the class instance
+			deltaTime = fpsLimiter.deltaTime;
 			fpsLimiter.end();			// Calculate and restore FPS
 		}
 	}

@@ -10,7 +10,8 @@ namespace SerraPlo {
 
 		void calculateFPS();
 	public:
-		float m_fps;
+		float fps;
+		float deltaTime;
 
 		explicit FPSLimiter();
 		explicit FPSLimiter(float targetFPS);

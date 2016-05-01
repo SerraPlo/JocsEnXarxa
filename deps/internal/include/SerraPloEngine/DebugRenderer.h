@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "GLSLManager.h"
+#include "ShaderProgram.h"
 #include "Vertex.h"
 #include <vector>
 
@@ -23,7 +23,7 @@ namespace SerraPlo {
 			ColorRGBA8 color;
 		};
 	private:
-		GLSLManager m_program;
+		ShaderProgram m_program;
 		std::vector<DebugVertex> m_vertices;
 		std::vector<GLuint> m_indices;
 		GLuint m_vbo = 0, m_vao = 0, m_ibo = 0;

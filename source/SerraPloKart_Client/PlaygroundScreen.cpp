@@ -1,124 +1,118 @@
 #include "PlaygroundScreen.h"
 #include <SerraPloEngine/IAppCLient.h>
 #include <SerraPloEngine/ResourceManager.h>
-#include <ctime>
 #include <iostream>
-#define GLM_FORCE_RADIANS
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-void PlaygroundScreen::checkInput() const {
-	SDL_Event evnt;
-	while (SDL_PollEvent(&evnt)) gameApp->OnSDLEvent(evnt);
-}
+PlaygroundScreen::PlaygroundScreen() {}
 
-PlaygroundScreen::PlaygroundScreen() : m_mouseLight(nullptr), m_particleBatch(nullptr) {}
-
-PlaygroundScreen::~PlaygroundScreen() {
-	delete m_mouseLight;
-	//delete m_particleBatch;
-}
+PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
-	m_particleBatch = new ParticleBatch2D;
-	m_particleBatch->init(1000, 0.05f, ResourceManager::GetTexture("images/tank-hero/exp1.png").id,
-		[](Particle2D& particle, float deltaTime) {
-		particle.position += particle.velocity*deltaTime;
-		particle.color.a = static_cast<GLubyte>(particle.life * 255.0f);
-	});
-	m_particleEngine.addParticleBatch(m_particleBatch);
+	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight);
 }
 
 void PlaygroundScreen::Destroy() {
-	
+	m_textureProgram.dispose();
 }
 
 void PlaygroundScreen::OnEntry() {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	m_spriteBatch.init(); //Initialize spritebatch
-	m_debugRenderer.init();
-
 	//Initialize texture shaders
-	m_textureProgram.compileShaders(SerraPlo::ResourceManager::LoadAsset("shaders/textureShading.vert"), SerraPlo::ResourceManager::LoadAsset("shaders/textureShading.frag"));
-	m_textureProgram.addAttribute("vertexPosition");
-	m_textureProgram.addAttribute("vertexColor");
-	m_textureProgram.addAttribute("vertexUV");
+	m_textureProgram.compileShaders(ResourceManager::LoadAsset("shaders/textureShading.vert"), ResourceManager::LoadAsset("shaders/textureShading.frag"));
 	m_textureProgram.linkShaders();
-	//Initialize light shaders
-	m_lightProgram.compileShaders(SerraPlo::ResourceManager::LoadAsset("shaders/lightShading.vert"), SerraPlo::ResourceManager::LoadAsset("shaders/lightShading.frag"));
-	m_lightProgram.addAttribute("vertexPosition");
-	m_lightProgram.addAttribute("vertexColor");
-	m_lightProgram.addAttribute("vertexUV");
-	m_lightProgram.linkShaders();
 
-	SDL_ShowCursor(0);
-	m_camera.init(gameApp->window.getScreenWidth(), gameApp->window.getScreenHeight());
-	m_camera.setScale(32.0f);
+	//SDL_ShowCursor(0);
+	m_camera.position = { 0,0,3 };
 
-	//Render light
-	m_mouseLight = new SerraPlo::Light2D();
-	m_mouseLight->color = SerraPlo::ColorRGBA8{50, 50, 255, 150};
-	m_mouseLight->position = &m_camera.mouseScreenCoords;
-	m_mouseLight->size = 50.0f;
+	m_renderer.Init();
+
+	// Load and create a texture 
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+											// Set our texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load, create texture and generate mipmaps
+	int width, height;
+	unsigned char* image = SOIL_load_image(ResourceManager::LoadAsset("images/container.jpg").c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SOIL_free_image_data(image);
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.*/
 }
 
 void PlaygroundScreen::OnExit() {
-	m_debugRenderer.dispose();
+	
 }
 
 void PlaygroundScreen::Update() {
-	m_camera.update(gameApp->inputManager.m_mouseCoords);
-	m_camera.setPosition({0,0});
 	checkInput();
-
-	for (auto i = 0; i < 50; i++)
-		m_particleBatch->addParticle({ sin(float(clock() / 300.0f))*10.0f , cos(float(clock() / 300.0f))*10.0f }, glm::rotate(glm::vec2(2.0f, 0.0f), float((rand() % 3600) / 10.0f)), 5.0f, ColorRGBA8{ GLubyte(rand() % 255), GLubyte(rand() % 255),GLubyte(rand() % 255), 255 });
-	m_particleEngine.update(1.0f);
 }
 
+void PlaygroundScreen::checkInput() {
+	SDL_Event evnt;
+	while (SDL_PollEvent(&evnt)) gameApp->OnSDLEvent(evnt);
+
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) m_camera.ProcessKeyboard(FORWARD, gameApp->deltaTime);
+	if (gameApp->inputManager.isKeyDown(SDLK_a)) m_camera.ProcessKeyboard(LEFT, gameApp->deltaTime);
+	if (gameApp->inputManager.isKeyDown(SDLK_s)) m_camera.ProcessKeyboard(BACKWARD, gameApp->deltaTime);
+	if (gameApp->inputManager.isKeyDown(SDLK_d)) m_camera.ProcessKeyboard(RIGHT, gameApp->deltaTime);
+
+	static GLfloat lastX = gameApp->inputManager.m_mouseCoords.x;
+	static GLfloat lastY = gameApp->inputManager.m_mouseCoords.y;
+	GLfloat xoffset = gameApp->inputManager.m_mouseCoords.x - lastX;
+	GLfloat yoffset = lastY - gameApp->inputManager.m_mouseCoords.y;
+	m_camera.ProcessMouseMovement(xoffset, yoffset);
+	lastX = gameApp->inputManager.m_mouseCoords.x;
+	lastY = gameApp->inputManager.m_mouseCoords.y;
+
+	m_camera.ProcessMouseScroll(gameApp->inputManager.zoom*0.1f);
+}
+
+// World space positions of our cubes
+static glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 void PlaygroundScreen::Draw() {
-	glClearDepth(1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Bind Textures using texture units
 	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glUniform1i(m_textureProgram.getUniformLocation("texture_diffuse"), 0);
 
 	m_textureProgram.bind();
 
-		auto textureUniform = m_textureProgram.getUniformLocation("mySampler");
-		glUniform1i(textureUniform, 0);
+	glm::mat4 cameraMatrix = m_camera.GetMatrix();	
+	GLint cameraUniform = m_textureProgram.getUniformLocation("camera");
+	glUniformMatrix4fv(cameraUniform, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 
-		auto projectionMatrix = m_camera.getCameraMatrix();
-		auto projectionUniform = m_textureProgram.getUniformLocation("P");
-		glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
-
-		//push batches to draw
-		m_spriteBatch.begin();
-			const glm::vec4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
-			static int textureID = SerraPlo::ResourceManager::GetTexture("images/interface/marijuana.png").id;
-			for (int i = 0; i < 500; ++i) {
-				glm::vec4 destRect((i%20) - 10 + sin(float(clock()/500.0f))*5.0f, ((i/20) - 10 + cos(float(clock()/500.0f))*5.0f), 1, 1);
-				m_spriteBatch.pushBatch(destRect, uvRect, textureID, 0.0f, SerraPlo::ColorRGBA8 { 255, 255, 255, 255 });
-			}
-			glm::vec4 destRect(m_camera.mouseScreenCoords.x, m_camera.mouseScreenCoords.y, 1, 1);
-			m_spriteBatch.pushBatch(destRect, uvRect, textureID, 0.0f, SerraPlo::ColorRGBA8 { 255, 255, 255, 255 });
-			m_particleEngine.draw(m_spriteBatch);
-		m_spriteBatch.end();
-		m_spriteBatch.renderBatches();
+	GLint modelLoc = m_textureProgram.getUniformLocation("model");
+	m_renderer.Begin();
+	for (GLuint i = 0; i < 10; i++) {
+		// Calculate the model matrix for each object and pass it to shader before drawing
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions[i]);
+		GLfloat angle = 20.0f * i;
+		model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		m_renderer.Render();
+	}
+	m_renderer.End();
 
 	m_textureProgram.unbind();
-
-	m_lightProgram.bind();
-
-		projectionUniform = m_lightProgram.getUniformLocation("P");
-		glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE); //Additive blending
-
-		m_spriteBatch.begin();
-			m_mouseLight->draw(m_spriteBatch);
-		m_spriteBatch.end();
-		m_spriteBatch.renderBatches();
-
-	m_lightProgram.unbind();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
 }
