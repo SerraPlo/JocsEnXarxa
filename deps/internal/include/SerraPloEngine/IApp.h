@@ -1,45 +1,28 @@
 #pragma once
-#include "Window.h"
-#include "InputManager.h"
-#include <memory>
 
 namespace SerraPlo {
 
-	class ScreenList;	// Forward declaration of the list of screens
-	class IScreen;		// Forward declaration of the game screen interface
+#define TARGET_FPS 120.0f
 
 	// Game app interface to the store the main runing game engine as a template
 	class IApp {
 	protected:
-		std::unique_ptr<ScreenList> m_screenList;	// Unique pointer instance to the list of screens of the game
-		IScreen *m_currentScreen;					// Reference pointer to the screen running at the moment
-		bool m_isRunning;							// Whether game is running or not
+		bool m_isRunning {true};			// Whether game is running or not
 
 		// Initialize everything related to game internals
-		void Init();
-		// Initialize SDKs, window, audio, events...
-		void InitSystems();
-
+		virtual void Init() = 0;
 		// Main update function of the game
-		virtual void Update();
-		// Main draw function of the game
-		virtual void Draw();
+		virtual void Update() = 0;
 	public:
-		float const targetFPS;		// How many fps do we wish to have
-		float fps;					// How many frames per second the game is running to
-		GLWindow window;				// Main instance of the OpenGL window
-		InputManager inputManager;	// Main instance of the input manager class
+		float fps{ 0 };						// How many frames per second the game is running to
 
-		explicit IApp(float tfps);
+		explicit IApp() = default;
 		virtual ~IApp() = default;
 
-		// Manage main SDL event types
-		void OnSDLEvent(SDL_Event &evnt);
-
 		// Where magic occurs, to be used to play the whole game
-		void Run();
+		virtual void Run() = 0;
 		// Destroy screen list and set game running to false
-		void ExitGame();
+		virtual void ExitGame() = 0;
 
 		// Initialize specific game attributes in derived app class
 		virtual void OnInit() = 0;

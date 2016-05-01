@@ -163,6 +163,9 @@
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GLSLManager.h" />
     <ClInclude Include="GLTexture.h" />
+    <ClInclude Include="IAppClient.h" />
+    <ClInclude Include="IAppServer.h" />
+    <ClInclude Include="IClientProxy.h" />
     <ClInclude Include="IScreen.h" />
     <ClInclude Include="IApp.h" />
     <ClInclude Include="InputManager.h" />
@@ -187,7 +190,8 @@
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="GLSLManager.cpp" />
-    <ClCompile Include="IApp.cpp" />
+    <ClCompile Include="IAppClient.cpp" />
+    <ClCompile Include="IAppServer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ParticleBatch2D.cpp" />
     <ClCompile Include="ParticleEngine2D.cpp" />

@@ -90,6 +90,15 @@
     <ClInclude Include="IApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IAppServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IAppClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IClientProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="picoPNG.cpp">
@@ -131,7 +140,10 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IApp.cpp">
+    <ClCompile Include="IAppServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IAppClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

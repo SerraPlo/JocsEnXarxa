@@ -60,7 +60,7 @@ void server_thread(int port) {
 			for (auto variable : listaClientes) { //para cada cliente
 				server << UDPStream::packet << variable.second.nick << std::vector<int>({0,1,2,3}) << variable.second.pos; //creamos un paquete con el nick, un vector (std::vector) y la posición del jugador (struct -pod)
 				for(auto eachPlayer : listaClientes) //con el paquete ya creado, enviamos el paquete a todos los clientes
-					server << eachPlayer.second.player;
+					server << eachPlayer.second.player ;
 			}
 		} catch (UDPStream::wrong) { //si la cantidad de datos del paquete no se corresponde a la cantidad de datos que estamos intentando leer
 			std::cout << "Client Received wrongly serialized data" << std::endl;
@@ -71,7 +71,7 @@ void server_thread(int port) {
 void client_thread(const char* ipport, const char* nick) {
 	UDPStream client;
 	sockaddr server_address(ipport);
-	client << UDPStream::packet << LOGIN << nick << sockaddr(ipport); //mandamos un int y un char* a la ip/puerto en cuestión
+	client << UDPStream::packet << LOGIN << nick << server_address; //mandamos un int y un char* a la ip/puerto en cuestión
 	while (true) {
 		if (_kbhit())
 			client << UDPStream::packet << MOVE << _getch() << server_address; //podemos enviar a una adress ya guardada
