@@ -3,8 +3,16 @@
 
 namespace SerraPlo {
 
+	IAppServer::IAppServer(int port) : serverSocket(port) {};
+	
 	IAppServer::~IAppServer() {
 		for (auto client : clientList) if (client.second) delete client.second, client.second = nullptr;
+	}
+
+	void IAppServer::Init() {
+	}
+
+	void IAppServer::Update() {
 	}
 
 	void IAppServer::Run() {
@@ -15,12 +23,13 @@ namespace SerraPlo {
 		while (m_isRunning) { // While game is running
 			fpsLimiter.begin();			// Init FPS counter
 			Update();					// Main update function
-			if (!m_isRunning) break;	// Break main game loop if running attribute set to false
 			fps = fpsLimiter.m_fps;		// Get the current fps of the class instance
 			fpsLimiter.end();			// Calculate and restore FPS
 		}
 	}
 
-	void IAppServer::ExitGame() {}
+	void IAppServer::ExitGame() {
+		m_isRunning = false; // Execution ends
+	}
 
 }

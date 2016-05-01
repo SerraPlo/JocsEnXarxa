@@ -1,6 +1,4 @@
 #include "IAppClient.h"
-#include "ScreenList.h"
-#include "IScreen.h"
 #include "Timing.h"
 
 namespace SerraPlo {
@@ -9,9 +7,6 @@ namespace SerraPlo {
 		m_screenList(std::make_unique<ScreenList>(this)),
 		m_currentScreen(nullptr),
 		serverAddress(ipport)
-	{}
-
-	IAppClient::~IAppClient()
 	{}
 
 	void IAppClient::InitSystems() {
@@ -60,7 +55,7 @@ namespace SerraPlo {
 		} else ExitGame(); // Call exit function if screen doesn't exist
 	}
 
-	void IAppClient::Draw() {
+	void IAppClient::Draw() const {
 		glViewport(0, 0, window.getScreenWidth(), window.getScreenHeight()); // Set the OpenGL viewport to window dimensions
 		if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
 			m_currentScreen->Draw(); // Then call the draw method of the screen

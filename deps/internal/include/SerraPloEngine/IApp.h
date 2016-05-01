@@ -23,13 +23,6 @@ namespace SerraPlo {
 		virtual void Run() = 0;
 		// Destroy screen list and set game running to false
 		virtual void ExitGame() = 0;
-
-		// Initialize specific game attributes in derived app class
-		virtual void OnInit() = 0;
-		// Push and store the app screens
-		virtual void AddScreens() = 0;
-		// Destroy specific game attributes in derived app class
-		virtual void OnExit() = 0;
 	};
 
 }

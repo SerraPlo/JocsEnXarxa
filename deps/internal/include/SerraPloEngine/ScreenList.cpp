@@ -3,7 +3,7 @@
 
 namespace SerraPlo {
 
-	ScreenList::ScreenList(IApp* game) :
+	ScreenList::ScreenList(IAppClient* game) :
 		m_gameApp(game),
 		m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
 

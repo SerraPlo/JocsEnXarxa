@@ -4,12 +4,12 @@
 
 #define TARGET_FPS 120.0f
 
-class App : public SerraPlo::IApp
+class AppClient : public SerraPlo::IApp
 {
 	std::unique_ptr<PlaygroundScreen> m_testScreen = nullptr;
 public:
-	App();
-	~App();
+	AppClient();
+	~AppClient();
 
 	virtual void OnInit() override;
 	virtual void AddScreens() override;

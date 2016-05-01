@@ -8,15 +8,15 @@ namespace SerraPlo {
 	class IAppServer : public IApp {
 	protected:
 		// Initialize everything related to game internals
-		//virtual void Init() override;
+		virtual void Init() override;
 		// Main update function of the game
-		//virtual void Update() override;
+		virtual void Update() override;
 	public:
+		UDPStream serverSocket;
 		std::map<uint64_t, IClientProxy*> clientList;
-		UDPStream server;
 
-		explicit IAppServer(int port) : server(port) {};
-		~IAppServer();
+		explicit IAppServer(int port);
+		virtual ~IAppServer();
 
 		// Where magic occurs, to be used to play the whole game
 		virtual void Run() override;

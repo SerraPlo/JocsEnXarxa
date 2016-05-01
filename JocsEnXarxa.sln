@@ -40,6 +40,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloTest", "source\Serr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloEngine", "deps\internal\include\SerraPloEngine\SerraPloEngine.vcxproj", "{704970AF-EFF9-46F3-8490-90F0E40C2A14}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloKart_Client", "source\SerraPloKart_Client\SerraPloKart_Client.vcxproj", "{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14} = {704970AF-EFF9-46F3-8490-90F0E40C2A14}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -120,6 +125,14 @@ Global
 		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x64.Build.0 = Release|x64
 		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x86.ActiveCfg = Release|Win32
 		{704970AF-EFF9-46F3-8490-90F0E40C2A14}.Release|x86.Build.0 = Release|Win32
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Debug|x64.ActiveCfg = Debug|x64
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Debug|x64.Build.0 = Debug|x64
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Debug|x86.ActiveCfg = Debug|Win32
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Debug|x86.Build.0 = Debug|Win32
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x64.ActiveCfg = Release|x64
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x64.Build.0 = Release|x64
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x86.ActiveCfg = Release|Win32
+		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

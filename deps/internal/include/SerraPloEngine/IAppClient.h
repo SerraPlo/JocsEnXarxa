@@ -1,14 +1,16 @@
 #pragma once
+#include "IApp.h"
 #include "Window.h"
 #include "InputManager.h"
+#include "ScreenList.h"
+#include "IScreen.h"
 #include <memory>
-#include "IApp.h"
 #include <UDPStream/UDPStream.hh>
 
 namespace SerraPlo {
 
-	class ScreenList;	// Forward declaration of the list of screens
-	class IScreen;		// Forward declaration of the game screen interface
+	//class ScreenList;	// Forward declaration of the list of screens
+	//class IScreen;		// Forward declaration of the game screen interface
 
 	class IAppClient : public IApp {
 	protected:
@@ -22,16 +24,16 @@ namespace SerraPlo {
 		// Main update function of the game
 		virtual void Update() override;
 		// Main draw function of the game
-		virtual void Draw();
+		void Draw() const;
 		
 	public:
-		UDPStream client;
+		UDPStream clientSocket;
 		sockaddr serverAddress;
 		GLWindow window;			// Main instance of the OpenGL window
 		InputManager inputManager;	// Main instance of the input manager class
 
 		explicit IAppClient(const char* ipport);
-		~IAppClient();
+		virtual ~IAppClient() = default;
 
 		// Manage main SDL event types
 		void OnSDLEvent(SDL_Event &evnt);
@@ -40,6 +42,13 @@ namespace SerraPlo {
 		virtual void Run() override;
 		// Destroy screen list and set game running to false
 		virtual void ExitGame() override;
+
+		// Initialize specific game attributes in derived app class
+		virtual void OnInit() = 0;
+		// Push and store the app screens
+		virtual void AddScreens() = 0;
+		// Destroy specific game attributes in derived app class
+		virtual void OnExit() = 0;
 	};
 
 }

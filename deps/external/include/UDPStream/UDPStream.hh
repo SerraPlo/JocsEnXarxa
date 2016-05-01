@@ -6,7 +6,7 @@
 
 #pragma once
 #include <cstdint>
-uint64_t inet_addr(const char* host, uint16_t family = 2, const uint64_t buffer = 0, const uint64_t retval = 0) {
+static uint64_t inet_addr(const char* host, uint16_t family = 2, const uint64_t buffer = 0, const uint64_t retval = 0) {
 	switch (*host) {
 		case '.':case ':':	return inet_addr(host + 1, family, 0, (retval >> 8) | (buffer << (64 - 8)));
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': return inet_addr(host + 1, family, buffer * 10 + (host[0] - '0'), retval);
@@ -20,7 +20,7 @@ union sockaddr {
 		uint32_t address;
 	} data;
 	uint64_t hash;
-	sockaddr(uint16_t port = 0, uint32_t ip = 0, uint16_t family = 2):data({ family,uint16_t(port << 8 | port >> 8),ip }) {}
+	sockaddr(uint16_t port = 0, uint32_t ip = 0, uint16_t family = 2):data({ family,uint16_t(port << 8 | port >> 8),ip }), hash(0) {}
 	sockaddr(const char* host, uint16_t family = 2):hash(inet_addr(host,family)) {}
 };
 extern "C" {
@@ -40,7 +40,7 @@ extern "C" {
 }
 struct UDP {
 	int sd;
-	UDP(const unsigned short port = 0){
+	explicit UDP(const unsigned short port = 0){
 		IF_WIN({char info[1024];WSAStartup(514, &info);},);
 		long unsigned opt = 1;
 		IF_WIN(ioctlsocket,ioctl)(sd = socket(2,2,0), 0x8004667E, &opt); //TODO:Check why old FIONBIO was === 0x5421
@@ -66,8 +66,8 @@ template<class T> UDPStream &operator>>(type_macro<T>& output){\
 	index += sz*sizeof(T);\
 	return *this;\
 }
-std::ostream dummy(0);
-size_t charplen(const char* str, size_t s = 0){ return (str[s])?charplen(str,s+1):s; }
+static std::ostream dummy(nullptr);
+static size_t charplen(const char* str, size_t s = 0){ return (str[s])?charplen(str,s+1):s; }
 struct UDPStream : public UDP {
 	enum controller { packet, answer };
 	struct empty : public std::exception {};
