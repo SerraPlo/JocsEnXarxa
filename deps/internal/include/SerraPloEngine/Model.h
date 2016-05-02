@@ -21,28 +21,9 @@ namespace SerraPlo
 	public:
 		/*  Functions   */
 		// Constructor, expects a filepath to a 3D model.
-		Model(GLchar* path)
-		{
-			this->loadModel(path);
-		}
+		Model() = default;
 
-		// Draws the model, and thus all its meshes
-		void Draw(ShaderProgram shader)
-		{
-			for (GLuint i = 0; i < this->meshes.size(); i++)
-				this->meshes[i].Draw(shader);
-		}
-
-	private:
-		/*  Model Data  */
-		vector<Mesh> meshes;
-		string directory;
-		vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-
-											/*  Functions   */
-											// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-		void loadModel(string path)
-		{
+		void Load(const string &path) {
 			// Read file via ASSIMP
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -58,6 +39,21 @@ namespace SerraPlo
 			// Process ASSIMP's root node recursively
 			this->processNode(scene->mRootNode, scene);
 		}
+
+		// Draws the model, and thus all its meshes
+		void Draw(ShaderProgram &shader) {
+			for (GLuint i = 0; i < this->meshes.size(); i++)
+				this->meshes[i].Draw(shader);
+		}
+
+	private:
+		/*  Model Data  */
+		vector<Mesh> meshes;
+		string directory;
+		vector<Texture> textures_loaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+
+											/*  Functions   */
+											// Loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 
 		// Processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 		void processNode(aiNode* node, const aiScene* scene)
@@ -178,8 +174,7 @@ namespace SerraPlo
 		}
 	};
 
-	inline GLint TextureFromFile(const char* path, string directory)
-	{
+	inline GLint TextureFromFile(const char* path, string directory) {
 		//Generate texture ID and load texture data 
 		string filename = string(path);
 		filename = directory + '/' + filename;

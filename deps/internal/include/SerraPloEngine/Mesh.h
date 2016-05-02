@@ -35,7 +35,7 @@ namespace SerraPlo
 		}
 
 		// Render the mesh
-		void Draw(ShaderProgram shader)
+		void Draw(ShaderProgram &shader)
 		{
 			// Bind appropriate textures
 			GLuint diffuseNr = 1;
@@ -52,15 +52,15 @@ namespace SerraPlo
 				else if (name == "texture_specular")
 					ss << specularNr++; // Transfer GLuint to stream
 				number = ss.str();
-				std::cout << (name + number).c_str() << std::endl;
+				//std::cout << (name + number).c_str() << std::endl;
 				// Now set the sampler to the correct texture unit
-				glUniform1i(glGetUniformLocation(shader.programID, (name + number).c_str()), i);
+				glUniform1i(shader.getUniformLocation((name + number).c_str()), i);
 				// And finally bind the texture
 				glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 			}
 
 			// Also set each mesh's shininess property to a default value (if you want you could extend this to another mesh property and possibly change this value)
-			glUniform1f(glGetUniformLocation(shader.programID, "material.shininess"), 16.0f);
+			glUniform1f(shader.getUniformLocation("material.shininess"), 16.0f);
 
 			// Draw mesh
 			glBindVertexArray(this->VAO);
@@ -68,8 +68,7 @@ namespace SerraPlo
 			glBindVertexArray(0);
 
 			// Always good practice to set everything back to defaults once configured.
-			for (GLuint i = 0; i < this->textures.size(); i++)
-			{
+			for (GLuint i = 0; i < this->textures.size(); i++) {
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}

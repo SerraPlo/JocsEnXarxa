@@ -5,30 +5,33 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-PlaygroundScreen::PlaygroundScreen() {}
+PlaygroundScreen::PlaygroundScreen() {
+	
+}
 
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
 	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight);
+	testMesh.Load(ResourceManager::LoadAsset("models/seahorse/seahorse.obj").c_str());
 }
 
 void PlaygroundScreen::Destroy() {
-	m_textureProgram.dispose();
+
 }
 
 void PlaygroundScreen::OnEntry() {
 	//Initialize texture shaders
-	m_textureProgram.compileShaders(ResourceManager::LoadAsset("shaders/textureShading.vert"), ResourceManager::LoadAsset("shaders/textureShading.frag"));
-	m_textureProgram.linkShaders();
+	m_mainProgram.compileShaders(ResourceManager::LoadAsset("shaders/textureShading.vert"), ResourceManager::LoadAsset("shaders/textureShading.frag"));
+	m_mainProgram.linkShaders();
 
 	//SDL_ShowCursor(0);
-	m_camera.position = { 0,0,3 };
+	m_camera.SetPosition({ 0,0,3 });
 
-	m_renderer.Init();
+	//m_renderer.Init();
 
 	// Load and create a texture 
-	glGenTextures(1, &texture1);
+	/*glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
 											// Set our texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
@@ -55,7 +58,17 @@ void PlaygroundScreen::Update() {
 
 void PlaygroundScreen::checkInput() {
 	SDL_Event evnt;
-	while (SDL_PollEvent(&evnt)) gameApp->OnSDLEvent(evnt);
+	while (SDL_PollEvent(&evnt)) {
+		gameApp->OnSDLEvent(evnt);
+		if (evnt.type == SDL_WINDOWEVENT) {
+			switch (evnt.window.event) {
+				case SDL_WINDOWEVENT_RESIZED:
+				glViewport(0, 0, gameApp->screenWidth, gameApp->screenHeight); // Set the OpenGL viewport to window dimensions
+				m_camera.Update();
+				break;
+			}
+		}
+	}
 
 	if (gameApp->inputManager.isKeyDown(SDLK_w)) m_camera.ProcessKeyboard(FORWARD, gameApp->deltaTime);
 	if (gameApp->inputManager.isKeyDown(SDLK_a)) m_camera.ProcessKeyboard(LEFT, gameApp->deltaTime);
@@ -73,48 +86,25 @@ void PlaygroundScreen::checkInput() {
 	m_camera.ProcessMouseScroll(gameApp->inputManager.zoom*0.1f);
 }
 
-// World space positions of our cubes
-static glm::vec3 cubePositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
 void PlaygroundScreen::Draw() {
-	// Bind Textures using texture units
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glUniform1i(m_textureProgram.getUniformLocation("texture_diffuse"), 0);
+	m_mainProgram.bind();
 
-	m_textureProgram.bind();
+	GLint cameraUniform = m_mainProgram.getUniformLocation("camera");
+	glUniformMatrix4fv(cameraUniform, 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix));
 
-	glm::mat4 cameraMatrix = m_camera.GetMatrix();	
-	GLint cameraUniform = m_textureProgram.getUniformLocation("camera");
-	glUniformMatrix4fv(cameraUniform, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+	GLint modelLoc = m_mainProgram.getUniformLocation("model");
+	glm::mat4 model;
+	model = glm::scale(model, { 0.05,0.05,0.05 });
+	model = glm::translate(model, { 0,0,0 });
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-	GLint modelLoc = m_textureProgram.getUniformLocation("model");
-	m_renderer.Begin();
-	for (GLuint i = 0; i < 10; i++) {
-		// Calculate the model matrix for each object and pass it to shader before drawing
-		glm::mat4 model;
-		model = glm::translate(model, cubePositions[i]);
-		GLfloat angle = 20.0f * i;
-		model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		m_renderer.Render();
-	}
-	m_renderer.End();
+	glBindVertexArray(testMesh.vao);
+	glDrawElements(GL_TRIANGLES, testMesh.elements, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 
-	m_textureProgram.unbind();
+	m_mainProgram.unbind();
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
 }
 
 int PlaygroundScreen::GetNextScreenIndex() const {

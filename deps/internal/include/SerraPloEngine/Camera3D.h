@@ -22,7 +22,6 @@ enum Camera_Movement {
 #define FAR 1000.0f
 
 class Camera3D {
-public:
 	glm::vec3 position{ 0,0,0 };
 	glm::vec3 front{ 0.0f, 0.0f, -1.0f };
 	glm::vec3 up{ 0,0,0 };
@@ -37,15 +36,15 @@ public:
 	GLfloat viewportAspectRatio{ 1.0f };
 	GLfloat far{ FAR };
 	GLfloat near{ NEAR };
+public:
+	glm::mat4 PVMatrix;
 
 	Camera3D() = default;
 
 	void Init(int screenWidth, int screenHeight, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH);
 
-	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-	glm::mat4 ComputeViewMatrix() const;
-	glm::mat4 ComputeProjectionMatrix() const;
-	glm::mat4 GetMatrix() const;
+	void Update() { PVMatrix = ComputeProjectionMatrix() * ComputeViewMatrix(); };
+	void SetPosition(const glm::vec3 &pos) { position = pos; Update(); };
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
@@ -57,7 +56,9 @@ public:
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors();
-	
+	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
+	glm::mat4 ComputeViewMatrix() const;
+	glm::mat4 ComputeProjectionMatrix() const;
 };
 
 #undef YAW

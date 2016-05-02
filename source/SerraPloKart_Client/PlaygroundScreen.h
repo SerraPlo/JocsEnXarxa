@@ -3,12 +3,13 @@
 #include <SerraPloEngine/IScreen.h>
 #include <SerraPloEngine/Camera3D.h>
 #include <SerraPloEngine/ShaderProgram.h>
+#include <SerraPloEngine/GLMesh.h>
 #include <SOIL/SOIL.h>
+
 #pragma comment(lib, "SOIL.lib")
 #pragma comment(lib, "SerraPloEngine.lib")
-using namespace SerraPlo;
 
-#define RENDER_DEBUG_MODE
+using namespace SerraPlo;
 
 class PlaygroundScreen : public IScreen
 {
@@ -27,9 +28,9 @@ public:
 private:
 	void checkInput();
 
-	ShaderProgram m_textureProgram;
-	Renderer3D m_renderer;
+	ShaderProgram m_mainProgram;
 	Camera3D m_camera;
+	GLMesh testMesh;
 
 	GLuint texture1;
 };

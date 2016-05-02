@@ -8,8 +8,7 @@ out vec4 color;
 // Texture samplers
 uniform sampler2D texture_diffuse;
 
-void main()
-{
+void main() {
 	// Linearly interpolate between both textures (second texture is only slightly combined)
-	color = vec4(texture(texture_diffuse, texCoords));
+	color = texture(texture_diffuse, texCoords);
 }

@@ -10,24 +10,13 @@ void Camera3D::Init(int screenWidth, int screenHeight, glm::vec3 position, glm::
 	this->updateCameraVectors();
 }
 
-glm::mat4 Camera3D::GetMatrix() const {
-	return ComputeProjectionMatrix() * ComputeViewMatrix();
-}
-
-glm::mat4 Camera3D::ComputeViewMatrix() const {
-	return glm::lookAt(this->position, this->position + this->front, this->up);
-}
-
-glm::mat4 Camera3D::ComputeProjectionMatrix() const {
-	return glm::perspective(this->FOV, this->viewportAspectRatio, this->near, this->far);
-}
-
 void Camera3D::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
 	GLfloat velocity = this->movementSpeed * deltaTime;
 	if (direction == FORWARD)	this->position += this->front * velocity;
 	if (direction == BACKWARD)	this->position -= this->front * velocity;
 	if (direction == LEFT)		this->position -= this->right * velocity;
 	if (direction == RIGHT)		this->position += this->right * velocity;
+	Update();
 }
 
 void Camera3D::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch) {
@@ -44,12 +33,14 @@ void Camera3D::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean 
 	}
 	// Update Front, Right and Up Vectors using the updated Eular angles
 	this->updateCameraVectors();
+	Update();
 }
 
 void Camera3D::ProcessMouseScroll(GLfloat yoffset) {
 	if (this->FOV >= 1.0f && this->FOV <= 45.0f) this->FOV -= yoffset;
 	if (this->FOV <= 1.0f) this->FOV = 1.0f;
 	if (this->FOV >= 45.0f) this->FOV = 45.0f;
+	Update();
 }
 
 void Camera3D::updateCameraVectors() {
@@ -62,4 +53,12 @@ void Camera3D::updateCameraVectors() {
 	// Also re-calculate the Right and Up vector
 	this->right = glm::normalize(glm::cross(this->front, this->worldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	this->up = glm::normalize(glm::cross(this->right, this->front));
+}
+
+glm::mat4 Camera3D::ComputeViewMatrix() const {
+	return glm::lookAt(this->position, { 0,0,0 }, this->up);
+}
+
+glm::mat4 Camera3D::ComputeProjectionMatrix() const {
+	return glm::perspective(this->FOV, this->viewportAspectRatio, this->near, this->far);
 }

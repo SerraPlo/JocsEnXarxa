@@ -160,8 +160,8 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera2D.h" />
     <ClInclude Include="Camera3D.h" />
-    <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="ErrorManager.h" />
+    <ClInclude Include="GLMesh.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ShaderProgram.h" />
@@ -193,7 +193,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Camera2D.cpp" />
     <ClCompile Include="Camera3D.cpp" />
-    <ClCompile Include="DebugRenderer.cpp" />
+    <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="IAppClient.cpp" />
     <ClCompile Include="IAppServer.cpp" />

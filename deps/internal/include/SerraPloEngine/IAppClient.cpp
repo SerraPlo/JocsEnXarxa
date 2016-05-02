@@ -67,7 +67,7 @@ namespace SerraPlo {
 	}
 
 	void IAppClient::Draw() const {
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color and depth buffer
 		if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
 			m_currentScreen->Draw(); // Then call the draw method of the screen
@@ -123,14 +123,6 @@ namespace SerraPlo {
 				break;
 			case SDL_MOUSEWHEEL:
 				inputManager.zoom = evnt.wheel.y;
-				break;
-			case SDL_WINDOWEVENT:
-				switch (evnt.window.event) {
-					case SDL_WINDOWEVENT_RESIZED:
-						glViewport(0, 0, screenWidth, screenHeight); // Set the OpenGL viewport to window dimensions
-						//m_camera.ComputeProjectionMatrix();
-						break;
-				}
 				break;
 		}
 	}
