@@ -1,0 +1,15 @@
+{
+	"character_seahorse": {
+		"name": "Seahorse",
+		"description": "Blablabla.",
+		"model": "seahorse/seahorse.obj",
+		"texture": "seahorse/seahorse_diffuse.png"
+	},
+
+	"character_bb8": {
+		"name": "BB8",
+		"description": "ahjsdfhsjfha",
+		"model": "bb8/bb8.obj",
+		"texture": "bb8/bb8_diffuse.jpg"
+	}
+}

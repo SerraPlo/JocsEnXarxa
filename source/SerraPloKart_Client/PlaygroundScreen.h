@@ -3,7 +3,6 @@
 #include <SerraPloEngine/IScreen.h>
 #include <SerraPloEngine/Camera3D.h>
 #include <SerraPloEngine/ShaderProgram.h>
-#include <SerraPloEngine/GLMesh.h>
 #include <SOIL/SOIL.h>
 
 #pragma comment(lib, "SOIL.lib")
@@ -28,9 +27,7 @@ public:
 private:
 	void checkInput();
 
-	ShaderProgram m_mainProgram;
+	ShaderProgram m_shaderProgram;
 	Camera3D m_camera;
 	GLMesh testMesh;
-
-	GLuint texture1;
 };

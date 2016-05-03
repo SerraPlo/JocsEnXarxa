@@ -1,20 +1,23 @@
 #pragma once
-#include <glm/glm.hpp>
-#include "Vertex.h"
-#include <vector>
+#include <JsonBox/JsonBox.h>
+#include "GLMesh.h"
+
+#ifdef _DEBUG
+#pragma comment(lib, "JsonBox_d.lib")
+#else
+#pragma comment(lib, "JsonBox.lib")
+#endif
 
 namespace SerraPlo {
 
 	class Renderer3D {
-		GLuint m_vbo{ 0 }; // vertex buffer object
-		GLuint m_vao{ 0 }; // vertex array object
-		GLuint m_ebo{ 0 }; // element buffer objects
+		std::vector<GLMesh*> meshList;
 
 	public:
-		Renderer3D();
+		explicit Renderer3D();
 		~Renderer3D();
 
-		void Init();
+		void LoadMeshes(std::string &filePath);
 
 		void Begin();
 		void Render();

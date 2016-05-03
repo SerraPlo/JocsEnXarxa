@@ -12,6 +12,7 @@ PlaygroundScreen::PlaygroundScreen() {
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
+	
 	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight);
 	testMesh.Load(ResourceManager::LoadAsset("models/seahorse/seahorse.obj").c_str());
 }
@@ -22,8 +23,8 @@ void PlaygroundScreen::Destroy() {
 
 void PlaygroundScreen::OnEntry() {
 	//Initialize texture shaders
-	m_mainProgram.compileShaders(ResourceManager::LoadAsset("shaders/textureShading.vert"), ResourceManager::LoadAsset("shaders/textureShading.frag"));
-	m_mainProgram.linkShaders();
+	m_shaderProgram.compileShaders(ResourceManager::LoadAsset("shaders/main.vert"), ResourceManager::LoadAsset("shaders/main.frag"));
+	m_shaderProgram.linkShaders();
 
 	//SDL_ShowCursor(0);
 	m_camera.SetPosition({ 0,0,3 });
@@ -87,12 +88,12 @@ void PlaygroundScreen::checkInput() {
 }
 
 void PlaygroundScreen::Draw() {
-	m_mainProgram.bind();
+	m_shaderProgram.bind();
 
-	GLint cameraUniform = m_mainProgram.getUniformLocation("camera");
+	GLint cameraUniform = m_shaderProgram.getUniformLocation("camera");
 	glUniformMatrix4fv(cameraUniform, 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix));
 
-	GLint modelLoc = m_mainProgram.getUniformLocation("model");
+	GLint modelLoc = m_shaderProgram.getUniformLocation("model");
 	glm::mat4 model;
 	model = glm::scale(model, { 0.05,0.05,0.05 });
 	model = glm::translate(model, { 0,0,0 });
@@ -102,7 +103,7 @@ void PlaygroundScreen::Draw() {
 	glDrawElements(GL_TRIANGLES, testMesh.elements, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 
-	m_mainProgram.unbind();
+	m_shaderProgram.unbind();
 
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
 }
