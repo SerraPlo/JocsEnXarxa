@@ -32,8 +32,17 @@ void PlaygroundScreen::OnExit() {
 
 void PlaygroundScreen::Update() {
 	checkInput();
-	m_camera.SetPosition({ 0,3,5 });
+	glm::vec3 direction;
+	if (gameApp->inputManager.isKeyDown(SDLK_w))direction = glm::vec3(0.0f, 0.0f, 1.0f);
+	else if (gameApp->inputManager.isKeyDown(SDLK_a))direction = glm::vec3(1.0f, 0.0f, 0.0f);
+	else if (gameApp->inputManager.isKeyDown(SDLK_s))direction = glm::vec3(0.0f, 0.0f, -1.0f);
+	else if (gameApp->inputManager.isKeyDown(SDLK_d))direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+	
+	tempCharacter->transform.position += direction*gameApp->deltaTime*5.0f;
+
+	//m_camera.position = glm::vec3(m_camera.position + direction*gameApp->deltaTime*5.0f);
 	m_camera.SetTarget(tempCharacter->transform.position);
+	//std::cout << "front: " << std::endl;
 }
 
 void PlaygroundScreen::checkInput() {
@@ -44,7 +53,7 @@ void PlaygroundScreen::checkInput() {
 			switch (evnt.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
 				glViewport(0, 0, gameApp->screenWidth, gameApp->screenHeight); // Set the OpenGL viewport to window dimensions
-				m_camera.Update();
+				//m_camera.Update();
 				break;
 			}
 		}
@@ -70,7 +79,7 @@ void PlaygroundScreen::Draw() {
 	m_shaderProgram.bind();
 
 	// Send camera matrix to shader (projection + view)
-	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix));
+	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix()));
 
 	/*auto &entityHashList = gameApp->gameObjectManager.gameObjectList;
 	auto gameObject = entityHash.second;*/

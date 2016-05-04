@@ -180,7 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="IAppClient.cpp" />
