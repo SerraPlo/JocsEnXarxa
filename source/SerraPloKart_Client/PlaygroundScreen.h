@@ -3,6 +3,7 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/Camera.h>
 #include <SerraPloEngine/GameObject.h>
+#include <vector>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -24,5 +25,6 @@ private:
 
 	ShaderProgram m_shaderProgram;
 	Camera m_camera;
-	GameObject* tempCharacter;
+	GameObject *m_player;
+	std::vector<GameObject*> m_sceneObjects;
 };

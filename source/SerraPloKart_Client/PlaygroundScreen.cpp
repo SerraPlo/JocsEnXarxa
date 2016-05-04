@@ -11,7 +11,9 @@ PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
 	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight);
-	tempCharacter = &gameApp->gameObjectManager.gameObjectList["character_slycooper"];
+	m_player = &gameApp->gameObjectManager.gameObjectList["character_slycooper"];
+	m_sceneObjects.push_back(m_player);
+	m_sceneObjects.push_back(&gameApp->gameObjectManager.gameObjectList["character_seahorse"]);
 }
 
 void PlaygroundScreen::Destroy() {
@@ -32,17 +34,17 @@ void PlaygroundScreen::OnExit() {
 
 void PlaygroundScreen::Update() {
 	checkInput();
-	glm::vec3 direction;
-	if (gameApp->inputManager.isKeyDown(SDLK_w))direction = glm::vec3(0.0f, 0.0f, 1.0f);
-	else if (gameApp->inputManager.isKeyDown(SDLK_a))direction = glm::vec3(1.0f, 0.0f, 0.0f);
-	else if (gameApp->inputManager.isKeyDown(SDLK_s))direction = glm::vec3(0.0f, 0.0f, -1.0f);
-	else if (gameApp->inputManager.isKeyDown(SDLK_d))direction = glm::vec3(-1.0f, 0.0f, 0.0f);
-	
-	tempCharacter->transform.position += direction*gameApp->deltaTime*5.0f;
 
-	//m_camera.position = glm::vec3(m_camera.position + direction*gameApp->deltaTime*5.0f);
-	m_camera.SetTarget(tempCharacter->transform.position);
-	//std::cout << "front: " << std::endl;
+	glm::vec3 direction;
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction += glm::vec3(0.0f, 0.0f, 1.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_a)) direction += glm::vec3(1.0f, 0.0f, 0.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction += glm::vec3(0.0f, 0.0f, -1.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_d)) direction += glm::vec3(-1.0f, 0.0f, 0.0f);
+
+	m_player->transform.position += direction*gameApp->deltaTime*8.0f;
+
+	m_camera.Translate(glm::vec3{ 0,5,-12 } + m_player->transform.position);
+	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }
 
 void PlaygroundScreen::checkInput() {
@@ -58,21 +60,6 @@ void PlaygroundScreen::checkInput() {
 			}
 		}
 	}
-	/*
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) m_camera.ProcessKeyboard(FORWARD, gameApp->deltaTime);
-	if (gameApp->inputManager.isKeyDown(SDLK_a)) m_camera.ProcessKeyboard(LEFT, gameApp->deltaTime);
-	if (gameApp->inputManager.isKeyDown(SDLK_s)) m_camera.ProcessKeyboard(BACKWARD, gameApp->deltaTime);
-	if (gameApp->inputManager.isKeyDown(SDLK_d)) m_camera.ProcessKeyboard(RIGHT, gameApp->deltaTime);
-
-	static GLfloat lastX = gameApp->inputManager.m_mouseCoords.x;
-	static GLfloat lastY = gameApp->inputManager.m_mouseCoords.y;
-	GLfloat xoffset = gameApp->inputManager.m_mouseCoords.x - lastX;
-	GLfloat yoffset = lastY - gameApp->inputManager.m_mouseCoords.y;
-	m_camera.ProcessMouseMovement(xoffset, yoffset);
-	lastX = gameApp->inputManager.m_mouseCoords.x;
-	lastY = gameApp->inputManager.m_mouseCoords.y;
-
-	m_camera.ProcessMouseScroll(gameApp->inputManager.zoom*0.1f);*/
 }
 
 void PlaygroundScreen::Draw() {
@@ -81,22 +68,25 @@ void PlaygroundScreen::Draw() {
 	// Send camera matrix to shader (projection + view)
 	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix()));
 
-	/*auto &entityHashList = gameApp->gameObjectManager.gameObjectList;
-	auto gameObject = entityHash.second;*/
+	static float counter = 0.0f;
+	for (auto gameObject : m_sceneObjects) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gameObject->texture.id);
+		glUniform1i(m_shaderProgram.getUniformLocation("texture_diffuse"), 0);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tempCharacter->texture.id);
-	glUniform1i(m_shaderProgram.getUniformLocation("texture_diffuse"), 0);
+		glm::mat4 model;
+		model = glm::translate(model, gameObject->transform.position);
+		model = glm::rotate(model, gameObject->transform.rotation.x, glm::vec3{1,0,0});
+		if (gameObject->id == "character_seahorse") model = glm::rotate(model, glm::radians(counter++), glm::vec3{ 0,1,0 });
+		model = glm::rotate(model, gameObject->transform.rotation.z, glm::vec3{ 0,0,1 });
+		model = glm::scale(model, gameObject->transform.scale);
+		glUniformMatrix4fv(m_shaderProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-	glm::mat4 model;
-	model = glm::scale(model, tempCharacter->transform.scale);
-	model = glm::translate(model, tempCharacter->transform.position);
-	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-
-	glBindVertexArray(tempCharacter->mesh.vao);
-	glDrawElements(GL_TRIANGLES, tempCharacter->mesh.elements, GL_UNSIGNED_INT, nullptr);
-	glBindVertexArray(0);
-
+		glBindVertexArray(gameObject->mesh.vao);
+		glDrawElements(GL_TRIANGLES, gameObject->mesh.elements, GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(0);
+	}
+	
 	m_shaderProgram.unbind();
 
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Reset regular alpha blending
