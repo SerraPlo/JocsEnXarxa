@@ -1,21 +1,20 @@
 {
-	"character_seahorse": {
-		"name": "Seahorse",
+  "character_seahorse": {
+    "name": "Seahorse",
+    "description": "Blablabla.",
+    "model": "models/seahorse/seahorse.obj",
+    "texture": "models/seahorse/seahorse_diffuse.png",
+    "position": [ 0, 0, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 0.1, 0.1, 0.1 ]
+  },
+  "character_slycooper": {
+		"name": "Sly Cooper",
 		"description": "Blablabla.",
-		"model": "models/seahorse/seahorse.obj",
-		"texture": "models/seahorse/seahorse_diffuse.png",
-		"position": [1, 5, 0],
-		"rotation": [5, 10, 2],
-		"scale": [1, 2, 1]
-	},
-
-	"character_bb8": {
-		"name": "BB8",
-		"description": "ahjsdfhsjfha",
-		"model": "models/bb8/bb8.obj",
-		"texture": "models/bb8/bb8_diffuse.jpg",
-		"position": [6, 0, 8],
-		"rotation": [0, 4, 0],
-		"scale": [3, 1, 1]
+		"model": "models/sly_cooper/sly_cooper.obj",
+		"texture": "models/sly_cooper/sly_cooper_diffuse.png",
+		"position": [0, 0, 0],
+		"rotation": [0, 0, 0],
+		"scale": [0.5, 0.5, 0.5]
 	}
 }

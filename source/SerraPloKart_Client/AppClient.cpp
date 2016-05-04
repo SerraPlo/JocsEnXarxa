@@ -2,6 +2,16 @@
 #include <SerraPloEngine/ResourceManager.h>
 #include "AppClient.h"
 
+/*"character_bb8": {
+"name": "BB8",
+"description": "ahjsdfhsjfha",
+"model": "models/bb8/bb8.obj",
+"texture": "models/bb8/bb8_diffuse.jpg",
+"position": [6, 0, 8],
+"rotation": [0, 4, 0],
+"scale": [3, 1, 1]
+}*/
+
 void AppClient::OnInit() {
 	window.changeName("SerraPlo Kart Client");
 	gameObjectManager.Load(LoadAsset("json/characters.json"));

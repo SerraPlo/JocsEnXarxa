@@ -8,8 +8,8 @@
 namespace SerraPlo {
 	struct GLTexture {
 		GLuint id;
-		int width;
-		int height;
+		int width, height;
+		explicit GLTexture() = default;
 		explicit GLTexture(const char* filePath) {
 			glGenTextures(1, &id);
 			glBindTexture(GL_TEXTURE_2D, id); // All upcoming GL_TEXTURE_2D operations now have effect on texture object
@@ -20,10 +20,7 @@ namespace SerraPlo {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			// Load, create texture and generate mipmaps
-			unsigned char* image = SOIL_load_image(filePath, &width, &height, nullptr, SOIL_LOAD_RGB);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			SOIL_free_image_data(image);
+			id = SOIL_load_OGL_texture(filePath, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so not accidentily mess up our texture
 		}
 	};

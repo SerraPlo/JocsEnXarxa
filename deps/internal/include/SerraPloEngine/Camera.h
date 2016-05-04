@@ -21,11 +21,11 @@ enum Camera_Movement {
 #define FAR 1000.0f
 
 class Camera {
-	glm::vec3 position{ 0,0,0 };
-	glm::vec3 front{ 0.0f, 0.0f, -1.0f };
-	glm::vec3 up{ 0,0,0 };
-	glm::vec3 right{ 0,0,0 };
-	glm::vec3 worldUp{ 0,0,0 };
+	glm::vec3 position	{ 0,0,0 };
+	glm::vec3 front		{ 0,0,0 };
+	glm::vec3 up		{ 0,0,0 };
+	glm::vec3 right		{ 0,0,0 };
+	glm::vec3 worldUp	{ 0,0,0 };
 
 	GLfloat yaw, pitch;
 
@@ -44,6 +44,11 @@ public:
 
 	void Update() { PVMatrix = ComputeProjectionMatrix() * ComputeViewMatrix(); };
 	void SetPosition(const glm::vec3 &pos) { position = pos; Update(); };
+	void SetTarget(const glm::vec3 &pos) {
+		this->front = pos - this->position;
+		this->front = glm::normalize(front);
+		Update(); 
+	};
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);

@@ -11,7 +11,7 @@ PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
 	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight);
-	tempCharacter = gameApp->gameObjectManager.gameObjectList["character_seahorse"];
+	tempCharacter = &gameApp->gameObjectManager.gameObjectList["character_slycooper"];
 }
 
 void PlaygroundScreen::Destroy() {
@@ -24,7 +24,6 @@ void PlaygroundScreen::OnEntry() {
 	m_shaderProgram.linkShaders();
 
 	//SDL_ShowCursor(0);
-	m_camera.SetPosition({ 0,0,3 });
 }
 
 void PlaygroundScreen::OnExit() {
@@ -33,6 +32,8 @@ void PlaygroundScreen::OnExit() {
 
 void PlaygroundScreen::Update() {
 	checkInput();
+	m_camera.SetPosition({ 0,3,5 });
+	m_camera.SetTarget(tempCharacter->transform.position);
 }
 
 void PlaygroundScreen::checkInput() {
@@ -48,7 +49,7 @@ void PlaygroundScreen::checkInput() {
 			}
 		}
 	}
-
+	/*
 	if (gameApp->inputManager.isKeyDown(SDLK_w)) m_camera.ProcessKeyboard(FORWARD, gameApp->deltaTime);
 	if (gameApp->inputManager.isKeyDown(SDLK_a)) m_camera.ProcessKeyboard(LEFT, gameApp->deltaTime);
 	if (gameApp->inputManager.isKeyDown(SDLK_s)) m_camera.ProcessKeyboard(BACKWARD, gameApp->deltaTime);
@@ -62,7 +63,7 @@ void PlaygroundScreen::checkInput() {
 	lastX = gameApp->inputManager.m_mouseCoords.x;
 	lastY = gameApp->inputManager.m_mouseCoords.y;
 
-	m_camera.ProcessMouseScroll(gameApp->inputManager.zoom*0.1f);
+	m_camera.ProcessMouseScroll(gameApp->inputManager.zoom*0.1f);*/
 }
 
 void PlaygroundScreen::Draw() {
@@ -71,23 +72,21 @@ void PlaygroundScreen::Draw() {
 	// Send camera matrix to shader (projection + view)
 	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix));
 
-	auto entityHashList = gameApp->gameObjectManager.gameObjectList;
-	for (auto entityHash : entityHashList) {
-		auto gameObject = entityHash.second;
+	/*auto &entityHashList = gameApp->gameObjectManager.gameObjectList;
+	auto gameObject = entityHash.second;*/
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gameObject->texture->id);
-		glUniform1i(m_shaderProgram.getUniformLocation("texture_diffuse"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tempCharacter->texture.id);
+	glUniform1i(m_shaderProgram.getUniformLocation("texture_diffuse"), 0);
 
-		glm::mat4 model;
-		model = glm::scale(model, gameObject->transform->scale);
-		model = glm::translate(model, gameObject->transform->position);
-		glUniformMatrix4fv(m_shaderProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+	glm::mat4 model;
+	model = glm::scale(model, tempCharacter->transform.scale);
+	model = glm::translate(model, tempCharacter->transform.position);
+	glUniformMatrix4fv(m_shaderProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-		glBindVertexArray(gameObject->mesh->vao);
-		glDrawElements(GL_TRIANGLES, gameObject->mesh->elements, GL_UNSIGNED_INT, nullptr);
-		glBindVertexArray(0);
-	}
+	glBindVertexArray(tempCharacter->mesh.vao);
+	glDrawElements(GL_TRIANGLES, tempCharacter->mesh.elements, GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(0);
 
 	m_shaderProgram.unbind();
 

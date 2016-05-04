@@ -56,7 +56,7 @@ void Camera::updateCameraVectors() {
 }
 
 glm::mat4 Camera::ComputeViewMatrix() const {
-	return glm::lookAt(this->position, { 0,0,0 }, this->up);
+	return glm::lookAt(this->position, this->position + this->front, this->up);
 }
 
 glm::mat4 Camera::ComputeProjectionMatrix() const {

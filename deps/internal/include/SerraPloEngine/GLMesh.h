@@ -4,10 +4,11 @@
 namespace SerraPlo {
 
 	struct GLMesh {
-		GLuint vao{ 0 };
-		GLuint vbo{ 0 };
-		GLuint ebo{ 0 };
-		unsigned int elements{ 0 };
+		GLuint vao;
+		GLuint vbo;
+		GLuint ebo;
+		unsigned int elements;
+		explicit GLMesh() = default;
 		explicit GLMesh(const char* filePath);
 		//~GLMesh();  //TODO
 	};

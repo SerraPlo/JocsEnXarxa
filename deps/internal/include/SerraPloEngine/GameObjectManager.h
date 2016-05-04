@@ -14,13 +14,13 @@ namespace SerraPlo {
 
 	class GameObjectManager {
 	public:
-		std::map<std::string, GameObject*> gameObjectList;
+		std::map<std::string, GameObject> gameObjectList;
 		explicit GameObjectManager() = default;
 		explicit GameObjectManager(const std::string &filePath) {
 			Load(filePath);
 		};
 		~GameObjectManager() {
-			for (auto& entity : this->gameObjectList) delete entity.second;
+			//for (auto& entity : this->gameObjectList) delete entity.second;
 		}
 		void Load(const std::string &filePath) {
 			JsonBox::Value fileData;
@@ -29,21 +29,15 @@ namespace SerraPlo {
 			for (auto entity : wrapper) {
 				std::string key{ entity.first };
 				JsonBox::Object properties{ entity.second.getObject() };
-				GameObject *tempGameObject = new GameObject(entity.first);
+				//GameObject *tempGameObject = new() GameObject(entity.first, LoadAsset(properties["model"].getString()), LoadAsset(properties["texture"].getString()));
+				this->gameObjectList[key] = GameObject(entity.first, LoadAsset(properties["model"].getString()), LoadAsset(properties["texture"].getString()));
 				/// Load transform attributes
-				Transform *tempTransform = new Transform;
 				JsonBox::Array tempArray = properties["position"].getArray();
-				tempTransform->position = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
+				this->gameObjectList[key].transform.position = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
 				tempArray = properties["rotation"].getArray();
-				tempTransform->rotation = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
+				this->gameObjectList[key].transform.rotation = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
 				tempArray = properties["scale"].getArray();
-				tempTransform->scale = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
-				tempGameObject->transform = tempTransform;
-				/// Load mesh
-				tempGameObject->mesh = new GLMesh(LoadAsset(properties["model"].getString()).c_str());
-				/// Load texture
-				tempGameObject->texture = new GLTexture(LoadAsset(properties["texture"].getString()).c_str());
-				this->gameObjectList[key] = tempGameObject;
+				this->gameObjectList[key].transform.scale = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
 			}
 		}
 	};
