@@ -9,7 +9,7 @@ namespace SerraPlo {
 		GLuint ebo{ 0 };
 		unsigned int elements{ 0 };
 		explicit GLMesh(const char* filePath);
-		~GLMesh();
+		//~GLMesh();  //TODO
 	};
 
 }

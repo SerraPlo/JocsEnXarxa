@@ -1,7 +1,14 @@
 #pragma once
+#include <JsonBox/JsonBox.h>
 #include <map>
 #include "GameObject.h"
 #include "ResourceManager.h"
+
+#ifdef _DEBUG
+#pragma comment(lib, "JsonBox_d.lib")
+#else
+#pragma comment(lib, "JsonBox.lib")
+#endif
 
 namespace SerraPlo {
 
