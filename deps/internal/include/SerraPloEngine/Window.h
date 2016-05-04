@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <SDL2\SDL.h>
-#include "Vertex.h"
 
 namespace SerraPlo {
 	enum WindowFlags { INVISIBLE = 0x1, FULLSCREEN = 0x2, BORDERLESS = 0x4, RESIZABLE = 0x8 };

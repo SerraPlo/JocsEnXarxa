@@ -6,6 +6,7 @@
 #include "IScreen.h"
 #include <memory>
 #include <UDPStream/UDPStream.hh>
+#include "GameObjectManager.h"
 
 namespace SerraPlo {
 
@@ -32,6 +33,7 @@ namespace SerraPlo {
 		sockaddr serverAddress;
 		GLWindow window;			// Main instance of the OpenGL window
 		InputManager inputManager;	// Main instance of the input manager class
+		GameObjectManager gameObjectManager;
 
 		explicit IAppClient(int sw, int sh, const char* ipport);
 		virtual ~IAppClient() = default;

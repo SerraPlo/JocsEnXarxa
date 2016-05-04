@@ -4,7 +4,7 @@
 
 void AppClient::OnInit() {
 	window.changeName("SerraPlo Kart Client");
-	m_entityManager.LoadJson<Character>(ResourceManager::LoadAsset("json/characters.json"));
+	gameObjectManager.Load(LoadAsset("json/characters.json"));
 }
 
 void AppClient::AddScreens() {

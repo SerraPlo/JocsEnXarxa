@@ -1,17 +1,12 @@
 #pragma once
-#include <SerraPloEngine/Renderer3D.h>
 #include <SerraPloEngine/IScreen.h>
-#include <SerraPloEngine/Camera3D.h>
 #include <SerraPloEngine/ShaderProgram.h>
-#include <SOIL/SOIL.h>
-
-#pragma comment(lib, "SOIL.lib")
+#include <SerraPloEngine/Camera.h>
+#include <SerraPloEngine/GameObject.h>
 #pragma comment(lib, "SerraPloEngine.lib")
-
 using namespace SerraPlo;
 
-class PlaygroundScreen : public IScreen
-{
+class PlaygroundScreen : public IScreen {
 public:
 	explicit PlaygroundScreen();
 	~PlaygroundScreen();
@@ -28,6 +23,6 @@ private:
 	void checkInput();
 
 	ShaderProgram m_shaderProgram;
-	Camera3D m_camera;
-	GLMesh testMesh;
+	Camera m_camera;
+	GameObject* tempCharacter;
 };

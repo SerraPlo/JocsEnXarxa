@@ -1,6 +1,5 @@
 #pragma once
 #include <SerraPloEngine/IAppClient.h>
-#include <SerraPloEngine/EntityManager.h>
 #include "PlaygroundScreen.h"
 
 #define SCREEN_WIDTH 600
@@ -27,7 +26,6 @@ for (auto...) {
 }*/
 
 class AppClient : public IAppClient {
-	EntityManager m_entityManager;
 	std::unique_ptr<PlaygroundScreen> m_testScreen { nullptr };
 
 	explicit AppClient() : IAppClient(SCREEN_WIDTH, SCREEN_HEIGHT, IP_PORT) {};

@@ -158,9 +158,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="Camera2D.h" />
-    <ClInclude Include="Camera3D.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ErrorManager.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GLMesh.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -173,38 +174,21 @@
     <ClInclude Include="IApp.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IOManager.h" />
-    <ClInclude Include="Light2D.h" />
-    <ClInclude Include="ParticleBatch2D.h" />
-    <ClInclude Include="ParticleEngine2D.h" />
-    <ClInclude Include="picoPNG.h" />
-    <ClInclude Include="Renderer3D.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ScreenList.h" />
-    <ClInclude Include="SpriteBatch.h" />
-    <ClInclude Include="SpriteFont.h" />
-    <ClInclude Include="TextureCache.h" />
-    <ClInclude Include="TextureLoader.h" />
-    <ClInclude Include="TileSheet.h" />
     <ClInclude Include="Timing.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="Camera2D.cpp" />
-    <ClCompile Include="Camera3D.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="IAppClient.cpp" />
     <ClCompile Include="IAppServer.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="ParticleBatch2D.cpp" />
-    <ClCompile Include="ParticleEngine2D.cpp" />
-    <ClCompile Include="picoPNG.cpp" />
-    <ClCompile Include="Renderer3D.cpp" />
     <ClCompile Include="ScreenList.cpp" />
-    <ClCompile Include="SpriteBatch.cpp" />
-    <ClCompile Include="SpriteFont.cpp" />
     <ClCompile Include="Timing.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

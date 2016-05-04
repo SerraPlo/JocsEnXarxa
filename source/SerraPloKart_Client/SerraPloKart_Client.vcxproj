@@ -151,16 +151,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppClient.cpp" />
-    <ClCompile Include="Character.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlaygroundScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClient.h" />
-    <ClInclude Include="Character.h" />
     <ClInclude Include="PlaygroundScreen.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\assets\json\characters.json" />
     <None Include="..\..\assets\shaders\main.frag" />
     <None Include="..\..\assets\shaders\main.vert" />
   </ItemGroup>

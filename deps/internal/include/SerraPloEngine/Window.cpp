@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "ErrorManager.h"
+#include <GL/glew.h>
 
 namespace SerraPlo {
 
