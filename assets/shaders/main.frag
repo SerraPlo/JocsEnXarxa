@@ -53,6 +53,7 @@ struct SpotLight {
 } fs_in;
  
 uniform vec3 viewerPosition; // Eye position in world space.
+uniform bool hasNormalMap;
  
 uniform Material material;
 uniform DirLight dirLight;
@@ -68,10 +69,12 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 void main() {
 		// Properties
     vec3 norm = normalize(fs_in.fragNormal);
-		// Obtain normal from normal map in range [0,1]
-    norm = texture(material.normal, fs_in.fragUV).rgb;
-		// Transform normal vector to range [-1,1]
-    norm = normalize(norm * 2.0 - 1.0);  
+	if (hasNormalMap) {
+			// Obtain normal from normal map in range [0,1]
+		norm = texture(material.normal, fs_in.fragUV).rgb;
+			// Transform normal vector to range [-1,1]
+		norm = normalize(norm * 2.0 - 1.0);  
+	}
     vec3 viewDir = normalize(viewerPosition - fs_in.fragPosition);
 
 		// Directional lighting

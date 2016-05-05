@@ -52,8 +52,10 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 		// Material properties
 		if (gameObject->material.diffuse.id != EMPTY_TEXTURE)
 			glActiveTexture(GL_TEXTURE0), glBindTexture(GL_TEXTURE_2D, gameObject->material.diffuse.id);
+		glUniform1i(program.getUniformLocation("hasNormalMap"), GL_FALSE);
 		if (gameObject->material.normal.id != EMPTY_TEXTURE)
-			glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, gameObject->material.normal.id);
+			glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, gameObject->material.normal.id), 
+			glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
 		if (gameObject->material.specular.id != EMPTY_TEXTURE)
 			glActiveTexture(GL_TEXTURE2),glBindTexture(GL_TEXTURE_2D, gameObject->material.specular.id);
 		glUniform1f(program.getUniformLocation("material.shininess"), gameObject->material.shininess);
