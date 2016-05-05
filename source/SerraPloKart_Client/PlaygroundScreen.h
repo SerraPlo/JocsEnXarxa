@@ -28,5 +28,5 @@ private:
 	Camera m_camera;
 	RendererList m_renderer;
 	GameObject *m_player;
-	BaseLight tempLight;
+	std::vector<BaseLight> m_lightList;
 };

@@ -2,19 +2,19 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void RendererList::Add(SerraPlo::GameObject * newObject) {
+void RendererList::Add(GameObject * newObject) {
 	m_objectList.push_back(newObject);
 }
 
-void RendererList::Add(SerraPlo::BaseLight * newLight) {
+void RendererList::Add(BaseLight newLight) {
 	m_lightList.push_back(newLight);
 }
 
-void RendererList::DrawObjects(SerraPlo::ShaderProgram &program, Camera &camera) {
+void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 	for (auto gameObject : m_objectList) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gameObject->texture.id);
-		glUniform1i(program.getUniformLocation("diffuseSampler"), 0);
+		glUniform1i(program.getUniformLocation("material.diffuse"), 0); // TODO: statuc get uniform location
 
 		// Send camera matrix to shader (projection + view)
 		glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
@@ -27,33 +27,39 @@ void RendererList::DrawObjects(SerraPlo::ShaderProgram &program, Camera &camera)
 		model = glm::scale(model, transformTemp.scale);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-		glUniform1i(program.getUniformLocation("lightingEnabled"), GL_TRUE);
-		glUniform1i(program.getUniformLocation("isALightSource"), GL_FALSE);
-
-		const glm::vec3 white(1);
-		const glm::vec3 black(0);
-		const glm::vec3 ambient(0.1f, 0.1f, 0.1f);
-		// Light properties.
-		auto g_uniformLightPosW = program.getUniformLocation("lightPosition");
-		auto g_uniformLightColor = program.getUniformLocation("lightColor");
-		glUniform3fv(g_uniformLightPosW, 1, glm::value_ptr(model));
-		glUniform3fv(g_uniformLightColor, 1, glm::value_ptr(white));
-
-		// Global ambient.
-		auto g_uniformAmbient = program.getUniformLocation("material.ambient");
-		glUniform3fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
-
-		// Material properties.
-		auto g_uniformMaterialEmissive = program.getUniformLocation("material.emissive");
-		auto g_uniformMaterialDiffuse = program.getUniformLocation("material.diffuse");
-		auto g_uniformMaterialSpecular = program.getUniformLocation("material.specular");
-		auto g_uniformMaterialShininess = program.getUniformLocation("material.shininess");
-		glUniform3fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-		glUniform3fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-		glUniform3fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-		glUniform1f(g_uniformMaterialShininess, 50.0f);
-
+		// Set camera position as the viewer
 		glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
+
+		// Directional light properties
+		glUniform3f(program.getUniformLocation("dirLight.direction"), -0.2f, -1.0f, -0.3f);
+		glUniform3f(program.getUniformLocation("dirLight.ambient"), 0.0f, 0.0f, 0.0f); //0.05f, 0.05f, 0.05f
+		glUniform3f(program.getUniformLocation("dirLight.diffuse"), 0.0f, 0.0f, 0.0f); //0.4f, 0.4f, 0.4f
+		glUniform3f(program.getUniformLocation("dirLight.specular"), 0.0f, 0.0f, 0.0f); //0.5f, 0.5f, 0.5f
+
+		// Point light properties
+		glUniform3f(program.getUniformLocation("pointLights[0].position"), 10, 0, 0); //temp pos !!!!!!!!!!!
+		glUniform3f(program.getUniformLocation("pointLights[0].ambient"), 0.5f, 0.0f, 0.5f);
+		glUniform3f(program.getUniformLocation("pointLights[0].diffuse"), 1.0f, 0.0f, 1.0f);
+		glUniform3f(program.getUniformLocation("pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
+		glUniform1f(program.getUniformLocation("pointLights[0].constant"), 1.0f);
+		glUniform1f(program.getUniformLocation("pointLights[0].linear"), 0.09);
+		glUniform1f(program.getUniformLocation("pointLights[0].quadratic"), 0.032);
+
+		// Spot light properties
+		glUniform3fv(program.getUniformLocation("spotLights[0].position"), 1, glm::value_ptr(glm::vec3{ -10,5,0 }));
+		glUniform3fv(program.getUniformLocation("spotLights[0].direction"), 1, glm::value_ptr(glm::vec3{ 0,-1,0 }));
+		glUniform1f(program.getUniformLocation("spotLights[0].cutOff"), glm::cos(glm::radians(40.0f)));
+		glUniform1f(program.getUniformLocation("spotLights[0].outerCutOff"), glm::cos(glm::radians(45.0f)));
+		glUniform3fv(program.getUniformLocation("spotLights[0].diffuse"), 1, glm::value_ptr(COLOR_GREEN));
+		glUniform3fv(program.getUniformLocation("spotLights[0].ambient"), 1, glm::value_ptr(glm::vec3{ 0.0f,0.5f,0.0f }));
+		glUniform3fv(program.getUniformLocation("spotLights[0].specular"), 1, glm::value_ptr(COLOR_WHITE));
+		glUniform1f(program.getUniformLocation("spotLights[0].constant"), 1.0f);
+		glUniform1f(program.getUniformLocation("spotLights[0].linear"), 0.09f);
+		glUniform1f(program.getUniformLocation("spotLights[0].quadratic"), 0.032f);
+
+		// Material properties
+		glUniform1i(program.getUniformLocation("material.specular"), 1);
+		glUniform1f(program.getUniformLocation("material.shininess"), 32.0f);
 
 		glBindVertexArray(gameObject->mesh.vao);
 		glDrawElements(GL_TRIANGLES, gameObject->mesh.elements, GL_UNSIGNED_INT, nullptr);
@@ -63,48 +69,19 @@ void RendererList::DrawObjects(SerraPlo::ShaderProgram &program, Camera &camera)
 	}
 }
 
-void RendererList::DrawLights(SerraPlo::ShaderProgram & program, Camera &camera) {
+void RendererList::DrawLights(ShaderProgram & program, Camera &camera) {
+	static DebugLight debugLight;
 	for (auto gameLight : m_lightList) {
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 1);
-		glUniform1i(program.getUniformLocation("diffuseSampler"), 0);
-
 		// Send camera matrix to shader (projection + view)
 		glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
 
-		glm::mat4 model = glm::translate(glm::mat4(), {0,0,0});
+		glm::mat4 model = glm::translate(glm::mat4(), gameLight.position);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
-		glUniform1i(program.getUniformLocation("lightingEnabled"), GL_TRUE);
-		glUniform1i(program.getUniformLocation("isALightSource"), GL_TRUE);
+		glUniform3fv(program.getUniformLocation("lightColor"), 1, glm::value_ptr(gameLight.diffuse));
 
-		const glm::vec3 white(1);
-		const glm::vec3 black(0);
-		const glm::vec3 ambient(0.1f, 0.1f, 0.1f);
-		// Light properties.
-		auto g_uniformLightPosW = program.getUniformLocation("lightPosition");
-		auto g_uniformLightColor = program.getUniformLocation("lightColor");
-		glUniform3fv(g_uniformLightPosW, 1, glm::value_ptr(model));
-		glUniform3fv(g_uniformLightColor, 1, glm::value_ptr(white));
-
-		// Global ambient.
-		auto g_uniformAmbient = program.getUniformLocation("material.ambient");
-		glUniform3fv(g_uniformAmbient, 1, glm::value_ptr(ambient));
-
-		// Material properties.
-		auto g_uniformMaterialEmissive = program.getUniformLocation("material.emissive");
-		auto g_uniformMaterialDiffuse = program.getUniformLocation("material.diffuse");
-		auto g_uniformMaterialSpecular = program.getUniformLocation("material.specular");
-		auto g_uniformMaterialShininess = program.getUniformLocation("material.shininess");
-		glUniform3fv(g_uniformMaterialEmissive, 1, glm::value_ptr(black));
-		glUniform3fv(g_uniformMaterialDiffuse, 1, glm::value_ptr(white));
-		glUniform3fv(g_uniformMaterialSpecular, 1, glm::value_ptr(white));
-		glUniform1f(g_uniformMaterialShininess, 50.0f);
-
-		glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
-
-		glBindVertexArray(gameLight->vao);
-		glDrawElements(GL_TRIANGLES, gameLight->elements, GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(debugLight.vao);
+		glDrawElements(GL_TRIANGLES, debugLight.elements, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

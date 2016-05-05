@@ -6,28 +6,52 @@
 
 namespace SerraPlo {
 
+	#define COLOR_BLACK glm::vec3(.0f)
 	#define COLOR_WHITE glm::vec3(1.0f, 1.0f, 1.0f)
 	#define COLOR_RED	glm::vec3(1.0f, 0.0f, 0.0f)
 	#define COLOR_GREEN glm::vec3(0.0f, 1.0f, 0.0f)
 	#define COLOR_CYAN	glm::vec3(0.0f, 1.0f, 1.0f)
 	#define COLOR_BLUE	glm::vec3(0.0f, 0.0f, 1.0f)
 	
-	class BaseLight {
-	public:
-		std::string name;
-		/*glm::vec3 color{ 0.0f, 0.0f, 0.0f };
-		float ambientIntensity{ 0.0f };
-		float diffuseIntensity{ 0.0f };*/
+	struct BaseLight {
+		glm::vec3 position;
+
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+	};
+
+	struct DirLight : BaseLight {
+		glm::vec3 direction;
+	};
+
+	struct PointLight : BaseLight {
+		float constant;
+		float linear;
+		float quadratic;
+	};
+
+	struct SpotLight : BaseLight {
+		glm::vec3 direction;
+		float cutOff;
+		float outerCutOff;
+
+		float constant;
+		float linear;
+		float quadratic;
+	};
+
+	struct DebugLight {
 		GLuint vao;
 		int elements;
-		explicit BaseLight() {
+		DebugLight() {
 			using namespace glm;
 			using namespace std;
 
 			const float pi = 3.1415926535897932384626433832795f;
 			const float _2pi = 2.0f * pi;
 
-			int radius = 1;
+			float radius = 0.5f;
 			int slices = 32;
 			int stacks = 32;
 			elements = (slices * stacks + slices) * 6;
@@ -67,31 +91,27 @@ namespace SerraPlo {
 				indicies.push_back(i);
 				indicies.push_back(i + 1);
 			}
-			
+
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
 
 			GLuint vbos[4];
 			glGenBuffers(4, vbos);
 
-#define POSITION_ATTRIBUTE 0
-#define NORMAL_ATTRIBUTE  1
-#define TEXCOORD0_ATTRIBUTE  2
-
 			glBindBuffer(GL_ARRAY_BUFFER, vbos[0]);
 			glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(vec3), positions.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-			glEnableVertexAttribArray(POSITION_ATTRIBUTE);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+			glEnableVertexAttribArray(0);
 
 			glBindBuffer(GL_ARRAY_BUFFER, vbos[1]);
 			glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(vec3), normals.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, 0, nullptr);
-			glEnableVertexAttribArray(NORMAL_ATTRIBUTE);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 0, nullptr);
+			glEnableVertexAttribArray(1);
 
 			glBindBuffer(GL_ARRAY_BUFFER, vbos[2]);
 			glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(vec2), textureCoords.data(), GL_STATIC_DRAW);
-			glVertexAttribPointer(TEXCOORD0_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-			glEnableVertexAttribArray(TEXCOORD0_ATTRIBUTE);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+			glEnableVertexAttribArray(2);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[3]);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(GLuint), indicies.data(), GL_STATIC_DRAW);
@@ -101,37 +121,5 @@ namespace SerraPlo {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 	};
-
-	/*class DirectionalLight : public BaseLight {
-	public:
-		glm::vec3 direction{ 0.0f, 0.0f, 0.0f };
-		explicit DirectionalLight() = default;
-	};
-
-	struct LightAttenuation {
-		float constant;
-		float linear;
-		float exp;
-	};
-
-	class PointLight : public BaseLight {
-	public:
-		glm::vec3 Position{ 0.0f, 0.0f, 0.0f };
-		LightAttenuation Attenuation{ 0.0f, 0.0f, 0.0f };
-		explicit PointLight() = default;
-	};
-
-	class SpotLight : public PointLight {
-	public:
-		glm::vec3 direction{ 0.0f, 0.0f, 0.0f };
-		float cutoff{ 0.0f };
-		explicit SpotLight() = default;
-	};
-
-	#define COLOR_WHITE glm::vec3(1.0f, 1.0f, 1.0f)
-	#define COLOR_RED	glm::vec3(1.0f, 0.0f, 0.0f)
-	#define COLOR_GREEN glm::vec3(0.0f, 1.0f, 0.0f)
-	#define COLOR_CYAN	glm::vec3(0.0f, 1.0f, 1.0f)
-	#define COLOR_BLUE	glm::vec3(0.0f, 0.0f, 1.0f)*/
 
 };

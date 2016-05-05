@@ -161,7 +161,7 @@
     <ClInclude Include="RendererList.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\json\characters.json" />
+    <None Include="..\..\assets\json\gameObjects.json" />
     <None Include="..\..\assets\shaders\light.frag" />
     <None Include="..\..\assets\shaders\light.vert" />
     <None Include="..\..\assets\shaders\main.frag" />

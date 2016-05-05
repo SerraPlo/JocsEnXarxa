@@ -16,7 +16,16 @@ void PlaygroundScreen::Build() {
 	m_renderer.Add(m_player);
 	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["character_bb8"]);
 	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["character_seahorse"]);
-	m_renderer.Add(&tempLight);
+	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["object_floor"]);
+
+	BaseLight temp;
+	temp.position = glm::vec3{ 10,0,0 };
+	temp.diffuse = glm::vec3{ 1,0,1 };
+	m_lightList.push_back(temp);
+	temp.position = glm::vec3{ -10,5,0 };
+	temp.diffuse = glm::vec3{ 0,1,0 };
+	m_lightList.push_back(temp);
+	for (auto light : m_lightList) m_renderer.Add(light);
 }
 
 void PlaygroundScreen::Destroy() {
@@ -37,7 +46,7 @@ struct Vertex {
 
 void PlaygroundScreen::OnEntry() {
 	//Initialize texture shaders
-	m_mainProgram.compileShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
+	m_mainProgram.compileShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
 	m_mainProgram.linkShaders();
 
 	//Initialize light shaders
@@ -57,16 +66,21 @@ void PlaygroundScreen::OnExit() {
 void PlaygroundScreen::Update() {
 	checkInput();
 
-	glm::vec3 direction;
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction += glm::vec3(0.0f, 0.0f, 1.0f);
-	if (gameApp->inputManager.isKeyDown(SDLK_a)) direction += glm::vec3(1.0f, 0.0f, 0.0f);
-	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction += glm::vec3(0.0f, 0.0f, -1.0f);
-	if (gameApp->inputManager.isKeyDown(SDLK_d)) direction += glm::vec3(-1.0f, 0.0f, 0.0f);
+	float direction = 0.0f;
+	float rotation = 0.0f;
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction = 1.0f;
+	if (gameApp->inputManager.isKeyDown(SDLK_a)) rotation = 1.0;
+	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction = -1.0f;
+	if (gameApp->inputManager.isKeyDown(SDLK_d)) rotation = -1.0f;
 
-	m_player->transform.position += direction*gameApp->deltaTime*8.0f;
+	m_player->transform.rotation += glm::vec3(0.0f, rotation*gameApp->deltaTime*100.0f, 0.0f);
+	glm::vec3 frontPlayer;
+	frontPlayer = glm::vec3(sin((m_player->transform.rotation.y*3.14159) / 180), 0.0f, cos((m_player->transform.rotation.y*3.14159) / 180));
+	frontPlayer = glm::normalize(frontPlayer);
 
-	m_camera.Translate(glm::vec3{ 0,5,-12 } + m_player->transform.position);
-	m_camera.SetTarget(glm::vec3{ 0,2,0 } + m_player->transform.position);
+	m_player->transform.position += direction*frontPlayer*gameApp->deltaTime * 10.0f;
+	m_camera.Translate(m_player->transform.position - (frontPlayer*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
+	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }
 
 void PlaygroundScreen::checkInput() {
@@ -87,13 +101,13 @@ void PlaygroundScreen::checkInput() {
 void PlaygroundScreen::Draw() {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
-		m_renderer.DrawLights(m_mainProgram, m_camera);
 	m_mainProgram.unbind();
 
-	/*m_lightProgram.bind();
-		glUniformMatrix4fv(m_lightProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix()));
-		m_renderer.DrawLights(m_lightProgram);
-	m_lightProgram.unbind();*/
+#if LIGHT_DEBUG_MODE
+	m_lightProgram.bind();
+		m_renderer.DrawLights(m_lightProgram, m_camera);
+	m_lightProgram.unbind();
+#endif
 }
 
 int PlaygroundScreen::GetNextScreenIndex() const {
