@@ -162,6 +162,7 @@
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GLMaterial.h" />
     <ClInclude Include="GLMesh.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="ShaderProgram.h" />

@@ -3,7 +3,8 @@
     "name": "Seahorse",
     "description": "Blablabla.",
     "model": "models/seahorse/seahorse.obj",
-    "texture": "models/seahorse/seahorse_diffuse.png",
+    "diffuse": "models/seahorse/seahorse_diffuse.png",
+    "shininess": 30.0,
     "position": [ -3, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.1, 0.1, 0.1 ]
@@ -12,7 +13,9 @@
     "name": "Sly Cooper",
     "description": "Blablabla.",
     "model": "models/sly_cooper/sly_cooper.obj",
-    "texture": "models/sly_cooper/sly_cooper_diffuse.png",
+    "diffuse": "models/sly_cooper/sly_cooper_diffuse.png",
+    "normal": "models/sly_cooper/sly_cooper_normal.png",
+    "shininess": 100.0,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.5, 0.5, 0.5 ]
@@ -21,7 +24,8 @@
     "name": "BB8",
     "description": "Blablabla.",
     "model": "models/bb8/bb8.obj",
-    "texture": "models/bb8/bb8_diffuse.jpg",
+    "diffuse": "models/bb8/bb8_diffuse.jpg",
+    "shininess": 30.0,
     "position": [ 4, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.02, 0.02, 0.02 ]
@@ -30,7 +34,9 @@
 		"name": "Floor",
 		"description": "Blablabla.",
 		"model": "models/floor/floor.obj",
-		"texture": "models/floor/floor_diffuse.png",
+    "diffuse": "models/floor/floor_diffuse.png",
+    "normal": "models/floor/floor_normal.png",
+    "shininess": 30.0,
 		"position": [0, 0, 0],
 		"rotation": [0, 0, 0],
 		"scale": [1, 1, 1]

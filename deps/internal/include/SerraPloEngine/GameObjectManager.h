@@ -33,8 +33,12 @@ namespace SerraPlo {
 			for (auto entity : wrapper) {
 				std::string key{ entity.first };
 				JsonBox::Object properties{ entity.second.getObject() };
-				//GameObject *tempGameObject = new() GameObject(entity.first, LoadAsset(properties["model"].getString()), LoadAsset(properties["texture"].getString()));
-				this->gameObjectList[key] = GameObject(entity.first, LoadAsset(properties["model"].getString()), LoadAsset(properties["texture"].getString()));
+				this->gameObjectList[key] = GameObject(entity.first, 
+													   LoadAsset(properties["model"].getString()).c_str(), 
+													   LoadAsset(properties["diffuse"].getString()).c_str(),
+													   !properties["normal"].isNull() ? LoadAsset(properties["normal"].getString()).c_str() : nullptr,
+													   !properties["specular"].isNull() ? LoadAsset(properties["specular"].getString()).c_str() : nullptr,
+													   properties["shininess"].getFloat());
 				/// Load transform attributes
 				JsonBox::Array tempArray = properties["position"].getArray();
 				this->gameObjectList[key].transform.position = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };

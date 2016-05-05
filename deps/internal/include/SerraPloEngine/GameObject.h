@@ -3,22 +3,22 @@
 #include <string>
 #include "Transform.h"
 #include "GLMesh.h"
-#include "GLTexture.h"
+#include "GLMaterial.h"
 
 namespace SerraPlo {
 
-	class GameObjectManager;
 	class GameObject {
 	public:
 		std::string id{""};
 		Transform transform;
 		GLMesh mesh;
-		GLTexture texture;
+		GLMaterial material;
 		explicit GameObject() = default;
-		explicit GameObject(const std::string &fileId, const std::string &fileMesh, const std::string &fileTexture) : 
-			id{ fileId }, 
-			mesh{ fileMesh.c_str() }, 
-			texture{ fileTexture.c_str() } {};
+		explicit GameObject(const std::string &fileId, const char* meshPath, 
+							const char* diffusePath,  const char* normalPath, const char* specularPath, float shininessFile) :
+			id{ fileId },
+			mesh(meshPath),
+			material(diffusePath, normalPath, specularPath, shininessFile) {};
 		virtual ~GameObject() = default;
 	};
 

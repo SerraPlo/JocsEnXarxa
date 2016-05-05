@@ -4,10 +4,12 @@
 layout(location=0) in vec3 vertPosition;
 layout(location=1) in vec3 vertNormal;
 layout(location=2) in vec2 vertUV;
- 
-out vec3 fragPosition; // Position in world space.
-out vec3 fragNormal; // Surface normal in world space.
-out vec2 fragUV;
+
+out SHADER_SOCKET {
+	vec3 fragPosition; // Position in world space.
+	vec3 fragNormal; // Surface normal in world space.
+	vec2 fragUV;
+} vs_out;
  
 // Model, View, Projection matrix
 uniform mat4 camera;
@@ -17,7 +19,7 @@ void main()
 {
     gl_Position = camera * model * vec4(vertPosition, 1.0f);
  
-    fragPosition = vec3(model * vec4(vertPosition, 1.0f));
-    fragNormal = mat3(transpose(inverse(model))) * vertNormal;
-    fragUV = vertUV;
+    vs_out.fragPosition = vec3(model * vec4(vertPosition, 1.0f));
+    vs_out.fragNormal = mat3(transpose(inverse(model))) * vertNormal;
+    vs_out.fragUV = vertUV;
 }
