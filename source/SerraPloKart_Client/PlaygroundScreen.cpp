@@ -57,23 +57,15 @@ void PlaygroundScreen::OnExit() {
 void PlaygroundScreen::Update() {
 	checkInput();
 
-	float direction = 0.0f;
-	float rotation = 0.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction = 1.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_a)) rotation = 1.0;
-	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction = -1.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_d)) {
-		rotation = -1.0f;
-		std::cout << m_player->transform.rotation.y << std::endl;
-	}
+	glm::vec3 direction;
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction += glm::vec3(0.0f, 0.0f, 1.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_a)) direction += glm::vec3(1.0f, 0.0f, 0.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction += glm::vec3(0.0f, 0.0f, -1.0f);
+	if (gameApp->inputManager.isKeyDown(SDLK_d)) direction += glm::vec3(-1.0f, 0.0f, 0.0f);
 
-	m_player->transform.rotation += glm::vec3(0.0f, rotation*gameApp->deltaTime*100.0f,0.0f);
-	glm::vec3 frontPlayer;
-	frontPlayer = glm::vec3(sin((m_player->transform.rotation.y*3.14159) / 180), 0.0f, cos((m_player->transform.rotation.y*3.14159) / 180));
-	frontPlayer = glm::normalize(frontPlayer);
+	m_player->transform.position += direction*gameApp->deltaTime*8.0f;
 
-	m_player->transform.position += direction*frontPlayer*gameApp->deltaTime * 6.0f;
-	m_camera.Translate(m_player->transform.position - (frontPlayer*15.0f) + glm::vec3(0.0f,5.0f,0.0f));
+	m_camera.Translate(glm::vec3{ 0,5,-12 } + m_player->transform.position);
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } + m_player->transform.position);
 }
 
