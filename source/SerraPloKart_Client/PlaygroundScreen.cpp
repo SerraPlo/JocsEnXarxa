@@ -86,10 +86,8 @@ void PlaygroundScreen::checkInput() {
 
 void PlaygroundScreen::Draw() {
 	m_mainProgram.bind();
-		// Send camera matrix to shader (projection + view)
-		glUniformMatrix4fv(m_mainProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(m_camera.PVMatrix())); 
-		m_renderer.DrawObjects(m_mainProgram);
-		m_renderer.DrawLights(m_mainProgram);
+		m_renderer.DrawObjects(m_mainProgram, m_camera);
+		m_renderer.DrawLights(m_mainProgram, m_camera);
 	m_mainProgram.unbind();
 
 	/*m_lightProgram.bind();

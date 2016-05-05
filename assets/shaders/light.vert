@@ -15,9 +15,9 @@ uniform mat4 model;
  
 void main()
 {
-    gl_Position = camera * model * vec4(vertPosition, 1);
+    gl_Position = camera * model * vec4(vertPosition, 1.0f);
  
-    fragPosition = model * vec4(vertPosition, 1); 
-    fragNormal = model * vec4(vertNormal, 0);
+    fragPosition = model * vec4(vertPosition, 1.0f); 
+    fragNormal = model * vec4(vertNormal, 0.0f);
     fragUV = vertUV;
 }

@@ -2,6 +2,7 @@
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/Light.h>
 #include <SerraPloEngine/ShaderProgram.h>
+#include <SerraPloEngine/Camera.h>
 #include <vector>
 
 class RendererList {
@@ -12,7 +13,7 @@ public:
 	~RendererList() = default;
 	void Add(SerraPlo::GameObject *newObject);
 	void Add(SerraPlo::BaseLight *newObject);
-	void DrawObjects(SerraPlo::ShaderProgram &program);
-	void DrawLights(SerraPlo::ShaderProgram &program);
+	void DrawObjects(SerraPlo::ShaderProgram &program, Camera &camera);
+	void DrawLights(SerraPlo::ShaderProgram &program, Camera &camera);
 };
 
