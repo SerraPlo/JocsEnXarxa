@@ -153,17 +153,26 @@
     <ClCompile Include="AppClient.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlaygroundScreen.cpp" />
+    <ClCompile Include="SceneObjectList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClient.h" />
     <ClInclude Include="PlaygroundScreen.h" />
+    <ClInclude Include="SceneObjectList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\json\characters.json" />
+    <None Include="..\..\assets\shaders\light.frag" />
+    <None Include="..\..\assets\shaders\light.vert" />
     <None Include="..\..\assets\shaders\main.frag" />
     <None Include="..\..\assets\shaders\main.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

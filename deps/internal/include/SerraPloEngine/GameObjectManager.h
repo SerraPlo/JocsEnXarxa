@@ -20,7 +20,11 @@ namespace SerraPlo {
 			Load(filePath);
 		};
 		~GameObjectManager() {
-			//for (auto& entity : this->gameObjectList) delete entity.second;
+			for (auto& entity : this->gameObjectList) {
+				glDeleteVertexArrays(1, &entity.second.mesh.vao);
+				glDeleteBuffers(1, &entity.second.mesh.vbo);
+				glDeleteBuffers(1, &entity.second.mesh.ebo);
+			}
 		}
 		void Load(const std::string &filePath) {
 			JsonBox::Value fileData;
@@ -33,11 +37,11 @@ namespace SerraPlo {
 				this->gameObjectList[key] = GameObject(entity.first, LoadAsset(properties["model"].getString()), LoadAsset(properties["texture"].getString()));
 				/// Load transform attributes
 				JsonBox::Array tempArray = properties["position"].getArray();
-				this->gameObjectList[key].transform.position = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
+				this->gameObjectList[key].transform.position = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 				tempArray = properties["rotation"].getArray();
-				this->gameObjectList[key].transform.rotation = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
+				this->gameObjectList[key].transform.rotation = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 				tempArray = properties["scale"].getArray();
-				this->gameObjectList[key].transform.scale = { tempArray[0].getFloat(), tempArray[0].getFloat(), tempArray[0].getFloat() };
+				this->gameObjectList[key].transform.scale = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 			}
 		}
 	};

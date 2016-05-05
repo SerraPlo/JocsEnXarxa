@@ -4,17 +4,26 @@
     "description": "Blablabla.",
     "model": "models/seahorse/seahorse.obj",
     "texture": "models/seahorse/seahorse_diffuse.png",
-    "position": [ 0, 0, 0 ],
+    "position": [ -3, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.1, 0.1, 0.1 ]
   },
   "character_slycooper": {
-		"name": "Sly Cooper",
+    "name": "Sly Cooper",
+    "description": "Blablabla.",
+    "model": "models/sly_cooper/sly_cooper.obj",
+    "texture": "models/sly_cooper/sly_cooper_diffuse.png",
+    "position": [ 0, 0, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 0.5, 0.5, 0.5 ]
+  },
+  "character_bb8": {
+		"name": "BB8",
 		"description": "Blablabla.",
-		"model": "models/sly_cooper/sly_cooper.obj",
-		"texture": "models/sly_cooper/sly_cooper_diffuse.png",
-		"position": [0, 0, 0],
+		"model": "models/bb8/bb8.obj",
+		"texture": "models/bb8/bb8_diffuse.jpg",
+		"position": [4, 0, 0],
 		"rotation": [0, 0, 0],
-		"scale": [0.5, 0.5, 0.5]
+		"scale": [0.02, 0.02, 0.02]
 	}
 }

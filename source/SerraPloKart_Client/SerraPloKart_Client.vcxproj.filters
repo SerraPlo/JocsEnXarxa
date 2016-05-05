@@ -24,6 +24,9 @@
     <ClCompile Include="AppClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneObjectList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PlaygroundScreen.h">
@@ -32,10 +35,15 @@
     <ClInclude Include="AppClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneObjectList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\shaders\main.frag" />
     <None Include="..\..\assets\shaders\main.vert" />
     <None Include="..\..\assets\json\characters.json" />
+    <None Include="..\..\assets\shaders\light.frag" />
+    <None Include="..\..\assets\shaders\light.vert" />
   </ItemGroup>
 </Project>

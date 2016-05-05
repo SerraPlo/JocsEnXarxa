@@ -25,7 +25,6 @@ namespace SerraPlo {
 
 	class GLWindow : public Window {
 		SDL_GLContext m_glContext = nullptr;
-		static void EnableGLHint();
 	public:
 		explicit GLWindow() = default;
 		explicit GLWindow(int sw, int sh, const std::string &name = "");

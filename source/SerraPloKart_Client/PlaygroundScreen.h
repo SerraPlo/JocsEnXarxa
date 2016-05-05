@@ -3,7 +3,8 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/Camera.h>
 #include <SerraPloEngine/GameObject.h>
-#include <vector>
+#include <SerraPloEngine/Light.h>
+#include "SceneObjectList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -23,8 +24,10 @@ public:
 private:
 	void checkInput();
 
-	ShaderProgram m_shaderProgram;
+	ShaderProgram m_mainProgram;
+	ShaderProgram m_lightProgram;
 	Camera m_camera;
+	SceneObjectList m_sceneObjects;
 	GameObject *m_player;
-	std::vector<GameObject*> m_sceneObjects;
+	GLuint VBO, containerVAO;
 };

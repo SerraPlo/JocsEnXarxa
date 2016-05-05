@@ -10,7 +10,6 @@ namespace SerraPlo {
 		unsigned int elements;
 		explicit GLMesh() = default;
 		explicit GLMesh(const char* filePath);
-		//~GLMesh();  //TODO
 	};
 
 }

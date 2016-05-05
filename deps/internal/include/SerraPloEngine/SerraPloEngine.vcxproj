@@ -163,6 +163,7 @@
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GLMesh.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="GLTexture.h" />
     <ClInclude Include="IAppClient.h" />

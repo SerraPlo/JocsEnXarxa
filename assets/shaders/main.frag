@@ -1,7 +1,7 @@
 //The fragment shader operates on each pixel in a given polygon
 #version 330 core
 
-in vec2 texCoords;
+in vec2 fragUV;
 
 out vec4 color;
 
@@ -10,5 +10,5 @@ uniform sampler2D texture_diffuse;
 
 void main() {
 	// Linearly interpolate between both textures (second texture is only slightly combined)
-	color = texture(texture_diffuse, texCoords);
+	color = texture(texture_diffuse, fragUV);
 }

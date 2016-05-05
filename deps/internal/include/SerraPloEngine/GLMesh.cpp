@@ -53,19 +53,13 @@ namespace SerraPlo {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.elements.size()*sizeof(unsigned int), &mesh.elements[0], GL_STATIC_DRAW);
 		///Configure vertex input
-		glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer((GLuint)1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer((GLuint)2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(GLuint(0), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+		glEnableVertexAttribArray(0); // position
+		glVertexAttribPointer(GLuint(1), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+		glEnableVertexAttribArray(1); // normal
+		glVertexAttribPointer(GLuint(2), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
+		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
 	}
-
-	/*GLMesh::~GLMesh() {
-		if (vao) glDeleteVertexArrays(1, &vao);
-		if (vbo) glDeleteBuffers(1, &vbo);
-		if (ebo) glDeleteBuffers(1, &ebo);
-	}*/
 
 }
