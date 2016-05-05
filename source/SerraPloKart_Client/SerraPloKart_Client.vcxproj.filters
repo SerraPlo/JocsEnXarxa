@@ -24,7 +24,7 @@
     <ClCompile Include="AppClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneObjectList.cpp">
+    <ClCompile Include="RendererList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="AppClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObjectList.h">
+    <ClInclude Include="RendererList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -153,12 +153,12 @@
     <ClCompile Include="AppClient.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlaygroundScreen.cpp" />
-    <ClCompile Include="SceneObjectList.cpp" />
+    <ClCompile Include="RendererList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClient.h" />
     <ClInclude Include="PlaygroundScreen.h" />
-    <ClInclude Include="SceneObjectList.h" />
+    <ClInclude Include="RendererList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\json\characters.json" />

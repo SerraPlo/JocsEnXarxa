@@ -3,8 +3,7 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/Camera.h>
 #include <SerraPloEngine/GameObject.h>
-#include <SerraPloEngine/Light.h>
-#include "SceneObjectList.h"
+#include "RendererList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -27,7 +26,7 @@ private:
 	ShaderProgram m_mainProgram;
 	ShaderProgram m_lightProgram;
 	Camera m_camera;
-	SceneObjectList m_sceneObjects;
+	RendererList m_renderer;
 	GameObject *m_player;
-	GLuint VBO, containerVAO;
+	BaseLight tempLight;
 };
