@@ -14,8 +14,6 @@ namespace SerraPlo {
 	#define COLOR_BLUE	glm::vec3(0.0f, 0.0f, 1.0f)
 	
 	struct BaseLight {
-		glm::vec3 position;
-
 		glm::vec3 ambient;
 		glm::vec3 diffuse;
 		glm::vec3 specular;
@@ -26,12 +24,14 @@ namespace SerraPlo {
 	};
 
 	struct PointLight : BaseLight {
+		glm::vec3 position;
 		float constant;
 		float linear;
 		float quadratic;
 	};
 
 	struct SpotLight : BaseLight {
+		glm::vec3 position;
 		glm::vec3 direction;
 		float cutOff;
 		float outerCutOff;

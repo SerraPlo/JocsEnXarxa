@@ -4,7 +4,7 @@
     "description": "Blablabla.",
     "model": "models/seahorse/seahorse.obj",
     "diffuse": "models/seahorse/seahorse_diffuse.png",
-    "shininess": 0.1,
+    "shininess": 30,
     "position": [ -3, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.1, 0.1, 0.1 ]
@@ -14,7 +14,7 @@
     "description": "Blablabla.",
     "model": "models/sly_cooper/sly_cooper.obj",
     "diffuse": "models/sly_cooper/sly_cooper_diffuse.png",
-    "shininess": 0.8,
+    "shininess": 5,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.5, 0.5, 0.5 ]
@@ -24,7 +24,7 @@
     "description": "Blablabla.",
     "model": "models/bb8/bb8.obj",
     "diffuse": "models/bb8/bb8_diffuse.jpg",
-    "shininess": 0.1,
+    "shininess": 50,
     "position": [ 4, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.02, 0.02, 0.02 ]
@@ -35,7 +35,7 @@
 		"model": "models/floor/floor.obj",
     "diffuse": "models/floor/floor_diffuse.png",
     "normal": "models/floor/floor_normal.png",
-    "shininess": 0.1,
+    "shininess": 5,
 		"position": [0, 0, 0],
 		"rotation": [0, 0, 0],
 		"scale": [1, 1, 1]

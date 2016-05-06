@@ -7,8 +7,16 @@ void RendererList::Add(GameObject * newObject) {
 	m_objectList.push_back(newObject);
 }
 
-void RendererList::Add(BaseLight newLight) {
-	m_lightList.push_back(newLight);
+void RendererList::Add(DirLight *newLight) {
+	m_dirLight = newLight;
+}
+
+void RendererList::Add(PointLight *newLight) {
+	m_pointLightList.push_back(newLight);
+}
+
+void RendererList::Add(SpotLight * newLight) {
+	m_spotLightList.push_back(newLight);
 }
 
 void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
@@ -18,31 +26,35 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 
 	// Directional light properties
-	glUniform3f(program.getUniformLocation("dirLight.direction"), -0.2f, -1.0f, -0.3f);
-	glUniform3f(program.getUniformLocation("dirLight.ambient"), 0.0f, 0.0f, 0.0f); //0.05f, 0.05f, 0.05f
-	glUniform3f(program.getUniformLocation("dirLight.diffuse"), 0.0f, 0.0f, 0.0f); //0.4f, 0.4f, 0.4f
-	glUniform3f(program.getUniformLocation("dirLight.specular"), 0.0f, 0.0f, 0.0f); //0.5f, 0.5f, 0.5f
+	glUniform3fv(program.getUniformLocation("dirLight.direction"), 1, glm::value_ptr(m_dirLight->direction));
+	glUniform3fv(program.getUniformLocation("dirLight.ambient"), 1, glm::value_ptr(m_dirLight->ambient)); //0.05f, 0.05f, 0.05f
+	glUniform3fv(program.getUniformLocation("dirLight.diffuse"), 1, glm::value_ptr(m_dirLight->diffuse)); //0.4f, 0.4f, 0.4f
+	glUniform3fv(program.getUniformLocation("dirLight.specular"), 1, glm::value_ptr(m_dirLight->specular)); //0.5f, 0.5f, 0.5f
 
 	// Point light properties
-	glUniform3f(program.getUniformLocation("pointLights[0].position"), 10, 0, 0); //temp pos !!!!!!!!!!!
-	glUniform3f(program.getUniformLocation("pointLights[0].ambient"), 0.5f, 0.0f, 0.5f);
-	glUniform3f(program.getUniformLocation("pointLights[0].diffuse"), 1.0f, 0.0f, 1.0f);
-	glUniform3f(program.getUniformLocation("pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
-	glUniform1f(program.getUniformLocation("pointLights[0].constant"), 1.0f);
-	glUniform1f(program.getUniformLocation("pointLights[0].linear"), 0.09f);
-	glUniform1f(program.getUniformLocation("pointLights[0].quadratic"), 0.032f);
+	for (int i = 0; i < m_pointLightList.size(); ++i) {
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_pointLightList[i]->position)); //temp pos !!!!!!!!!!!
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_pointLightList[i]->ambient));
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(m_pointLightList[i]->diffuse));
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(m_pointLightList[i]->specular));
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].constant"), m_pointLightList[i]->constant);
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].linear"), m_pointLightList[i]->linear);
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].quadratic"), m_pointLightList[i]->quadratic);
+	}
 
 	// Spot light properties
-	glUniform3fv(program.getUniformLocation("spotLights[0].position"), 1, glm::value_ptr(glm::vec3{ -10,5,0 }));
-	glUniform3fv(program.getUniformLocation("spotLights[0].direction"), 1, glm::value_ptr(glm::vec3{ 0,-1,0 }));
-	glUniform1f(program.getUniformLocation("spotLights[0].cutOff"), glm::cos(glm::radians(40.0f)));
-	glUniform1f(program.getUniformLocation("spotLights[0].outerCutOff"), glm::cos(glm::radians(45.0f)));
-	glUniform3fv(program.getUniformLocation("spotLights[0].diffuse"), 1, glm::value_ptr(COLOR_GREEN));
-	glUniform3fv(program.getUniformLocation("spotLights[0].ambient"), 1, glm::value_ptr(glm::vec3{ 0.0f,0.5f,0.0f }));
-	glUniform3fv(program.getUniformLocation("spotLights[0].specular"), 1, glm::value_ptr(COLOR_WHITE));
-	glUniform1f(program.getUniformLocation("spotLights[0].constant"), 1.0f);
-	glUniform1f(program.getUniformLocation("spotLights[0].linear"), 0.09f);
-	glUniform1f(program.getUniformLocation("spotLights[0].quadratic"), 0.032f);
+	for (int i = 0; i < m_spotLightList.size(); ++i) {
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(glm::vec3{ -10,5,0 }));
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].direction"), 1, glm::value_ptr(glm::vec3{ 0,-1,0 }));
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(COLOR_GREEN));
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(glm::vec3{ 0.0f,0.5f,0.0f }));
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(COLOR_WHITE));
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].constant"), 1.0f);
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].linear"), 0.09f);
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].quadratic"), 0.032f);
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].cutOff"), glm::cos(glm::radians(40.0f)));
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].outerCutOff"), glm::cos(glm::radians(45.0f)));
+	}
 
 	glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 	glUniform1i(program.getUniformLocation("material.normal"), 1);
@@ -80,7 +92,7 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 
 void RendererList::DrawLights(ShaderProgram & program, Camera &camera) {
 	static DebugLight debugLight;
-	for (auto gameLight : m_lightList) {
+	/*for (auto gameLight : m_lightList) {
 		// Send camera matrix to shader (projection + view)
 		glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
 
@@ -93,5 +105,5 @@ void RendererList::DrawLights(ShaderProgram & program, Camera &camera) {
 		glDrawElements(GL_TRIANGLES, debugLight.elements, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	}*/
 }

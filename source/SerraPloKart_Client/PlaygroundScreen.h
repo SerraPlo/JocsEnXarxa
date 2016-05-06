@@ -7,6 +7,9 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
+#define MAX_POINT_LIGHTS 1
+#define MAX_SPOT_LIGHTS 1
+
 class PlaygroundScreen : public IScreen {
 public:
 	explicit PlaygroundScreen();
@@ -28,5 +31,8 @@ private:
 	Camera m_camera;
 	RendererList m_renderer;
 	GameObject *m_player;
-	std::vector<BaseLight> m_lightList;
+
+	DirLight m_dirLight;
+	PointLight m_pointLights[MAX_POINT_LIGHTS];
+	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
 };

@@ -18,31 +18,39 @@ void PlaygroundScreen::Build() {
 	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["character_seahorse"]);
 	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["object_floor"]);
 
-	BaseLight temp;
-	temp.position = glm::vec3{ 10,0,0 };
-	temp.diffuse = glm::vec3{ 1,0,1 };
-	m_lightList.push_back(temp);
-	temp.position = glm::vec3{ -10,5,0 };
-	temp.diffuse = glm::vec3{ 0,1,0 };
-	m_lightList.push_back(temp);
-	for (auto light : m_lightList) m_renderer.Add(light);
+	// Init directional light
+	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
+	m_dirLight.ambient = { 0.05f, 0.05f, 0.05f };
+	m_dirLight.diffuse = { 0.4f, 0.4f, 0.4f };
+	m_dirLight.specular = { 0.5f, 0.5f, 0.5f };
+	m_renderer.Add(&m_dirLight);
+
+	// Init point lights
+	m_pointLights[0].position = { 10, 0, 0 };
+	m_pointLights[0].ambient = { 0.5f, 0.0f, 0.5f };
+	m_pointLights[0].diffuse = { 1.0f, 0.0f, 1.0f };
+	m_pointLights[0].specular = { 1.0f, 1.0f, 1.0f };
+	m_pointLights[0].constant = 1.0f;
+	m_pointLights[0].linear = 0.09f;
+	m_pointLights[0].quadratic = 0.032f;
+	m_renderer.Add(&m_pointLights[0]);
+
+	// Init spot lights
+	m_spotLights[0].position = { 10, 0, 0 };
+	m_spotLights[0].ambient = { 0.5f, 0.0f, 0.5f };
+	m_spotLights[0].diffuse = { 1.0f, 0.0f, 1.0f };
+	m_spotLights[0].specular = { 1.0f, 1.0f, 1.0f };
+	m_spotLights[0].constant = 1.0f;
+	m_spotLights[0].linear = 0.09f;
+	m_spotLights[0].quadratic = 0.032f;
+	m_spotLights[0].cutOff = 0.09f;
+	m_spotLights[0].outerCutOff = 0.032f;
+	m_renderer.Add(&m_spotLights[0]);
 }
 
 void PlaygroundScreen::Destroy() {
 
 }
-
-struct Vertex {
-	glm::vec3 m_pos;
-	glm::vec2 m_tex;
-
-	Vertex() {}
-
-	Vertex(glm::vec3 pos, glm::vec2 tex) {
-		m_pos = pos;
-		m_tex = tex;
-	}
-};
 
 void PlaygroundScreen::OnEntry() {
 	//Initialize texture shaders

@@ -10,12 +10,16 @@ using namespace SerraPlo;
 
 class RendererList {
 	std::vector<GameObject*> m_objectList;
-	std::vector<BaseLight> m_lightList;
+	DirLight *m_dirLight;
+	std::vector<PointLight*> m_pointLightList;
+	std::vector<SpotLight*> m_spotLightList;
 public:
 	explicit RendererList() = default;
 	~RendererList() = default;
 	void Add(GameObject *newObject);
-	void Add(BaseLight newObject);
+	void Add(DirLight *newLight);
+	void Add(PointLight *newLight);
+	void Add(SpotLight *newLight);
 	void DrawObjects(ShaderProgram &program, Camera &camera);
 	void DrawLights(ShaderProgram &program, Camera &camera);
 };
