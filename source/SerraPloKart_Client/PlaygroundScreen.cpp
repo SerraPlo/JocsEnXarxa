@@ -36,15 +36,16 @@ void PlaygroundScreen::Build() {
 	m_renderer.Add(&m_pointLights[0]);
 
 	// Init spot lights
-	m_spotLights[0].position = { 10, 0, 0 };
-	m_spotLights[0].ambient = { 0.5f, 0.0f, 0.5f };
-	m_spotLights[0].diffuse = { 1.0f, 0.0f, 1.0f };
+	m_spotLights[0].position = { -10,5,0 };
+	m_spotLights[0].direction = { 0, -1, 0 };
+	m_spotLights[0].ambient = { 0.0f, 0.5f, 0.0f };
+	m_spotLights[0].diffuse = { 0.0f, 1.0f, 0.0f };
 	m_spotLights[0].specular = { 1.0f, 1.0f, 1.0f };
 	m_spotLights[0].constant = 1.0f;
 	m_spotLights[0].linear = 0.09f;
 	m_spotLights[0].quadratic = 0.032f;
-	m_spotLights[0].cutOff = 0.09f;
-	m_spotLights[0].outerCutOff = 0.032f;
+	m_spotLights[0].cutOff = glm::cos(glm::radians(40.0f));
+	m_spotLights[0].outerCutOff = glm::cos(glm::radians(45.0f));
 	m_renderer.Add(&m_spotLights[0]);
 }
 
@@ -54,12 +55,9 @@ void PlaygroundScreen::Destroy() {
 
 void PlaygroundScreen::OnEntry() {
 	//Initialize texture shaders
-	m_mainProgram.compileShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
-	m_mainProgram.linkShaders();
-
+	m_mainProgram.LoadShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
 	//Initialize light shaders
-	m_lightProgram.compileShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
-	m_lightProgram.linkShaders();
+	m_lightProgram.LoadShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
 
 	//SDL_ShowCursor(0);
 	//LIGHTNING
@@ -74,6 +72,7 @@ void PlaygroundScreen::OnExit() {
 void PlaygroundScreen::Update() {
 	checkInput();
 
+	// TODO: take it to server
 	float direction = 0.0f;
 	float rotation = 0.0f;
 	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction = 1.0f;

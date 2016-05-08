@@ -27,7 +27,7 @@ namespace SerraPlo {
 		}
 	}
 
-	void ShaderProgram::compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
+	void ShaderProgram::LoadShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
 		std::string vertSource, fragSource;
 
 		IOManager::loadFileToBuffer(vertexShaderFilePath, vertSource);
@@ -41,6 +41,7 @@ namespace SerraPlo {
 
 		compileShader(vertSource.c_str(), "Vertex Shader", m_vertexShaderID);
 		compileShader(fragSource.c_str(), "Fragment Shader", m_fragmentShaderID);
+		linkShaders();
 	}
 
 	void ShaderProgram::linkShaders() const {

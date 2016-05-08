@@ -13,12 +13,12 @@ namespace SerraPlo {
 		int m_numAttributes			{ 0 };
 
 		static void compileShader(const char* source, const std::string &name, GLuint id);
+		void linkShaders() const;
 	public:
 		explicit ShaderProgram();
 		~ShaderProgram();
 
-		void compileShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
-		void linkShaders() const;
+		void LoadShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 
 		GLint getUniformLocation(const std::string &uniformName) const;
 		GLint getAttribLocation(const std::string &attribName) const;
