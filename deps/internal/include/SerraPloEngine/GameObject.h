@@ -15,10 +15,10 @@ namespace SerraPlo {
 		GLMaterial material;
 		explicit GameObject() = default;
 		explicit GameObject(const std::string &fileId, const char* meshPath, 
-							const char* diffusePath,  const char* normalPath, const char* specularPath, float shininessFile) :
+							const char* diffusePath,  const char* normalPath, JsonBox::Array specularFile, float shininessFile) :
 			id{ fileId },
 			mesh(meshPath),
-			material(diffusePath, normalPath, specularPath, shininessFile) {};
+			material(diffusePath, normalPath, specularFile, shininessFile) {};
 		virtual ~GameObject() = default;
 	};
 

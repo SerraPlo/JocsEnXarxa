@@ -4,6 +4,7 @@
     "description": "Blablabla.",
     "model": "models/seahorse/seahorse.obj",
     "diffuse": "models/seahorse/seahorse_diffuse.png",
+    "specular":  [0, 0, 0],
     "shininess": 30,
     "position": [ -3, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
@@ -14,6 +15,7 @@
     "description": "Blablabla.",
     "model": "models/sly_cooper/sly_cooper.obj",
     "diffuse": "models/sly_cooper/sly_cooper_diffuse.png",
+    "specular":  [0.2, 0.2, 0.2],
     "shininess": 5,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
@@ -24,20 +26,21 @@
     "description": "Blablabla.",
     "model": "models/bb8/bb8.obj",
     "diffuse": "models/bb8/bb8_diffuse.jpg",
+    "specular":  [1, 1, 1],
     "shininess": 50,
     "position": [ 4, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.02, 0.02, 0.02 ]
   },
-  "object_floor": {
-		"name": "Floor",
-		"description": "Blablabla.",
-		"model": "models/floor/floor.obj",
-    "diffuse": "models/floor/floor_diffuse.png",
-    "normal": "models/floor/floor_normal.png",
+  "object_circuit": {
+		"name": "Circuit",
+		"description": "asdgsdgsd",
+		"model": "models/circuit/circuit.obj",
+    "diffuse": "models/bb8/bb8_diffuse.jpg",
+    "specular":  [0, 0, 0],
     "shininess": 5,
 		"position": [0, 0, 0],
 		"rotation": [0, 0, 0],
-		"scale": [1, 1, 1]
+		"scale": [0.1, 0.1, 0.1]
 	}
 }

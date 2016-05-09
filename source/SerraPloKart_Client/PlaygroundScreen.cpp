@@ -11,12 +11,12 @@ PlaygroundScreen::~PlaygroundScreen() {}
 void PlaygroundScreen::Build() {
 	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight); // Initialize camera with viewport dimensions
 
-	m_player = &gameApp->gameObjectManager.gameObjectList["character_slycooper"]; // Load the player model
+	m_player = &gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
-	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["character_bb8"]);
-	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["character_seahorse"]);
-	m_renderer.Add(&gameApp->gameObjectManager.gameObjectList["object_floor"]);
+	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("character_seahorse"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
 
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };

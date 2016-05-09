@@ -56,7 +56,7 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 	// Material map properties
 	glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 	glUniform1i(program.getUniformLocation("material.normal"), 1);
-	glUniform1i(program.getUniformLocation("material.specular"), 2);
+	//glUniform1i(program.getUniformLocation("material.specular"), 2);
 
 	for (auto gameObject : m_objectList) {
 		// Enable texture for each map
@@ -66,8 +66,9 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 		if (gameObject->material.normal.id != EMPTY_TEXTURE)
 			glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, gameObject->material.normal.id), 
 			glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
-		if (gameObject->material.specular.id != EMPTY_TEXTURE)
-			glActiveTexture(GL_TEXTURE2),glBindTexture(GL_TEXTURE_2D, gameObject->material.specular.id);
+		/*if (gameObject->material.specular.id != EMPTY_TEXTURE)
+			glActiveTexture(GL_TEXTURE2),glBindTexture(GL_TEXTURE_2D, gameObject->material.specular.id);*/
+		glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->material.specular));
 		glUniform1f(program.getUniformLocation("material.shininess"), gameObject->material.shininess);
 
 		// Transform properties

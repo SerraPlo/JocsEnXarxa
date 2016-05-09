@@ -33,10 +33,10 @@ void AppClient::OnInit() {
 	//glFrontFace(GL_CW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-	EnableGLHint(); 
+	EnableGLHint();
 
 	window.changeName("SerraPlo Kart Client");
-	gameObjectManager.Load(LoadAsset("json/gameObjects.json"));
+	gameObjectManager.Load(LoadAsset("gameObjects.json"));
 }
 
 void AppClient::AddScreens() {

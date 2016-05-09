@@ -1,20 +1,13 @@
 #pragma once
-#include <JsonBox/JsonBox.h>
 #include <map>
 #include "GameObject.h"
 #include "ResourceManager.h"
 
-#ifdef _DEBUG
-#pragma comment(lib, "JsonBox_d.lib")
-#else
-#pragma comment(lib, "JsonBox.lib")
-#endif
-
 namespace SerraPlo {
 
 	class GameObjectManager {
-	public:
 		std::map<std::string, GameObject> gameObjectList;
+	public:
 		explicit GameObjectManager() = default;
 		explicit GameObjectManager(const std::string &filePath) {
 			Load(filePath);
@@ -37,7 +30,7 @@ namespace SerraPlo {
 													   LoadAsset(properties["model"].getString()).c_str(), 
 													   LoadAsset(properties["diffuse"].getString()).c_str(),
 													   !properties["normal"].isNull() ? LoadAsset(properties["normal"].getString()).c_str() : nullptr,
-													   !properties["specular"].isNull() ? LoadAsset(properties["specular"].getString()).c_str() : nullptr,
+													   properties["specular"].getArray(),
 													   properties["shininess"].getFloat());
 				/// Load transform attributes
 				JsonBox::Array tempArray = properties["position"].getArray();
@@ -47,6 +40,11 @@ namespace SerraPlo {
 				tempArray = properties["scale"].getArray();
 				this->gameObjectList[key].transform.scale = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 			}
+		}
+		GameObject& Find(const std::string &str) {
+			auto it = gameObjectList.find(str);
+			if (it != gameObjectList.end()) return it->second;
+			SP_THROW_ERROR("Could not find game object [" + str + "] inside manager list");
 		}
 	};
 

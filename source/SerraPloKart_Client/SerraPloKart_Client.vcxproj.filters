@@ -44,6 +44,6 @@
     <None Include="..\..\assets\shaders\main.vert" />
     <None Include="..\..\assets\shaders\light.frag" />
     <None Include="..\..\assets\shaders\light.vert" />
-    <None Include="..\..\assets\json\gameObjects.json" />
+    <None Include="..\..\assets\gameObjects.json" />
   </ItemGroup>
 </Project>
