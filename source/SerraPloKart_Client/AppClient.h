@@ -3,27 +3,8 @@
 #include "PlaygroundScreen.h"
 
 #define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 600
+#define SCREEN_HEIGHT 900
 #define IP_PORT "127.0.0.1:5000"
-
-//(modelos / texturas)
-
-//gameobject(modelo,textura)
-
-//hashmap<k=(modelo,textura),v=vbo(T)>
-
-/*coche, coche, coche, avion, avion
-coche, avion, coche, avion, coche
-
-setuniform(camera)
-for (auto...) {
-	setvao(modelo)
-	settexture(textura)
-	for (model : .second) {
-		setuniform(model / transform)
-		drawelements()
-	}
-}*/
 
 class AppClient : public IAppClient {
 	std::unique_ptr<PlaygroundScreen> m_testScreen { nullptr };

@@ -18,11 +18,10 @@ public:
 	glm::mat4 viewMatrix;
 
 	Camera() = default;
-	void Init(int screenWidth, int screenHeight) { viewportAspectRatio = GLfloat(screenWidth / screenHeight); };
-	glm::mat4 PVMatrix() const { return viewMatrix * ComputeViewMatrix(); };
-
-	void Translate(const glm::vec3 &pos) { position = pos; viewMatrix = ComputeProjectionMatrix(); };
-	void SetTarget(const glm::vec3 &pos) { target = pos; viewMatrix = ComputeProjectionMatrix(); };
+	void Resize(int screenWidth, int screenHeight) { viewportAspectRatio = GLfloat(screenWidth / screenHeight); };
+	glm::mat4 PVMatrix() const { return ComputeProjectionMatrix() * viewMatrix; };
+	void Translate(const glm::vec3 &pos) { position = pos; viewMatrix = ComputeViewMatrix(); };
+	void SetTarget(const glm::vec3 &pos) { target = pos; viewMatrix = ComputeViewMatrix(); };
 
 private:
 	glm::mat4 ComputeViewMatrix() const { return glm::lookAt(this->position, this->target, this->up); }

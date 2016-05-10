@@ -9,7 +9,7 @@ PlaygroundScreen::PlaygroundScreen() {}
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
-	m_camera.Init(gameApp->screenWidth, gameApp->screenHeight); // Initialize camera with viewport dimensions
+	m_camera.Resize(gameApp->screenWidth*1.5, gameApp->screenHeight); // Initialize camera with viewport dimensions
 
 	m_player = &gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
 	// Add the gameobjects needed in this scene
@@ -97,8 +97,12 @@ void PlaygroundScreen::checkInput() {
 		if (evnt.type == SDL_WINDOWEVENT) {
 			switch (evnt.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-				glViewport(0, 0, gameApp->screenWidth, gameApp->screenHeight); // Set the OpenGL viewport to window dimensions
-				//m_camera.Update();
+				SDL_GetWindowSize(gameApp->window.SDLWindow, &gameApp->screenWidth, &gameApp->screenHeight);
+				int nh = (int)(gameApp->screenWidth / 16*9);
+				//int nw = (int)(nh / 9*16);
+				int nCenteringFactor = (gameApp->screenHeight - nh) / 2;
+				glViewport(0, 0, gameApp->screenWidth, nh + nCenteringFactor); // Set the OpenGL viewport to window dimensions
+				//std::cout << w << std::endl;
 				break;
 			}
 		}

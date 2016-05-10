@@ -24,8 +24,8 @@ namespace SerraPlo {
 		int buttonid;
 		SDL_ShowMessageBox(&messageboxdata, &buttonid); // Whether to play on fullscreen mode or default normal mode
 
-		if (buttonid == 0) window.create("Default", screenWidth, screenHeight, WindowFlags::RESIZABLE); // Create default window resizable
-		else window.create("Default", screenWidth, screenHeight, WindowFlags::FULLSCREEN); // Create default window fullscreen
+		if (buttonid == 0) window.create("Default", &screenWidth, &screenHeight, WindowFlags::RESIZABLE); // Create default window resizable
+		else window.create("Default", &screenWidth, &screenHeight, WindowFlags::FULLSCREEN); // Create default window fullscreen
 	}
 
 	void IAppClient::Init() {

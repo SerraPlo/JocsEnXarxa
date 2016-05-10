@@ -8,15 +8,15 @@ namespace SerraPlo {
 	//						WINDOW
 	//========================================================
 
-	Window::Window(int sw, int sh, const std::string &name) :
-		m_SDLWindow(nullptr),
+	Window::Window(int *sw, int *sh, const std::string &name) :
+		SDLWindow(nullptr),
 		m_engineName(name),
-		m_screenWidth(sw),
-		m_screenHeight(sh)
+		screenWidth(sw),
+		screenHeight(sh)
 	{};
 
 	Window::~Window() {
-		if (m_SDLWindow != nullptr) SDL_DestroyWindow(m_SDLWindow);
+		if (SDLWindow != nullptr) SDL_DestroyWindow(SDLWindow);
 		SDL_Quit();
 	};
 
@@ -26,14 +26,14 @@ namespace SerraPlo {
 		else if (curFlags & FULLSCREEN) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		else if (curFlags & BORDERLESS) flags |= SDL_WINDOW_BORDERLESS;
 		else if (curFlags & RESIZABLE) flags |= SDL_WINDOW_RESIZABLE;
-		m_SDLWindow = SDL_CreateWindow(m_engineName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_screenWidth, m_screenHeight, flags);
-		if (m_SDLWindow == nullptr) SP_THROW_ERROR("SDL Window could not be created.");
+		SDLWindow = SDL_CreateWindow(m_engineName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, *screenWidth, *screenHeight, flags);
+		if (SDLWindow == nullptr) SP_THROW_ERROR("SDL Window could not be created.");
 	}
 
-	void Window::create(const std::string & name, int sw, int sh, const unsigned & curFlags) {
+	void Window::create(const std::string & name, int *sw, int *sh, const unsigned & curFlags) {
 		m_engineName = name;
-		m_screenWidth = sw;
-		m_screenHeight = sh;
+		screenWidth = sw;
+		screenHeight = sh;
 		create(curFlags);
 	}
 
@@ -41,13 +41,13 @@ namespace SerraPlo {
 	//						GLWINDOW
 	//========================================================
 
-	GLWindow::GLWindow(int sw, int sh, const std::string &name) :
+	GLWindow::GLWindow(int *sw, int *sh, const std::string &name) :
 		Window(sw, sh, name),
 		m_glContext(nullptr)
 	{};
 
 	GLWindow::~GLWindow() {
-		if (m_SDLWindow != nullptr) SDL_DestroyWindow(m_SDLWindow);
+		if (SDLWindow != nullptr) SDL_DestroyWindow(SDLWindow);
 		if (m_glContext != nullptr) SDL_GL_DeleteContext(m_glContext);
 		SDL_Quit();
 	};
@@ -59,10 +59,10 @@ namespace SerraPlo {
 		else if (curFlags & BORDERLESS) flags |= SDL_WINDOW_BORDERLESS;
 		else if (curFlags & RESIZABLE) flags |= SDL_WINDOW_RESIZABLE;
 
-		m_SDLWindow = SDL_CreateWindow(m_engineName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_screenWidth, m_screenHeight, flags);
-		if (m_SDLWindow == nullptr) SP_THROW_ERROR("SDL Window could not be created.");
+		SDLWindow = SDL_CreateWindow(m_engineName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, *screenWidth, *screenHeight, flags);
+		if (SDLWindow == nullptr) SP_THROW_ERROR("SDL Window could not be created.");
 
-		m_glContext = SDL_GL_CreateContext(m_SDLWindow);
+		m_glContext = SDL_GL_CreateContext(SDLWindow);
 		if (m_glContext == nullptr) SP_THROW_ERROR("SDL_GL Context could not be created.");
 
 		glewExperimental = true;
@@ -73,10 +73,10 @@ namespace SerraPlo {
 		SDL_GL_SetSwapInterval(0);	// Set V-Sync
 	}
 
-	void GLWindow::create(const std::string & name, int sw, int sh, const unsigned & curFlags) {
+	void GLWindow::create(const std::string & name, int *sw, int *sh, const unsigned & curFlags) {
 		m_engineName = name;
-		m_screenWidth = sw;
-		m_screenHeight = sh;
+		screenWidth = sw;
+		screenHeight = sh;
 		create(curFlags);
 	}
 }
