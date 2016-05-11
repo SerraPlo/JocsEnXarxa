@@ -5,6 +5,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "GLMaterial.h"
+#include "ResourceManager.h"
 #pragma comment(lib, "assimp.lib") 
 
 namespace SerraPlo {
@@ -72,7 +73,10 @@ namespace SerraPlo {
 					int texIndex = 0;
 					aiString path;
 					if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &path) == AI_SUCCESS) {
-						GLMaterial temp(path.data, normalPath, specular, emissive, shininess);
+						std::string fileName = path.data;
+						fileName = fileName.substr(fileName.rfind("models"), fileName.size());
+						fileName = LoadAsset(fileName);
+						GLMaterial temp(fileName.c_str(), normalPath, specular, emissive, shininess);
 						meshData[i].material = temp;
 						continue;
 					}
