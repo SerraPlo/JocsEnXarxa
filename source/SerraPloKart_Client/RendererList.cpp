@@ -59,18 +59,6 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 	//glUniform1i(program.getUniformLocation("material.specular"), 2);
 
 	for (auto gameObject : m_objectList) {
-		// Enable texture for each map
-		if (gameObject->material.diffuse.id != EMPTY_TEXTURE)
-			glActiveTexture(GL_TEXTURE0), glBindTexture(GL_TEXTURE_2D, gameObject->material.diffuse.id);
-		glUniform1i(program.getUniformLocation("hasNormalMap"), GL_FALSE);
-		if (gameObject->material.normal.id != EMPTY_TEXTURE)
-			glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, gameObject->material.normal.id), 
-			glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
-		/*if (gameObject->material.specular.id != EMPTY_TEXTURE)
-			glActiveTexture(GL_TEXTURE2),glBindTexture(GL_TEXTURE_2D, gameObject->material.specular.id);*/
-		glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->material.specular));
-		glUniform1f(program.getUniformLocation("material.shininess"), gameObject->material.shininess);
-
 		// Transform properties
 		Transform &transformTemp = gameObject->transform;
 		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
@@ -81,10 +69,22 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		// Draw game object
-		glBindVertexArray(gameObject->mesh.vao);
-		glDrawElements(GL_TRIANGLES, gameObject->mesh.elements, GL_UNSIGNED_INT, nullptr);
-		glBindVertexArray(0);
+		for (auto meshData : gameObject->model.meshData) {
+			if (meshData.material.diffuse.id != EMPTY_TEXTURE)
+				glActiveTexture(GL_TEXTURE0), glBindTexture(GL_TEXTURE_2D, meshData.material.diffuse.id);
+			glUniform1i(program.getUniformLocation("hasNormalMap"), GL_FALSE);
+			if (meshData.material.normal.id != EMPTY_TEXTURE)
+				glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, meshData.material.normal.id),
+				glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
+			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(meshData.material.specular));
+			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(meshData.material.emissive));
+			glUniform1f(program.getUniformLocation("material.shininess"), meshData.material.shininess);
 
+			glBindVertexArray(meshData.vao);
+			glDrawElements(GL_TRIANGLES, meshData.elements.size(), GL_UNSIGNED_INT, nullptr);
+			glBindVertexArray(0);
+		}
+		
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }

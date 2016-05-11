@@ -3,7 +3,6 @@
 #include <string>
 #include "Transform.h"
 #include "GLMesh.h"
-#include "GLMaterial.h"
 
 namespace SerraPlo {
 
@@ -11,14 +10,13 @@ namespace SerraPlo {
 	public:
 		std::string id{""};
 		Transform transform;
-		GLMesh mesh;
-		GLMaterial material;
+		GLModel model;
 		explicit GameObject() = default;
-		explicit GameObject(const std::string &fileId, const char* meshPath, 
-							const char* diffusePath,  const char* normalPath, JsonBox::Array specularFile, float shininessFile) :
+		explicit GameObject(const std::string &fileId, const char* meshPath, const char* diffusePath,  const char* normalPath, 
+							JsonBox::Array specular, JsonBox::Array emissive, float shininess) :
 			id{ fileId },
-			mesh(meshPath),
-			material(diffusePath, normalPath, specularFile, shininessFile) {};
+			model(meshPath, diffusePath, normalPath, specular, emissive, shininess) {}
+			//material(diffusePath, normalPath, specular, emissive, shininess) {};
 		virtual ~GameObject() = default;
 	};
 

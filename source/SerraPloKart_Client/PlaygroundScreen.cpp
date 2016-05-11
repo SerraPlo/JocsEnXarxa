@@ -4,24 +4,27 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#define FIXED_ASPECT_RATIO 16 / 10
+
 PlaygroundScreen::PlaygroundScreen() {}
 
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
-	m_camera.Resize(gameApp->screenWidth*1.5, gameApp->screenHeight); // Initialize camera with viewport dimensions
+	int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
+	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight); // Initialize camera with viewport dimensions
 
 	m_player = &gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
 	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("character_seahorse"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
 
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
-	m_dirLight.ambient = { 0.05f, 0.05f, 0.05f };
-	m_dirLight.diffuse = { 0.4f, 0.4f, 0.4f };
+	m_dirLight.ambient = { 0.3f, 0.3f, 0.3f };
+	m_dirLight.diffuse = { 0.9f, 0.9f, 0.7f };
 	m_dirLight.specular = { 0.5f, 0.5f, 0.5f };
 	m_renderer.Add(&m_dirLight);
 
@@ -98,11 +101,9 @@ void PlaygroundScreen::checkInput() {
 			switch (evnt.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
 				SDL_GetWindowSize(gameApp->window.SDLWindow, &gameApp->screenWidth, &gameApp->screenHeight);
-				int nh = (int)(gameApp->screenWidth / 16*9);
-				//int nw = (int)(nh / 9*16);
-				int nCenteringFactor = (gameApp->screenHeight - nh) / 2;
-				glViewport(0, 0, gameApp->screenWidth, nh + nCenteringFactor); // Set the OpenGL viewport to window dimensions
-				//std::cout << w << std::endl;
+				glViewport(0, 0, gameApp->screenWidth, gameApp->screenHeight); // Set the OpenGL viewport to window dimensions
+				int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
+				m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight);
 				break;
 			}
 		}

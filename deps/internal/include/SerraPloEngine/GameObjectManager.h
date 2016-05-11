@@ -14,9 +14,9 @@ namespace SerraPlo {
 		};
 		~GameObjectManager() {
 			for (auto& entity : this->gameObjectList) {
-				glDeleteVertexArrays(1, &entity.second.mesh.vao);
-				glDeleteBuffers(1, &entity.second.mesh.vbo);
-				glDeleteBuffers(1, &entity.second.mesh.ebo);
+				//glDeleteVertexArrays(1, &entity.second.mesh.vao);
+				//glDeleteBuffers(1, &entity.second.mesh.vbo);
+				//glDeleteBuffers(1, &entity.second.mesh.ebo);
 			}
 		}
 		void Load(const std::string &filePath) {
@@ -28,9 +28,10 @@ namespace SerraPlo {
 				JsonBox::Object properties{ entity.second.getObject() };
 				this->gameObjectList[key] = GameObject(entity.first, 
 													   LoadAsset(properties["model"].getString()).c_str(), 
-													   LoadAsset(properties["diffuse"].getString()).c_str(),
+													   !properties["diffuse"].isNull() ? LoadAsset(properties["diffuse"].getString()).c_str() : nullptr,
 													   !properties["normal"].isNull() ? LoadAsset(properties["normal"].getString()).c_str() : nullptr,
 													   properties["specular"].getArray(),
+													   !properties["emissive"].isNull() ? properties["emissive"].getArray() : JsonBox::Array{0, 0, 0},
 													   properties["shininess"].getFloat());
 				/// Load transform attributes
 				JsonBox::Array tempArray = properties["position"].getArray();

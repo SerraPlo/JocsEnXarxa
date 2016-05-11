@@ -1,21 +1,10 @@
 {
-  "character_seahorse": {
-    "name": "Seahorse",
-    "description": "Blablabla.",
-    "model": "models/seahorse/seahorse.obj",
-    "diffuse": "models/seahorse/seahorse_diffuse.png",
-    "specular":  [0, 0, 0],
-    "shininess": 30,
-    "position": [ -3, 0, 0 ],
-    "rotation": [ 0, 0, 0 ],
-    "scale": [ 0.1, 0.1, 0.1 ]
-  },
   "character_slycooper": {
     "name": "Sly Cooper",
     "description": "Blablabla.",
     "model": "models/sly_cooper/sly_cooper.obj",
     "diffuse": "models/sly_cooper/sly_cooper_diffuse.png",
-    "specular":  [0.2, 0.2, 0.2],
+    "specular": [ 0.2, 0.2, 0.2 ],
     "shininess": 5,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
@@ -26,21 +15,32 @@
     "description": "Blablabla.",
     "model": "models/bb8/bb8.obj",
     "diffuse": "models/bb8/bb8_diffuse.jpg",
-    "specular":  [1, 1, 1],
+    "specular": [ 1, 1, 1 ],
     "shininess": 50,
     "position": [ 4, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 0.02, 0.02, 0.02 ]
   },
+  "object_skybox": {
+    "name": "Skybox",
+    "description": "Beautiful skybox",
+    "model": "models/skybox/skybox.obj",
+    "diffuse": "models/skybox/skybox.jpg",
+    "specular": [ 1, 1, 1 ],
+    "emissive": [ 0.7, 0.7, 0.7 ],
+    "shininess": 100,
+    "position": [ 0, -100, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 3, 3, 3 ]
+  },
   "object_circuit": {
-		"name": "Circuit",
-		"description": "asdgsdgsd",
-		"model": "models/circuit/circuit.obj",
-    "diffuse": "models/bb8/bb8_diffuse.jpg",
-    "specular":  [0, 0, 0],
+    "name": "Circuit",
+    "description": "asdgsdgsd",
+    "model": "models/circuit/circuit.DAE",
+    "specular": [ 0, 0, 0 ],
     "shininess": 5,
-		"position": [0, -10, 0],
-		"rotation": [0, 0, 0],
-		"scale": [5, 5, 5]
-	}
+    "position": [ 0, -10, 0 ],
+    "rotation": [ 180, 0, 0 ],
+    "scale": [ 5, 5, 5 ]
+  }
 }

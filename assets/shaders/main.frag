@@ -5,6 +5,7 @@ struct Material {
 	sampler2D diffuse;
 	sampler2D normal;
 	vec3 specular;
+	vec3 emissive;
 	float shininess;
 };
 
@@ -86,7 +87,7 @@ void main() {
 	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i)
 		result += CalcSpotLight(spotLights[i], norm, fs_in.fragPosition, viewDir);
 
-	finalColor = vec4(result, 1.0f);
+	finalColor = vec4(material.emissive + result, 1.0f);
 }
 
 // Calculates the color when using a directional light.

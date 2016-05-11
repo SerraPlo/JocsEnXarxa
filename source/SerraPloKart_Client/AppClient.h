@@ -3,7 +3,7 @@
 #include "PlaygroundScreen.h"
 
 #define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 900
+#define SCREEN_HEIGHT 600
 #define IP_PORT "127.0.0.1:5000"
 
 class AppClient : public IAppClient {
