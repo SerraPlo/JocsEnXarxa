@@ -84,6 +84,9 @@
     <ClInclude Include="GLMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CarPhysics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">

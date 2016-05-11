@@ -3,6 +3,7 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/Camera.h>
 #include <SerraPloEngine/GameObject.h>
+#include <SerraPloEngine/CarPhysics.h>
 #include "RendererList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
@@ -31,7 +32,7 @@ private:
 	Camera m_camera;
 	RendererList m_renderer;
 	GameObject *m_player;
-
+	CarPhysics m_carPhy;
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];

@@ -16,7 +16,6 @@ namespace SerraPlo {
 							JsonBox::Array specular, JsonBox::Array emissive, float shininess) :
 			id{ fileId },
 			model(meshPath, diffusePath, normalPath, specular, emissive, shininess) {}
-			//material(diffusePath, normalPath, specular, emissive, shininess) {};
 		virtual ~GameObject() = default;
 	};
 

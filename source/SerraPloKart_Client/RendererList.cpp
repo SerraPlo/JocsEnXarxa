@@ -87,6 +87,9 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	//glDrawArrays(GL_LINES, /*primer*/, /*num*/);
+
 }
 
 #define RENDER_LIGHT_TEMPLATE(light) \

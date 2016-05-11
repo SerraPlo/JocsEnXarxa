@@ -6,7 +6,7 @@
 namespace SerraPlo {
 
 	class GameObjectManager {
-		std::map<std::string, GameObject> gameObjectList;
+		std::map<std::string, GameObject*> gameObjectList;
 	public:
 		explicit GameObjectManager() = default;
 		explicit GameObjectManager(const std::string &filePath) {
@@ -17,6 +17,7 @@ namespace SerraPlo {
 				//glDeleteVertexArrays(1, &entity.second.mesh.vao);
 				//glDeleteBuffers(1, &entity.second.mesh.vbo);
 				//glDeleteBuffers(1, &entity.second.mesh.ebo);
+				delete entity.second;
 			}
 		}
 		void Load(const std::string &filePath) {
@@ -26,7 +27,7 @@ namespace SerraPlo {
 			for (auto entity : wrapper) {
 				std::string key{ entity.first };
 				JsonBox::Object properties{ entity.second.getObject() };
-				this->gameObjectList[key] = GameObject(entity.first, 
+				this->gameObjectList[key] = new GameObject(entity.first, 
 													   LoadAsset(properties["model"].getString()).c_str(), 
 													   !properties["diffuse"].isNull() ? LoadAsset(properties["diffuse"].getString()).c_str() : nullptr,
 													   !properties["normal"].isNull() ? LoadAsset(properties["normal"].getString()).c_str() : nullptr,
@@ -35,14 +36,14 @@ namespace SerraPlo {
 													   properties["shininess"].getFloat());
 				/// Load transform attributes
 				JsonBox::Array tempArray = properties["position"].getArray();
-				this->gameObjectList[key].transform.position = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
+				this->gameObjectList[key]->transform.position = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 				tempArray = properties["rotation"].getArray();
-				this->gameObjectList[key].transform.rotation = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
+				this->gameObjectList[key]->transform.rotation = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 				tempArray = properties["scale"].getArray();
-				this->gameObjectList[key].transform.scale = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
+				this->gameObjectList[key]->transform.scale = { tempArray[0].getFloat(), tempArray[1].getFloat(), tempArray[2].getFloat() };
 			}
 		}
-		GameObject& Find(const std::string &str) {
+		GameObject* Find(const std::string &str) {
 			auto it = gameObjectList.find(str);
 			if (it != gameObjectList.end()) return it->second;
 			SP_THROW_ERROR("Could not find game object [" + str + "] inside manager list");

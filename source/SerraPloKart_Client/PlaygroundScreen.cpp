@@ -6,7 +6,8 @@
 
 #define FIXED_ASPECT_RATIO 16 / 10
 
-PlaygroundScreen::PlaygroundScreen() {}
+PlaygroundScreen::PlaygroundScreen() {
+}
 
 PlaygroundScreen::~PlaygroundScreen() {}
 
@@ -14,12 +15,12 @@ void PlaygroundScreen::Build() {
 	int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
 	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight); // Initialize camera with viewport dimensions
 
-	m_player = &gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
+	m_player = gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
-	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(gameApp->gameObjectManager.Find("character_bb8"));
+	m_renderer.Add(gameApp->gameObjectManager.Find("object_skybox"));
+	m_renderer.Add(gameApp->gameObjectManager.Find("object_circuit"));
 
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
@@ -50,6 +51,8 @@ void PlaygroundScreen::Build() {
 	m_spotLights[0].cutOff = glm::cos(glm::radians(40.0f));
 	m_spotLights[0].outerCutOff = glm::cos(glm::radians(45.0f));
 	m_renderer.Add(&m_spotLights[0]);
+
+	m_carPhy.AddTransform(&m_player->transform);
 }
 
 void PlaygroundScreen::Destroy() {
@@ -75,21 +78,16 @@ void PlaygroundScreen::OnExit() {
 void PlaygroundScreen::Update() {
 	checkInput();
 
-	// TODO: take it to server
-	float direction = 0.0f;
-	float rotation = 0.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) direction = 1.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_a)) rotation = 1.0;
-	if (gameApp->inputManager.isKeyDown(SDLK_s)) direction = -1.0f;
-	if (gameApp->inputManager.isKeyDown(SDLK_d)) rotation = -1.0f;
+	bool temp[5];
+	for (int i = 0; i < 5; i++) temp[i] = false;
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) temp[0] = true;
+	if (gameApp->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
+	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
+	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 
-	m_player->transform.rotation += glm::vec3(0.0f, rotation*gameApp->deltaTime*100.0f, 0.0f);
-	glm::vec3 frontPlayer;
-	frontPlayer = glm::vec3(sin((m_player->transform.rotation.y*3.14159) / 180), 0.0f, cos((m_player->transform.rotation.y*3.14159) / 180));
-	frontPlayer = glm::normalize(frontPlayer);
-
-	m_player->transform.position += direction*frontPlayer*gameApp->deltaTime * 10.0f;
-	m_camera.Translate(m_player->transform.position - (frontPlayer*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
+	m_carPhy.Update(temp, gameApp->deltaTime);
+	
+	m_camera.Translate(m_player->transform.position - (m_carPhy.front*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }
 
