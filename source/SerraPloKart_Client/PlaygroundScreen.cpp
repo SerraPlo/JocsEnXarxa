@@ -15,9 +15,11 @@ void PlaygroundScreen::Build() {
 	int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
 	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight); // Initialize camera with viewport dimensions
 
-	m_player = gameApp->gameObjectManager.Find("character_slycooper"); // Load the player model
+	m_player = gameApp->gameObjectManager.Find("car_base"); // Load the player model
+	for (int i = 0; i < 4; i++) m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
+	for (int i = 0; i < 4; i++) m_renderer.Add(m_playerwheels[i]);
 	m_renderer.Add(gameApp->gameObjectManager.Find("character_bb8"));
 	m_renderer.Add(gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(gameApp->gameObjectManager.Find("object_circuit"));
@@ -86,7 +88,10 @@ void PlaygroundScreen::Update() {
 	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 
 	m_carPhy.Update(temp, gameApp->deltaTime);
-	
+
+	m_playerwheels[0]->transform.position = m_player->transform.position + m_carPhy.front*3.0f;
+	m_playerwheels[0]->transform.rotation = m_player->transform.rotation - glm::vec3(0.0f,(m_carPhy.steerAngle*180.0f)/M_PI,0.0f);
+
 	m_camera.Translate(m_player->transform.position - (m_carPhy.front*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }

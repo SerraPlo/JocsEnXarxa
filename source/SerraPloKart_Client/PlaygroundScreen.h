@@ -32,6 +32,7 @@ private:
 	Camera m_camera;
 	RendererList m_renderer;
 	GameObject *m_player;
+	GameObject *m_playerwheels[4];
 	CarPhysics m_carPhy;
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];

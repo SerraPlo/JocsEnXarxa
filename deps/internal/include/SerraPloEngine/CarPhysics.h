@@ -45,9 +45,9 @@ public:
 	float steerAngle = 0.0; // actual front wheel steer angle (-maxSteer..maxSteer)
 
 	//  Use input smoothing (on by default)
-	bool smoothSteer = false;
+	bool smoothSteer = true;
 	//  Use safe steering (angle limited by speed)
-	bool safeSteer = false;
+	bool safeSteer = true;
 
 	float inertia = 0.0;	// will be = mass
 	float wheelBase = 0.0;  // set from axle to CG lengths
@@ -84,26 +84,26 @@ public:
 
 	
 	float applySmoothSteer(float steerInput, float dt){
-		float steer = 0;
+		//float steer = 0.0f;
 
-		if (abs(steerInput) > 0.001) {	//  Move toward steering input
-			steer = clamp(steer + steerInput * dt * 2.0, -1.0, 1.0); // -inp.right, inp.left);
+		if (abs(steerInput) > 0.001f) {	//  Move toward steering input
+			steer = clamp(steer + steerInput * dt * 2.0f, -1.0f, 1.0f); // -inp.right, inp.left);
 		}
 		else {	//  No steer input - move toward centre (0)
-			if (steer > 0) steer = max(steer - dt * 1.0, 0);
-			else if (steer < 0)	steer = min(steer + dt * 1.0, 0);
+			if (steer > 0.0f) steer = max(steer - dt * 1.0f, 0.0f);
+			else if (steer < 0.0f)	steer = min(steer + dt * 1.0f, 0.0f);
 		}
 		return steer;
 	};
 	float applySafeSteer(float steerInput){
-		float avel = min(absVel, 250.0);  // m/s
-		float steer = steerInput * (1.0 - (avel / 280.0));
+		float avel = min(absVel, 250.0f);  // m/s
+		float steer = steerInput * (1.0f - (avel / 280.0f));
 		return steer;
 	};
 	void processInput(bool arrayK[5], float dt) {
 		throttle = arrayK[0]?1:0;
 		brake = arrayK[1]?1:0;
-		ebrake = arrayK[4] ? 1 : 0;
+		ebrake = /*arrayK[4]? 1 :*/ 0;
 		float steerInput = 0.0f;
 		if(arrayK[2]) steerInput += -1.0f;
 		if(arrayK[3]) steerInput += 1.0f;
@@ -113,19 +113,16 @@ public:
 		if (safeSteer)	steer = applySafeSteer(steer);
 		//  Now set the actual steering angle
 		steerAngle = steer * cfg.maxSteer;
+		std::cout << "steer: " << steer << "/ steerAngle: " << (steerAngle*180.0f) / M_PI << std::endl;
 	}
 	void doPhysics(float deltaTime) {
 		front = glm::vec3(sin((transform->rotation.y*M_PI) / 180), 0.0f, cos((transform->rotation.y*M_PI) / 180));
 		//float deltaTime = dt / 1000.0;  // delta T in seconds
+
+		float sn = sin((transform->rotation.y*M_PI) / 180); float cs = cos((transform->rotation.y*M_PI) / 180);// Pre-calc heading vector
+
+		velocity_c =glm::vec3(cs * velocity_w.x + sn * velocity_w.z, 0.0f, cs * velocity_w.z - sn * velocity_w.x);// Get velocity in local car coordinates
 		
-		// Pre-calc heading vector
-		float sn = sin(transform->rotation.y);
-		float cs = cos(transform->rotation.y);
-
-		// Get velocity in local car coordinates
-		velocity_c.x = cs * velocity_w.x + sn * velocity_w.z;
-		velocity_c.z = cs * velocity_w.z - sn * velocity_w.x;
-
 		// Weight on axles based on centre of gravity and weight shift due to forward/reverse acceleration
 		float axleWeightFront = cfg.mass * (axleWeightRatioFront * cfg.gravity - cfg.weightTransfer * accel_c.x * cfg.cgHeight / wheelBase);
 		float axleWeightRear = cfg.mass * (axleWeightRatioRear * cfg.gravity + cfg.weightTransfer * accel_c.x * cfg.cgHeight / wheelBase);
@@ -188,7 +185,7 @@ public:
 
 		yawRate += angularAccel * deltaTime;
 
-		transform->rotation.y += -yawRate * deltaTime;
+		transform->rotation.y += (-yawRate*180/M_PI) * deltaTime;
 
 		//  finally we can update position
 		transform->position.x += velocity_w.z * deltaTime;
@@ -200,7 +197,7 @@ public:
 	void Update(bool arrayK[5], float deltaTime) {
 		processInput(arrayK, deltaTime);
 		doPhysics(deltaTime);
-		std::cout << "position:[" << transform->position.x << "," << transform->position.y << "," << transform->position.z << "]" << std::endl;
+		//std::cout << "position:[" << transform->position.x << "," << transform->position.y << "," << transform->position.z << "] -> speed:"<< absVel << std::endl;
 		//std::cout << "throttle: " << throttle << ", brake: " << brake << ", steerAngle: " << steerAngle << ", velocity_c.x: " << velocity_c.x << ", velocity_c.z: " << velocity_c.z << std::endl;
 	}
 };

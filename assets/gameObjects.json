@@ -33,6 +33,26 @@
     "rotation": [ 0, 0, 0 ],
     "scale": [ 3, 3, 3 ]
   },
+  "car_base": {
+    "name": "Base",
+    "description": "asdgsdgsd",
+    "model": "models/car/base.obj",
+    "specular": [ 0, 0, 0 ],
+    "shininess": 5,
+    "position": [ 0, 0, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [1, 1, 1 ]
+  },
+  "car_wheel": {
+    "name": "Circuit",
+    "description": "asdgsdgsd",
+    "model": "models/car/wheel.obj",
+    "specular": [ 0, 0, 0 ],
+    "shininess": 5,
+    "position": [ 0, 0, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 1,1,1 ]
+  },
   "object_circuit": {
     "name": "Circuit",
     "description": "asdgsdgsd",
