@@ -160,6 +160,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CarPhysics.h" />
+    <ClInclude Include="DebugPrimitives.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
@@ -183,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="DebugPrimitives.cpp" />
     <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="IAppClient.cpp" />
