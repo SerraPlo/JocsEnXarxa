@@ -1,8 +1,6 @@
-#include <SerraPloEngine/ScreenList.h>
+﻿#include <SerraPloEngine/ScreenList.h>
 #include <SerraPloEngine/ResourceManager.h>
 #include "AppClient.h"
-#include <thread>
-#include <atomic>
 #include <SerraPloEngine/DebugPrimitives.h>
 
 static void EnableGLHint() {
@@ -28,19 +26,6 @@ static void EnableGLHint() {
 	glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
 }
 
-static std::atomic<bool> loading = true;
-
-static void LoadGame(ShaderProgram *m_textProgram) {
-	DebugText plane;
-	plane.position = { 0,0,0 };
-	while (loading) {
-		std::cout << "Loading assets..." << std::endl;
-		m_textProgram->bind();
-		plane.Draw(*m_textProgram);
-		m_textProgram->unbind();
-	}
-}
-
 void AppClient::OnInit() {
 	glClearDepth(1.0);			// Set the base depth when depth buffer
 	glEnable(GL_DEPTH_TEST);	// Activate the Z-buffer
@@ -51,13 +36,29 @@ void AppClient::OnInit() {
 	glEnable(GL_CULL_FACE);
 	EnableGLHint();
 
-	ShaderProgram m_textProgram;
-	m_textProgram.LoadShaders(LoadAsset("shaders/text.vert"), LoadAsset("shaders/text.frag"));
+	// Temp window for loading screen purposes
+	SDL_Window *msgbox = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 100, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
+	SDL_Renderer *msgboxR = SDL_CreateRenderer(msgbox, 0, SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawColor(msgboxR, 255, 255, 255, 255);
+	SDL_Surface *text_surface = nullptr;
+	SDL_RenderClear(msgboxR);
+	TTF_Font *font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), 40);
+	if ((text_surface = TTF_RenderText_Blended(font, "Loading assets...", { 0,0,0 })) != nullptr) {
+		SDL_Texture *texture = nullptr;
+		if ((texture = SDL_CreateTextureFromSurface(msgboxR, text_surface)) != nullptr) {
+			SDL_RenderCopy(msgboxR, texture, nullptr, nullptr);
+			SDL_RenderPresent(msgboxR);
+			SDL_DestroyTexture(texture);
+		}
+		SDL_FreeSurface(text_surface);
+	}
 
-	std::thread(LoadGame, &m_textProgram).detach();
+	//std::thread(LoadGame).detach();
 	window.changeName("SerraPlo Kart Client");
 	gameObjectManager.Load(LoadAsset("gameObjects.json"));
-	loading = false;
+
+	SDL_DestroyRenderer(msgboxR);
+	SDL_DestroyWindow(msgbox);
 }
 
 void AppClient::AddScreens() {

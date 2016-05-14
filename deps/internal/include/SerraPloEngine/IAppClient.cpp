@@ -1,5 +1,7 @@
 #include "IAppClient.h"
 #include "Timing.h"
+#include <SDL2/SDL_ttf.h>
+#pragma comment(lib, "SDL2_ttf.lib")
 
 namespace SerraPlo {
 	
@@ -13,6 +15,7 @@ namespace SerraPlo {
 
 	void IAppClient::InitSystems() {
 		SDL_Init(SDL_INIT_EVERYTHING); // Initialize everything in SDL (VIDEO, AUDIO, EVENTS,...)
+		TTF_Init();
 
 		// Tell we want a double buffered windows to avoid flickering
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);

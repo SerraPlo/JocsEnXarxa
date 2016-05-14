@@ -83,8 +83,8 @@ void PlaygroundScreen::OnExit() {
 void PlaygroundScreen::Update() {
 	checkInput();
 
-	bool temp[5];
-	for (int i = 0; i < 5; i++) temp[i] = false;
+	static bool temp[5];
+	memset(temp, false, 5); // reset all elements to false
 	if (gameApp->inputManager.isKeyDown(SDLK_w)) temp[0] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;

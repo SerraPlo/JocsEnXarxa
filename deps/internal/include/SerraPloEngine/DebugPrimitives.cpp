@@ -3,9 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vector>
-#include <SDL2/SDL_ttf.h>
 #include <algorithm>
-#pragma comment(lib, "SDL2_ttf.lib")
 
 namespace SerraPlo {
 
@@ -153,16 +151,17 @@ namespace SerraPlo {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
+
+		font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), 20);
+	}
+
+	DebugText::~DebugText() {
+		TTF_CloseFont(font);
 	}
 
 	void DebugText::Draw(ShaderProgram &program) {
-		TTF_Init();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		TTF_Font *font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), 20);
 		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 255,0,0 });
-		//SDL_SaveBMP(surf, "blended.bmp");
-
+		
 		glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 		GLuint textureid;
 		int p = pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2)));
@@ -178,12 +177,15 @@ namespace SerraPlo {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ns->w, ns->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ns->pixels);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		glBindTexture(GL_TEXTURE_2D, textureid);
+		//SDL_SaveBMP(surf, LoadAsset("blended.bmp").c_str());
 
 		glm::mat4 model;
 		model = glm::translate(model, position);
 		model = glm::rotate(model, glm::radians(180.0f), { 0,0,1 });
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
 
 		glBindVertexArray(vao);
@@ -194,6 +196,5 @@ namespace SerraPlo {
 		glEnable(GL_CULL_FACE);
 
 		SDL_FreeSurface(surf);
-		TTF_CloseFont(font);
 	}
 }
