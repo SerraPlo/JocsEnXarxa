@@ -6,24 +6,42 @@
 
 #define FIXED_ASPECT_RATIO 16 / 10
 
-PlaygroundScreen::PlaygroundScreen() {
-}
+PlaygroundScreen::PlaygroundScreen() {}
 
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
+	// Initialize camera with viewport dimensions
 	int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
-	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight); // Initialize camera with viewport dimensions
+	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight);
 
-	m_player = gameApp->gameObjectManager.Find("car_base"); // Load the player model
-	for (int i = 0; i < 4; i++) m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
+	//Initialize texture shaders
+	m_mainProgram.LoadShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
+	//Initialize light shaders
+	m_lightProgram.LoadShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
+
+	// Load the player model
+	m_player = &gameApp->gameObjectManager.Find("car_base");
+	for (int i = 0; i < 4; i++) m_playerwheels[i] = &gameApp->gameObjectManager.Find("car_wheel");
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
 	for (int i = 0; i < 4; i++) m_renderer.Add(m_playerwheels[i]);
-	m_renderer.Add(gameApp->gameObjectManager.Find("character_bb8"));
-	m_renderer.Add(gameApp->gameObjectManager.Find("object_skybox"));
-	m_renderer.Add(gameApp->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
 
+	m_carPhy.AddTransform(&m_player->transform);
+}
+
+void PlaygroundScreen::Destroy() {
+
+}
+
+void PlaygroundScreen::OnEntry() {
+	//SDL_ShowCursor(0);
+
+	// LIGHTNING
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
 	m_dirLight.ambient = { 0.3f, 0.3f, 0.3f };
@@ -54,21 +72,6 @@ void PlaygroundScreen::Build() {
 	m_spotLights[0].outerCutOff = glm::cos(glm::radians(45.0f));
 	m_renderer.Add(&m_spotLights[0]);
 
-	m_carPhy.AddTransform(&m_player->transform);
-}
-
-void PlaygroundScreen::Destroy() {
-
-}
-
-void PlaygroundScreen::OnEntry() {
-	//Initialize texture shaders
-	m_mainProgram.LoadShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
-	//Initialize light shaders
-	m_lightProgram.LoadShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
-
-	//SDL_ShowCursor(0);
-	//LIGHTNING
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
 }

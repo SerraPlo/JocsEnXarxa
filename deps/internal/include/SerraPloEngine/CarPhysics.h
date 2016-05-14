@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #define _USE_MATH_DEFINES
 #include <cmath>
+
+#define BRAKE_FORCE 12000.0f
+
 struct Config {
 	float gravity = 9.81f;   // m/s^2
 	float mass = 1200.0f; // kg
@@ -19,8 +22,7 @@ struct Config {
 	float tireGrip = 2.0f;    // How much grip tires have
 	float lockGrip = 0.7f;    // % of grip available when wheel is locked
 	float engineForce = 8000.0;
-	float brakeForce = 12000.0;
-	float eBrakeForce = brakeForce / 2.5f;
+	float eBrakeForce = BRAKE_FORCE / 2.5f;
 	float weightTransfer = 0.2f;    // How much weight is transferred during acceleration/braking
 	float maxSteer = 0.6f;    // Maximum steering angle in radians
 	float cornerStiffnessFront = 5.0f;
@@ -119,7 +121,7 @@ public:
 		front = glm::vec3(sin((transform->rotation.y*M_PI) / 180), 0.0f, cos((transform->rotation.y*M_PI) / 180));
 		//float deltaTime = dt / 1000.0;  // delta T in seconds
 
-		float sn = sin((transform->rotation.y*M_PI) / 180); float cs = cos((transform->rotation.y*M_PI) / 180);// Pre-calc heading vector
+		float sn = float(sin((transform->rotation.y*M_PI) / 180.0f)); float cs = float(cos((transform->rotation.y*M_PI) / 180.0f));// Pre-calc heading vector
 
 		velocity_c =glm::vec3(cs * velocity_w.x + sn * velocity_w.z, 0.0f, cs * velocity_w.z - sn * velocity_w.x);// Get velocity in local car coordinates
 		
@@ -137,13 +139,13 @@ public:
 		float slipAngleRear = atan2(velocity_c.z + yawSpeedRear, abs(velocity_c.x));
 
 		float tireGripFront = cfg.tireGrip;
-		float tireGripRear = cfg.tireGrip * (1.0 - ebrake * (1.0 - cfg.lockGrip)); // reduce rear grip when ebrake is on
+		float tireGripRear = cfg.tireGrip * (1.0f - ebrake * (1.0f - cfg.lockGrip)); // reduce rear grip when ebrake is on
 
 		float frictionForceFront_cy = clamp(-cfg.cornerStiffnessFront * slipAngleFront, -tireGripFront, tireGripFront) * axleWeightFront;
 		float frictionForceRear_cy = clamp(-cfg.cornerStiffnessRear * slipAngleRear, -tireGripRear, tireGripRear) * axleWeightRear;
 
 		//  Get amount of brake/throttle from our inputs
-		float _brake = min(brake * cfg.brakeForce + ebrake * cfg.eBrakeForce, cfg.brakeForce);
+		float _brake = min(brake * BRAKE_FORCE + ebrake * cfg.eBrakeForce, BRAKE_FORCE);
 		float _throttle = throttle * cfg.engineForce;
 
 		//  Resulting force in local car coordinates.
@@ -185,7 +187,7 @@ public:
 
 		yawRate += angularAccel * deltaTime;
 
-		transform->rotation.y += (-yawRate*180/M_PI) * deltaTime;
+		transform->rotation.y += float(-yawRate*180.0f /M_PI) * deltaTime;
 
 		//  finally we can update position
 		transform->position.x += velocity_w.z * deltaTime;

@@ -23,7 +23,4 @@ public:
 	virtual void AddScreens() override;
 	virtual void OnExit() override;
 };
-
-#undef SCREEN_WIDTH
-#undef SCREEN_HEIGHT
 #undef IP_PORT

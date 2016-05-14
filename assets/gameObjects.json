@@ -37,6 +37,7 @@
     "name": "Base",
     "description": "asdgsdgsd",
     "model": "models/car/base.obj",
+    "diffuse": "models/plch/blue.jpg",
     "specular": [ 0, 0, 0 ],
     "shininess": 5,
     "position": [ 0, 0, 0 ],
@@ -47,6 +48,7 @@
     "name": "Circuit",
     "description": "asdgsdgsd",
     "model": "models/car/wheel.obj",
+    "diffuse": "models/plch/blue.jpg",
     "specular": [ 0, 0, 0 ],
     "shininess": 5,
     "position": [ 0, 0, 0 ],
@@ -59,7 +61,7 @@
     "model": "models/circuit/circuit.DAE",
     "specular": [ 0, 0, 0 ],
     "shininess": 5,
-    "position": [ 0, -10, 0 ],
+    "position": [ 15, -2.6, 5 ],
     "rotation": [ 180, 0, 0 ],
     "scale": [ 5, 5, 5 ]
   }

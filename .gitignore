@@ -1,6 +1,7 @@
 !*.lib
 !*.dll
 !*.obj
+!*.pdb
 *.opendb
 *.sdf
 *.suo

@@ -27,13 +27,20 @@ public:
 private:
 	void checkInput();
 
+	// Shader programs
 	ShaderProgram m_mainProgram;
 	ShaderProgram m_lightProgram;
+
+	// Camera
 	Camera m_camera;
+
+	// Game objects
 	RendererList m_renderer;
 	GameObject *m_player;
 	GameObject *m_playerwheels[4];
 	CarPhysics m_carPhy;
+
+	// Lights
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];

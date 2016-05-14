@@ -70,21 +70,18 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 
 		// Draw game object
 		for (auto meshData : gameObject->model.meshData) {
-			if (meshData.material.diffuse.id != EMPTY_TEXTURE)
-				glActiveTexture(GL_TEXTURE0), glBindTexture(GL_TEXTURE_2D, meshData.material.diffuse.id);
+			if (meshData.material.diffuse.id != EMPTY_TEXTURE) glActiveTexture(GL_TEXTURE0), glBindTexture(GL_TEXTURE_2D, meshData.material.diffuse.id);
 			glUniform1i(program.getUniformLocation("hasNormalMap"), GL_FALSE);
-			if (meshData.material.normal.id != EMPTY_TEXTURE)
-				glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, meshData.material.normal.id),
-				glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
+			if (meshData.material.normal.id != EMPTY_TEXTURE) glActiveTexture(GL_TEXTURE1), glBindTexture(GL_TEXTURE_2D, meshData.material.normal.id), glUniform1i(program.getUniformLocation("hasNormalMap"), GL_TRUE);
 			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(meshData.material.specular));
 			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(meshData.material.emissive));
 			glUniform1f(program.getUniformLocation("material.shininess"), meshData.material.shininess);
 
 			glBindVertexArray(meshData.vao);
-			glDrawElements(GL_TRIANGLES, meshData.elements.size(), GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, meshData.numElements, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
 		}
-		
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
