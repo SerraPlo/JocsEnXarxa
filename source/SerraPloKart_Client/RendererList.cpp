@@ -1,6 +1,8 @@
 #include "RendererList.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <SerraPloEngine/DebugPrimitives.h>
+#include <ctime>
 
 void RendererList::Add(GameObject *newObject) {
 	m_objectList.push_back(newObject);
@@ -85,8 +87,12 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	//glDrawArrays(GL_LINES, /*primer*/, /*num*/);
+	static DebugText text;
+	text.position = { 0,3,0 };
+	text.message = std::to_string(clock() / 1000);
+	text.Draw(program);
 
+	//glDrawArrays(GL_LINES, /*primer*/, /*num*/);
 }
 
 #define RENDER_LIGHT_TEMPLATE(light) \

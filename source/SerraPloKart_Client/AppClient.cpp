@@ -3,9 +3,7 @@
 #include "AppClient.h"
 #include <thread>
 #include <atomic>
-#include <glm/gtc/type_ptr.hpp>
-#include <SDL2/SDL_ttf.h>
-#pragma commnent(lib, "SDL2_ttf.lib")
+#include <SerraPloEngine/DebugPrimitives.h>
 
 static void EnableGLHint() {
 	//Indicates the accuracy of fog calculation.If per - pixel fog calculation is not efficiently supported by the GL implementation, 
@@ -32,35 +30,14 @@ static void EnableGLHint() {
 
 static std::atomic<bool> loading = true;
 
-static void LoadGame() {
+static void LoadGame(ShaderProgram *m_textProgram) {
+	DebugText plane;
+	plane.position = { 0,0,0 };
 	while (loading) {
 		std::cout << "Loading assets..." << std::endl;
-		/*m_textProgram->bind();
-		glUniform3f(m_textProgram->getUniformLocation("textColor"), 255, 0, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindVertexArray(*VAO);
-
-		GLfloat vertices[6][4] = {
-			{ 0,     0 + 1,   0.0, 0.0 },
-			{ 0,     0,       0.0, 1.0 },
-			{ 0 + 1, 0,       1.0, 1.0 },
-
-			{ 0,     0 + 1,   0.0, 0.0 },
-			{ 0 + 1, 0,       1.0, 1.0 },
-			{ 0 + 1, 0 + 1,   1.0, 0.0 }
-		};
-		//glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		m_textProgram->bind();
+		plane.Draw(*m_textProgram);
 		m_textProgram->unbind();
-
-		window->swapBuffer();*/
 	}
 }
 
@@ -74,24 +51,10 @@ void AppClient::OnInit() {
 	glEnable(GL_CULL_FACE);
 	EnableGLHint();
 
-	/*ShaderProgram m_textProgram;
+	ShaderProgram m_textProgram;
 	m_textProgram.LoadShaders(LoadAsset("shaders/text.vert"), LoadAsset("shaders/text.frag"));
 
-	glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(SCREEN_WIDTH), 0.0f, static_cast<GLfloat>(SCREEN_HEIGHT));
-	glUniformMatrix4fv(m_textProgram.getUniformLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
-
-	GLuint VAO, VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);*/
-
-	std::thread(LoadGame).detach();
+	std::thread(LoadGame, &m_textProgram).detach();
 	window.changeName("SerraPlo Kart Client");
 	gameObjectManager.Load(LoadAsset("gameObjects.json"));
 	loading = false;
