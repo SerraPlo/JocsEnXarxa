@@ -37,7 +37,7 @@ private:
 	// Game objects
 	RendererList m_renderer;
 	GameObject *m_player;
-	GameObject *m_playerwheels[4];
+	GameObject m_playerwheels[4];
 	CarPhysics m_carPhy;
 
 	// Lights

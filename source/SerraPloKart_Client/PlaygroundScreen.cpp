@@ -22,10 +22,10 @@ void PlaygroundScreen::Build() {
 
 	// Load the player model
 	m_player = &gameApp->gameObjectManager.Find("car_base");
-	for (int i = 0; i < 4; i++) m_playerwheels[i] = &gameApp->gameObjectManager.Find("car_wheel");
+	for (int i = 0; i < 4; i++) m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
-	for (int i = 0; i < 4; i++) m_renderer.Add(m_playerwheels[i]);
+	for (int i = 0; i < 4; i++) m_renderer.Add(&m_playerwheels[i]);
 	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
@@ -91,9 +91,15 @@ void PlaygroundScreen::Update() {
 	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 
 	m_carPhy.Update(temp, gameApp->deltaTime);
-
-	m_playerwheels[0]->transform.position = m_player->transform.position + m_carPhy.front*3.0f;
-	m_playerwheels[0]->transform.rotation = m_player->transform.rotation - glm::vec3(0.0f,(m_carPhy.steerAngle*180.0f)/M_PI,0.0f);
+	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
+	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.0f;
+	m_playerwheels[1].transform.position = m_player->transform.position + m_carPhy.front*2.0f - perFront*1.0f;
+	m_playerwheels[2].transform.position = m_player->transform.position - m_carPhy.front*2.0f + perFront*1.0f;
+	m_playerwheels[3].transform.position = m_player->transform.position - m_carPhy.front*2.0f - perFront*1.0f;
+	m_playerwheels[0].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
+	m_playerwheels[1].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
+	m_playerwheels[2].transform.rotation = m_player->transform.rotation;
+	m_playerwheels[3].transform.rotation = m_player->transform.rotation;
 
 	m_camera.Translate(m_player->transform.position - (m_carPhy.front*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
