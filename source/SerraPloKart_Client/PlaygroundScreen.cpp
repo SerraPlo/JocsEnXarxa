@@ -89,13 +89,14 @@ void PlaygroundScreen::Update() {
 	if (gameApp->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
+	if (gameApp->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 
 	m_carPhy.Update(temp, gameApp->deltaTime);
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
-	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.0f;
-	m_playerwheels[1].transform.position = m_player->transform.position + m_carPhy.front*2.0f - perFront*1.0f;
-	m_playerwheels[2].transform.position = m_player->transform.position - m_carPhy.front*2.0f + perFront*1.0f;
-	m_playerwheels[3].transform.position = m_player->transform.position - m_carPhy.front*2.0f - perFront*1.0f;
+	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.25f;
+	m_playerwheels[1].transform.position = m_player->transform.position + m_carPhy.front*2.0f - perFront*1.25f;
+	m_playerwheels[2].transform.position = m_player->transform.position - m_carPhy.front*2.0f + perFront*1.25f;
+	m_playerwheels[3].transform.position = m_player->transform.position - m_carPhy.front*2.0f - perFront*1.25f;
 	m_playerwheels[0].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
 	m_playerwheels[1].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
 	m_playerwheels[2].transform.rotation = m_player->transform.rotation;
