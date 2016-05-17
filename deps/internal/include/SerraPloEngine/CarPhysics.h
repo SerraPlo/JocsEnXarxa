@@ -35,7 +35,7 @@ public:
 	float steer = 0.0;
 	float steerAngle = 0.0;
 
-	CarPhysics() { glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f); collisions.InitStructures("C:/Users/Pol/Documents/GitHub/JocsEnXarxa/assets/models/circuit_col/colisions.txt"); }
+	CarPhysics() { glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f); collisions.InitStructures("../../assets/models/circuit_col/colisions.txt"); }
 
 	~CarPhysics() = default;
 
@@ -98,16 +98,16 @@ public:
 		if (velocity < 0.5 && throttle == 0) velocity = 0.0f;
 
 		if (velocity > 0.0f) transform->rotation.y += -((steerAngle*180.0f) / M_PI)*1.5f *deltaTime;
-		transform->position += front* velocity *deltaTime;
 		
+		glm::vec2 newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z);
 		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
 		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
 		glm::vec2 positionsCol[4];
-		positionsCol[0] = glm::vec2(transform->position.x, transform->position.z) + front2*2.0f + pFront2*1.25f;
-		positionsCol[1] = glm::vec2(transform->position.x, transform->position.z) + front2*2.0f - pFront2*1.25f;
-		positionsCol[2] = glm::vec2(transform->position.x, transform->position.z) - front2*2.0f + pFront2*1.25f;
-		positionsCol[3] = glm::vec2(transform->position.x, transform->position.z) - front2*2.0f - pFront2*1.25f;
-		collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]);
+		positionsCol[0] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[1] = newPos + front2*2.0f - pFront2*1.25f;
+		positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
+		
+		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
+		if(collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[0], positionsCol[0])==-1) transform->position = glm::vec3(newPos.x,0.0f,newPos.y);
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 

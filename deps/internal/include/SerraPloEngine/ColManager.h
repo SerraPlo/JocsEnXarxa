@@ -27,6 +27,14 @@ public:
 		return (projection*a.x*a.x) + (projection *a.y*a.y);
 	}
 	void InitStructures(std::string path) {
+		//----------------
+		std::ofstream myfile("example.txt");
+		if (myfile.is_open()){
+			myfile << "This is a line.\n";
+			myfile << "This is another line.\n";
+			myfile.close();
+		}else std::cout << "Unable to open file";
+		//----------------
 		std::ifstream myReadFile;
 		myReadFile.open(path);
 		if (myReadFile.is_open()) {
@@ -118,15 +126,14 @@ public:
 
 	}
 	
-	void CalculateCollision(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, glm::vec2 v4) {
+	int CalculateCollision(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, glm::vec2 v4) {
 		for (int i = 0; i < nBoxs; i++) {
+			bool colliding = true;
 			glm::vec2 axis[4];
 			axis[0] = boxs[i].axis[0];
 			axis[1] = boxs[i].axis[1];
 			axis[2] = v2 - v1;
 			axis[3] = v3 - v2;
-			bool colliding = true;
-			//box axis
 			for (int j = 0; j < 4; j++) {
 				float bMax = 0.0f; float oMax = 0.0f;
 				float bMin = 0.0f; float oMin = 0.0f;
@@ -149,8 +156,17 @@ public:
 					}
 				}
 			}
-			if (colliding) std::cout << i << std::endl;
+			if (colliding) return i;
 		}
+		for (int i = 0; i < nCircles; i++) {
+			if (glm::length(v1 - circles[i].c) <= circles[i].r ||
+				glm::length(v2 - circles[i].c) <= circles[i].r ||
+				glm::length(v3 - circles[i].c) <= circles[i].r ||
+				glm::length(v4 - circles[i].c) <= circles[i].r) {
+				return nBoxs + i;
+			}
+		}
+		return -1;
 	}
 };
 

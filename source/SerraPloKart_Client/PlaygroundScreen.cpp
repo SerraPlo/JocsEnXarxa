@@ -22,21 +22,24 @@ void PlaygroundScreen::Build() {
 
 	// Load the player model
 	m_player = &gameApp->gameObjectManager.Find("car_base");
-	for (int i = 0; i < 4; i++) m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
-	//for (int i = 0; i < 116; i++) markersCol[i] = gameApp->gameObjectManager.Find("cube");
+	
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
-	for (int i = 0; i < 4; i++) m_renderer.Add(&m_playerwheels[i]);
-	//for (int i = 0; i < 116; i++) m_renderer.Add(&markersCol[i]);
+	for (int i = 0; i < 4; i++) {
+		m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
+		m_renderer.Add(&m_playerwheels[i]);
+	}
 	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
-	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("colisions"));
+	//m_renderer.Add(&gameApp->gameObjectManager.Find("colisions"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
 
 	m_carPhy.AddTransform(&m_player->transform);
-	/*for (int i = 0; i < 116; i++) {
-		markersCol[i].transform.position = glm::vec3(m_carPhy.collisions.boxs[(int)(i/4)].v[i % 4].x, 20.0f, m_carPhy.collisions.boxs[(int)(i / 4)].v[i % 4].y);
+	/*for (int i = 0; i < 116; i++) markersCol[i] = gameApp->gameObjectManager.Find("cube");
+	for (int i = 0; i < 116; i++) m_renderer.Add(&markersCol[i]);
+	for (int i = 0; i < 116; i++) {
+		markersCol[i].transform.position = glm::vec3(m_carPhy.collisions.boxs[(int)(i/4)].v[i % 4].x, 10.0f, m_carPhy.collisions.boxs[(int)(i / 4)].v[i % 4].y);
 		std::cout << (int)i/4<<": "<< markersCol[i].transform.position.x << ", " << markersCol[i].transform.position.z << std::endl;
 	}*/
 }
