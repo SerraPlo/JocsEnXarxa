@@ -38,6 +38,7 @@ private:
 	RendererList m_renderer;
 	GameObject *m_player;
 	GameObject m_playerwheels[4];
+	GameObject markersCol[116];
 	CarPhysics m_carPhy;
 
 	// Lights

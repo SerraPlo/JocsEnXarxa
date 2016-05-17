@@ -160,6 +160,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CarPhysics.h" />
+    <ClInclude Include="ColManager.h" />
     <ClInclude Include="DebugPrimitives.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ErrorManager.h" />

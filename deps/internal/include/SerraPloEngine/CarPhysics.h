@@ -4,19 +4,13 @@
 #include <glm/glm.hpp>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include "ColManager.h"
 
 #define BRAKE_FORCE 100000.0f
 
 struct Config {
 	float gravity = 9.81f;   // m/s^2
 	float mass = 1200.0f; // kg
-	/*float inertiaScale = 1.0f;    // Multiply by mass for inertia
-	float cgToFrontAxle = 0.5f;   // Centre gravity to front axle
-	float cgToRearAxle = 2.5f;   // Centre gravity to rear axle
-	float cgHeight = 0.55f;   // Centre gravity height
-	float wheelRadius = 0.3f;    // Includes tire (also represents height of axle)
-	float tireGrip = 15.0f;    // How much grip tires have
-	float lockGrip = 0.7f;    // % of grip available when wheel is locked*/
 	float engineForce = 25000.0;
 	float eBrakeForce = BRAKE_FORCE / 2.5f;
 	float maxSteer = 1.0f;    // Maximum steering angle in radians
@@ -27,15 +21,13 @@ struct Config {
 class CarPhysics
 {
 public:
+	ColManager collisions;
 	Transform *transform{ nullptr };
-
 	glm::vec3 front;
 	float accel = 0.0f;
 	float velocity = 0.0f;
-
 	bool smoothSteer = true;
 	bool safeSteer = true;
-
 	Config cfg;
 	int throttle = 0;
 	int brake = 0;
@@ -43,7 +35,7 @@ public:
 	float steer = 0.0;
 	float steerAngle = 0.0;
 
-	CarPhysics() { glm::vec3 front = glm::vec3(0.0f,0.0f,0.0f);}
+	CarPhysics() { glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f); collisions.InitStructures("C:/Users/Pol/Documents/GitHub/JocsEnXarxa/assets/models/circuit_col/colisions.txt"); }
 
 	~CarPhysics() = default;
 
@@ -87,6 +79,7 @@ public:
 		steerAngle = steer * cfg.maxSteer;
 		//std::cout << "steer: " << steer << "/ steerAngle: " << (steerAngle*180.0f) / M_PI << std::endl;
 	}
+
 	void doPhysics(float deltaTime) {
 		front = glm::vec3(sin((transform->rotation.y*M_PI) / 180), 0.0f, cos((transform->rotation.y*M_PI) / 180));
 		float sn = float(sin((transform->rotation.y*M_PI) / 180.0f)); float cs = float(cos((transform->rotation.y*M_PI) / 180.0f));
@@ -106,9 +99,17 @@ public:
 
 		if (velocity > 0.0f) transform->rotation.y += -((steerAngle*180.0f) / M_PI)*1.5f *deltaTime;
 		transform->position += front* velocity *deltaTime;
-		std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
+		
+		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
+		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
+		glm::vec2 positionsCol[4];
+		positionsCol[0] = glm::vec2(transform->position.x, transform->position.z) + front2*2.0f + pFront2*1.25f;
+		positionsCol[1] = glm::vec2(transform->position.x, transform->position.z) + front2*2.0f - pFront2*1.25f;
+		positionsCol[2] = glm::vec2(transform->position.x, transform->position.z) - front2*2.0f + pFront2*1.25f;
+		positionsCol[3] = glm::vec2(transform->position.x, transform->position.z) - front2*2.0f - pFront2*1.25f;
+		collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]);
+		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
-
 
 	void Update(bool arrayK[5], float deltaTime) {
 		processInput(arrayK, deltaTime);

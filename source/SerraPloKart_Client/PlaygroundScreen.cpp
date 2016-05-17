@@ -23,15 +23,22 @@ void PlaygroundScreen::Build() {
 	// Load the player model
 	m_player = &gameApp->gameObjectManager.Find("car_base");
 	for (int i = 0; i < 4; i++) m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
+	//for (int i = 0; i < 116; i++) markersCol[i] = gameApp->gameObjectManager.Find("cube");
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
 	for (int i = 0; i < 4; i++) m_renderer.Add(&m_playerwheels[i]);
-	m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
+	//for (int i = 0; i < 116; i++) m_renderer.Add(&markersCol[i]);
+	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
+	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
+	m_renderer.Add(&gameApp->gameObjectManager.Find("colisions"));
 
 	m_carPhy.AddTransform(&m_player->transform);
+	/*for (int i = 0; i < 116; i++) {
+		markersCol[i].transform.position = glm::vec3(m_carPhy.collisions.boxs[(int)(i/4)].v[i % 4].x, 20.0f, m_carPhy.collisions.boxs[(int)(i / 4)].v[i % 4].y);
+		std::cout << (int)i/4<<": "<< markersCol[i].transform.position.x << ", " << markersCol[i].transform.position.z << std::endl;
+	}*/
 }
 
 void PlaygroundScreen::Destroy() {
@@ -90,7 +97,6 @@ void PlaygroundScreen::Update() {
 	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
-
 	m_carPhy.Update(temp, gameApp->deltaTime);
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
 	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.25f;
@@ -102,7 +108,9 @@ void PlaygroundScreen::Update() {
 	m_playerwheels[2].transform.rotation = m_player->transform.rotation;
 	m_playerwheels[3].transform.rotation = m_player->transform.rotation;
 
-	m_camera.Translate(m_player->transform.position - (m_carPhy.front*15.0f) + glm::vec3(0.0f, 5.0f, 0.0f));
+	//std::cout << m_player->transform.position.x << "," << m_player->transform.position.y << std::endl;
+
+	m_camera.Translate(m_player->transform.position - (m_carPhy.front*25.0f) + glm::vec3(0.0f,10.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }
 

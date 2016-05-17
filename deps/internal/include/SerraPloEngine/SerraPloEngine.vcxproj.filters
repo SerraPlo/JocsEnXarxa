@@ -90,6 +90,9 @@
     <ClInclude Include="DebugPrimitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ColManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
