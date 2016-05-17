@@ -27,14 +27,6 @@ public:
 		return (projection*a.x*a.x) + (projection *a.y*a.y);
 	}
 	void InitStructures(std::string path) {
-		//----------------
-		std::ofstream myfile("example.txt");
-		if (myfile.is_open()){
-			myfile << "This is a line.\n";
-			myfile << "This is another line.\n";
-			myfile.close();
-		}else std::cout << "Unable to open file";
-		//----------------
 		std::ifstream myReadFile;
 		myReadFile.open(path);
 		if (myReadFile.is_open()) {
@@ -112,41 +104,31 @@ public:
 			}
 			
 			for (int i = 0; i <nBoxs; i++) {
-				for (int j = 0; j < 4; j++) {
-					boxs[i].v[j].y *= -1;
-					boxs[i].v[j].x *= -1;
-					//std::cout << i<<": (" << boxs[i].v[j].x << "," << boxs[i].v[j].y << ")" << std::endl;
-				}
-				boxs[i].axis[0] = boxs[i].v[1] - boxs[i].v[0];
-				boxs[i].axis[1] = boxs[i].v[2] - boxs[i].v[1];
-				std::cout << i << ": A1 (" << boxs[i].axis[0].x << "," << boxs[i].axis[0].y << "), A2 (" << boxs[i].axis[1].x << "," << boxs[i].axis[1].y <<")"<< std::endl;
+				for (int j = 0; j < 4; j++) {boxs[i].v[j].y *= -1;boxs[i].v[j].x *= -1;}
+				boxs[i].axis[0] = boxs[i].v[1] - boxs[i].v[0]; boxs[i].axis[1] = boxs[i].v[2] - boxs[i].v[1];
 			}
 		}
 		myReadFile.close();
 
 	}
 	
-	int CalculateCollision(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, glm::vec2 v4) {
+	int CalculateCollision(glm::vec2 v[4]) {
 		for (int i = 0; i < nBoxs; i++) {
 			bool colliding = true;
 			glm::vec2 axis[4];
 			axis[0] = boxs[i].axis[0];
 			axis[1] = boxs[i].axis[1];
-			axis[2] = v2 - v1;
-			axis[3] = v3 - v2;
+			axis[2] = v[1] - v[0];
+			axis[3] = v[2] - v[1];
 			for (int j = 0; j < 4; j++) {
 				float bMax = 0.0f; float oMax = 0.0f;
 				float bMin = 0.0f; float oMin = 0.0f;
 				if (colliding) {
 					float temp[8];
-					temp[0] = projectionScalar(axis[j], v1);
-					temp[1] = projectionScalar(axis[j], v2);
-					temp[2] = projectionScalar(axis[j], v3);
-					temp[3] = projectionScalar(axis[j], v4);
-					temp[4] = projectionScalar(axis[j], boxs[i].v[0]);
-					temp[5] = projectionScalar(axis[j], boxs[i].v[1]);
-					temp[6] = projectionScalar(axis[j], boxs[i].v[2]);
-					temp[7] = projectionScalar(axis[j], boxs[i].v[3]);
+					for (int k = 0; k < 8; k++) {
+						if (k<4)temp[k] = projectionScalar(axis[j], v[k%4]);
+						else temp[k] = projectionScalar(axis[j], boxs[i].v[k % 4]);
+					}
 					oMax = temp[0]; bMax = temp[4];
 					oMin = temp[0]; bMin = temp[4];
 					for (int k = 1; k < 4; k++) { if (temp[k] > oMax) oMax = temp[k]; if (temp[k] < oMin) oMin = temp[k];}
@@ -159,11 +141,8 @@ public:
 			if (colliding) return i;
 		}
 		for (int i = 0; i < nCircles; i++) {
-			if (glm::length(v1 - circles[i].c) <= circles[i].r ||
-				glm::length(v2 - circles[i].c) <= circles[i].r ||
-				glm::length(v3 - circles[i].c) <= circles[i].r ||
-				glm::length(v4 - circles[i].c) <= circles[i].r) {
-				return nBoxs + i;
+			for (int j = 0; j < 4; j++) {
+				if (glm::length(v[j] - circles[i].c) <= circles[i].r)return nBoxs + i;
 			}
 		}
 		return -1;
