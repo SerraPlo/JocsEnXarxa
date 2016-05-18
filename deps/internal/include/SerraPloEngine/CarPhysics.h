@@ -104,10 +104,11 @@ public:
 		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
 		glm::vec2 positionsCol[4];
 		positionsCol[0] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[1] = newPos + front2*2.0f - pFront2*1.25f;
-		positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
+		positionsCol[2] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos + front2*2.0f - pFront2*1.25f;
+		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
 		
 		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
-		if(collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[0], positionsCol[0])==-1) transform->position = glm::vec3(newPos.x,0.0f,newPos.y);
+		if(collisions.CalculateCollision(positionsCol)==-1) transform->position = glm::vec3(newPos.x,0.0f,newPos.y);
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 
