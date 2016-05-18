@@ -4,14 +4,11 @@
 
 namespace SerraPlo {
 
-	class IClientProxy {
-	public:
-		ScreenState currentScreenState{ ScreenState::NONE };
-		int screenIndex{ SCREEN_INDEX_NO_SCREEN };
+	struct ClientProxy {
 		sockaddr address;
-
-		IClientProxy() = default;
-		~IClientProxy() = default;
+		std::string nick;
+		ScreenState currentScreenState;
+		int screenIndex;
 	};
 
 }

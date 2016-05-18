@@ -11,11 +11,11 @@
 namespace SerraPlo {
 
 	struct GLMesh {
-		GLMaterial material;
-		std::vector<float> vertices;
-		std::vector<unsigned int> elements;
-		GLuint vao, vbo, ebo;
-		unsigned int numElements;
+		GLMaterial material;				// Set of mesh textures and material attributes
+		std::vector<float> vertices;		// Array of mesh vertices
+		std::vector<unsigned int> indices;	// Array of mesh elements
+		GLuint vao, vbo, ebo;				/// TODO: optimize 1 VAO & 1 VBO for multiple meshes
+		unsigned int numElements;			// How many faces does the mesh have
 		GLMesh(aiMesh* mesh) {
 			const int nv = mesh->mNumVertices;
 			const bool foo = mesh->HasTextureCoords(0);
@@ -25,10 +25,10 @@ namespace SerraPlo {
 				vertices.push_back(mesh->mNormals[i].x), vertices.push_back(mesh->mNormals[i].y), vertices.push_back(mesh->mNormals[i].z),
 				vertices.push_back((foo) ? mesh->mTextureCoords[0][i].x : 0.f), vertices.push_back((foo) ? mesh->mTextureCoords[0][i].y : 0.f);
 			const int nf = mesh->mNumFaces;
-			elements.reserve(nf);
+			indices.reserve(nf);
 			for (int i = 0; i < nf; ++i)
-				elements.push_back(mesh->mFaces[i].mIndices[0]), elements.push_back(mesh->mFaces[i].mIndices[1]), elements.push_back(mesh->mFaces[i].mIndices[2]);
-			numElements = elements.size();
+				indices.push_back(mesh->mFaces[i].mIndices[0]), indices.push_back(mesh->mFaces[i].mIndices[1]), indices.push_back(mesh->mFaces[i].mIndices[2]);
+			numElements = indices.size();
 			///Create VAO
 			glGenVertexArrays(1, &vao);
 			glBindVertexArray(vao);
@@ -39,7 +39,7 @@ namespace SerraPlo {
 			///Create EBO
 			glGenBuffers(1, &ebo);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, numElements*sizeof(unsigned int), &elements[0], GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, numElements*sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 			///Configure vertex input
 			glVertexAttribPointer(GLuint(0), 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 			glEnableVertexAttribArray(0); // position
@@ -61,7 +61,7 @@ namespace SerraPlo {
 				if (diffusePath == nullptr) { // If diffuse texture not specified, look for it
 					const aiMaterial* material = pScene->mMaterials[pScene->mMeshes[i]->mMaterialIndex]; // Load material from mesh
 					int texIndex = 0; aiString path; // To fill variables
-					if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &path) == AI_SUCCESS) { // Load texture from material
+					if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &path) == AI_SUCCESS) { // Load diffuse texture from material
 						std::string fileName = path.data; // Get texture path
 						meshData[i].material = GLMaterial(LoadAsset(fileName.substr(fileName.rfind("models"), fileName.size())).c_str(), normalPath, specular, emissive, shininess); // Create material for mesh
 						continue; // Keep adding meshes

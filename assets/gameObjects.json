@@ -42,7 +42,7 @@
     "shininess": 5,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
-    "scale": [1, 1, 1 ]
+    "scale": [ 1, 1, 1 ]
   },
   "car_wheel": {
     "name": "Circuit",
@@ -55,25 +55,14 @@
     "rotation": [ 0, 0, 0 ],
     "scale": [ 1, 1, 1 ]
   },
-  "cube": {
-    "name": "Cube",
-    "description": "asdgsdgsd",
-    "model": "models/cube.obj",
-    "diffuse": "models/plch/red.jpg",
-    "specular": [ 0, 0, 0 ],
-    "shininess": 5,
-    "position": [ 0, 0, 0 ],
-    "rotation": [ 0, 0, 0 ],
-    "scale": [ 0.1, 0.1, 0.1 ]
-  },
-  "colisions": {
+  "debug_colisions": {
     "name": "Colisions",
     "description": "asdgsdgsd",
     "model": "models/circuit_col/colisions.DAE",
-    "diffuse": "models/plch/blue.jpg",
+    "diffuse": "models/plch/green.jpg",
     "specular": [ 0, 0, 0 ],
     "shininess": 5,
-    "position": [ 0,-5, 0 ],
+    "position": [ 0, -5, 0 ],
     "rotation": [ 0, 0, 0 ],
     "scale": [ 1, 1, 1 ]
   },
@@ -85,6 +74,6 @@
     "shininess": 5,
     "position": [ 0, 0, 0 ],
     "rotation": [ 0, 0, 0 ],
-    "scale": [ 1,1,0.2 ]
+    "scale": [ 1, 1, 0.2 ]
   }
 }

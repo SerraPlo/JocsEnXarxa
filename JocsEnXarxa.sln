@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPChat", "source\UDPChat\UDPChat.vcxproj", "{2E89016D-E968-48E2-A99D-30973347AE8F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -44,6 +44,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloKart_Client", "sour
 	ProjectSection(ProjectDependencies) = postProject
 		{704970AF-EFF9-46F3-8490-90F0E40C2A14} = {704970AF-EFF9-46F3-8490-90F0E40C2A14}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SerraPloKart_Server", "source\SerraPloKart_Server\SerraPloKart_Server.vcxproj", "{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{704970AF-EFF9-46F3-8490-90F0E40C2A14} = {704970AF-EFF9-46F3-8490-90F0E40C2A14}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NWDDSockets", "source\NWDDSockets\NWDDSockets.vcxproj", "{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +140,22 @@ Global
 		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x64.Build.0 = Release|x64
 		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x86.ActiveCfg = Release|Win32
 		{7C4850FC-3D93-442F-B8D0-7065BF1BE51E}.Release|x86.Build.0 = Release|Win32
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Debug|x64.ActiveCfg = Debug|x64
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Debug|x64.Build.0 = Debug|x64
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Debug|x86.ActiveCfg = Debug|Win32
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Debug|x86.Build.0 = Debug|Win32
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Release|x64.ActiveCfg = Release|x64
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Release|x64.Build.0 = Release|x64
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Release|x86.ActiveCfg = Release|Win32
+		{E4EE5EE9-2E27-42F6-9851-8E28A165B95A}.Release|x86.Build.0 = Release|Win32
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Debug|x64.ActiveCfg = Debug|x64
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Debug|x64.Build.0 = Debug|x64
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Debug|x86.ActiveCfg = Debug|Win32
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Debug|x86.Build.0 = Debug|Win32
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Release|x64.ActiveCfg = Release|x64
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Release|x64.Build.0 = Release|x64
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Release|x86.ActiveCfg = Release|Win32
+		{1BBEA645-0485-484C-B9AB-6BDD0CDCB051}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

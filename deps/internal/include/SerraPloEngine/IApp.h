@@ -4,6 +4,10 @@ namespace SerraPlo {
 
 #define TARGET_FPS 120.0f
 
+	enum KEY_MESSAGE {
+		LOGIN, MOVE
+	};
+
 	// Game app interface to the store the main runing game engine as a template
 	class IApp {
 	protected:

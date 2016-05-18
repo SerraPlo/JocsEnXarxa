@@ -1,5 +1,6 @@
 #include "DebugPrimitives.h"
 #include "ResourceManager.h"
+#define GLM_FORCE_RADIANS
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vector>
@@ -164,7 +165,7 @@ namespace SerraPlo {
 		
 		glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 		GLuint textureid;
-		int p = pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2)));
+		int p = int(pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2))));
 		SDL_Surface* ns = SDL_CreateRGBSurface(SDL_SWSURFACE, p, p, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 		SDL_BlitSurface(surf, NULL, ns, NULL);
 		SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);

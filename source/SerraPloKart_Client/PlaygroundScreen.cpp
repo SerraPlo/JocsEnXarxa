@@ -32,8 +32,9 @@ void PlaygroundScreen::Build() {
 	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
-	//m_renderer.Add(&gameApp->gameObjectManager.Find("colisions"));
 	m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
+
+	m_renderer.AddDebug(&gameApp->gameObjectManager.Find("debug_colisions"));
 
 	m_carPhy.AddTransform(&m_player->transform);
 	/*for (int i = 0; i < 116; i++) markersCol[i] = gameApp->gameObjectManager.Find("cube");
@@ -54,7 +55,7 @@ void PlaygroundScreen::OnEntry() {
 	// LIGHTNING
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
-	m_dirLight.ambient = { 0.3f, 0.3f, 0.3f };
+	m_dirLight.ambient = { 0.6f, 0.6f, 0.6f };
 	m_dirLight.diffuse = { 0.9f, 0.9f, 0.7f };
 	m_dirLight.specular = { 0.5f, 0.5f, 0.5f };
 	m_renderer.Add(&m_dirLight);
@@ -95,7 +96,7 @@ void PlaygroundScreen::Update() {
 
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) temp[0] = true;
+	if (gameApp->inputManager.isKeyDown(SDLK_w)) temp[0] = true, gameApp->mainSocket << UDPStream::packet << MOVE << 'w' << gameApp->serverAddress;
 	if (gameApp->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
@@ -132,11 +133,14 @@ void PlaygroundScreen::checkInput() {
 			}
 		}
 	}
+	if (gameApp->inputManager.isKeyPressed(SDLK_e)) RendererList::DEBUG_DRAW = !RendererList::DEBUG_DRAW;
+	if (gameApp->inputManager.isKeyPressed(SDLK_q)) RendererList::DEBUG_MODE = (RendererList::DEBUG_MODE == GL_TRIANGLES) ? GL_LINES : GL_TRIANGLES;
 }
 
 void PlaygroundScreen::Draw() {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
+		if (RendererList::DEBUG_DRAW) m_renderer.DrawDebug(m_mainProgram, m_camera);
 	m_mainProgram.unbind();
 
 #if LIGHT_DEBUG_MODE

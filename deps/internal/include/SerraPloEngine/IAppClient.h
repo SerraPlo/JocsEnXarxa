@@ -29,13 +29,14 @@ namespace SerraPlo {
 		
 	public:
 		int screenWidth, screenHeight;
-		UDPStream clientSocket;
+		UDPStream mainSocket;
 		sockaddr serverAddress;
 		GLWindow window;			// Main instance of the OpenGL window
 		InputManager inputManager;	// Main instance of the input manager class
 		GameObjectManager gameObjectManager;
+		std::string nick;
 
-		explicit IAppClient(int sw, int sh, const char* ipport);
+		explicit IAppClient(int sw, int sh, const char* ipport, const std::string &nck);
 		virtual ~IAppClient() = default;
 
 		// Manage main SDL event types

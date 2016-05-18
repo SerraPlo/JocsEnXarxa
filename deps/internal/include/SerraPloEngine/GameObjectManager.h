@@ -45,8 +45,8 @@ namespace SerraPlo {
 		}
 		GameObject& Find(const std::string &str) {
 			auto it = gameObjectList.find(str);
-			if (it != gameObjectList.end()) return it->second;
-			SP_THROW_ERROR("Could not find game object [" + str + "] inside manager list");
+			if (it == gameObjectList.end()) SP_THROW_ERROR("Could not find game object [" + str + "] inside manager list"); 
+			return it->second;
 		}
 	};
 

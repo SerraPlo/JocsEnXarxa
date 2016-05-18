@@ -1,8 +1,8 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include "Transform.h"
 #include <iostream>
 #include <glm/glm.hpp>
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include "ColManager.h"
 
@@ -18,8 +18,7 @@ struct Config {
 	float rollResist = 8.0f;   // rolling resistance force (* vel)
 };
 
-class CarPhysics
-{
+class CarPhysics {
 public:
 	ColManager collisions;
 	Transform *transform{ nullptr };
@@ -97,7 +96,7 @@ public:
 			
 		if (velocity < 0.5 && throttle == 0) velocity = 0.0f;
 
-		if (velocity > 0.0f) transform->rotation.y += -((steerAngle*180.0f) / M_PI)*1.5f *deltaTime;
+		if (velocity > 0.0f) transform->rotation.y += -(float((steerAngle*180.0f) / M_PI))*1.5f *deltaTime;
 		
 		glm::vec2 newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z);
 		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
@@ -108,7 +107,7 @@ public:
 		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
 		
 		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
-		if(collisions.CalculateCollision(positionsCol)==-1) transform->position = glm::vec3(newPos.x,0.0f,newPos.y);
+		if (collisions.CalculateCollision(positionsCol) == -1) transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 

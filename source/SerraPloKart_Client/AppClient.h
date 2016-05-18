@@ -5,11 +5,12 @@
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
 #define IP_PORT "127.0.0.1:5000"
+#define TEMP_NICK "Aloha"
 
 class AppClient : public IAppClient {
 	std::unique_ptr<PlaygroundScreen> m_testScreen { nullptr };
 
-	explicit AppClient() : IAppClient(SCREEN_WIDTH, SCREEN_HEIGHT, IP_PORT) {};
+	explicit AppClient() : IAppClient(SCREEN_WIDTH, SCREEN_HEIGHT, IP_PORT, TEMP_NICK) {};
 	AppClient(AppClient const&) = delete;
 	void operator=(AppClient const&) = delete;
 	~AppClient() = default;

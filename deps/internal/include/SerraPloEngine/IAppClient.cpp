@@ -5,12 +5,13 @@
 
 namespace SerraPlo {
 	
-	IAppClient::IAppClient(int sw, int sh, const char* ipport) :
+	IAppClient::IAppClient(int sw, int sh, const char* ipport, const std::string &nck) :
 		m_screenList(std::make_unique<ScreenList>(this)),
 		m_currentScreen(nullptr),
 		screenWidth(sw),
 		screenHeight(sh),
-		serverAddress(ipport)
+		serverAddress(ipport),
+		nick(nck)
 	{}
 
 	void IAppClient::InitSystems() {
@@ -32,6 +33,7 @@ namespace SerraPlo {
 	}
 
 	void IAppClient::Init() {
+		mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
 		InitSystems();	// Initialize game systems
 		OnInit();		// Initialize specific derived properties
 		AddScreens();	// Add the screens of the derived app into the list
