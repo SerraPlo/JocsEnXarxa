@@ -5,13 +5,12 @@
 
 namespace SerraPlo {
 	
-	IAppClient::IAppClient(int sw, int sh, const char* ipport, const std::string &nck) :
+	IAppClient::IAppClient(int sw, int sh, const char* ipport) :
 		m_screenList(std::make_unique<ScreenList>(this)),
 		m_currentScreen(nullptr),
 		screenWidth(sw),
 		screenHeight(sh),
-		serverAddress(ipport),
-		nick(nck)
+		serverAddress(ipport)
 	{}
 
 	void IAppClient::InitSystems() {
@@ -22,18 +21,19 @@ namespace SerraPlo {
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-		const SDL_MessageBoxButtonData buttons[] = { { 0, 0, "NO" }, { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "YES" } };
+		/*const SDL_MessageBoxButtonData buttons[] = { { 0, 0, "NO" }, { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "YES" } };
 		const SDL_MessageBoxColorScheme colorScheme = { { { 255,   0,   0 }, { 0, 255,   0 }, { 255, 255,   0 }, { 0,   0, 255 }, { 255,   0, 255 } } };
 		const SDL_MessageBoxData messageboxdata = { SDL_MESSAGEBOX_INFORMATION, nullptr, "Select an option", "Do you want to play on full screen mode?", SDL_arraysize(buttons), buttons, &colorScheme };
 		int buttonid;
-		SDL_ShowMessageBox(&messageboxdata, &buttonid); // Whether to play on fullscreen mode or default normal mode
-
-		if (buttonid == 0) window.create("Default", &screenWidth, &screenHeight, WindowFlags::RESIZABLE); // Create default window resizable
-		else window.create("Default", &screenWidth, &screenHeight, WindowFlags::FULLSCREEN); // Create default window fullscreen
+		SDL_ShowMessageBox(&messageboxdata, &buttonid); // Whether to play on fullscreen mode or default normal mode*/
+		
+		window.create("Default", &screenWidth, &screenHeight);
+		
+		//if (buttonid == 0) window.create("Default", &screenWidth, &screenHeight, WindowFlags::RESIZABLE); // Create default window resizable
+		//else window.create("Default", &screenWidth, &screenHeight, WindowFlags::FULLSCREEN); // Create default window fullscreen
 	}
 
 	void IAppClient::Init() {
-		mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
 		InitSystems();	// Initialize game systems
 		OnInit();		// Initialize specific derived properties
 		AddScreens();	// Add the screens of the derived app into the list

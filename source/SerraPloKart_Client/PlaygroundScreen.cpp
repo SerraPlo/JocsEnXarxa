@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-#define FIXED_ASPECT_RATIO 16 / 10
+#define FIXED_ASPECT_RATIO 16 / 9
 
 PlaygroundScreen::PlaygroundScreen() {}
 
@@ -114,7 +114,7 @@ void PlaygroundScreen::Update() {
 
 	//std::cout << m_player->transform.position.x << "," << m_player->transform.position.y << std::endl;
 
-	m_camera.Translate(m_player->transform.position - (m_carPhy.front*25.0f) + glm::vec3(0.0f,10.0f, 0.0f));
+	m_camera.Translate(m_player->transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
 }
 

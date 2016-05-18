@@ -34,9 +34,9 @@ namespace SerraPlo {
 		GLWindow window;			// Main instance of the OpenGL window
 		InputManager inputManager;	// Main instance of the input manager class
 		GameObjectManager gameObjectManager;
-		std::string nick;
+		std::string nick{" "};
 
-		explicit IAppClient(int sw, int sh, const char* ipport, const std::string &nck);
+		explicit IAppClient(int sw, int sh, const char* ipport);
 		virtual ~IAppClient() = default;
 
 		// Manage main SDL event types

@@ -18,7 +18,6 @@ namespace SerraPlo {
 			int header;
 			sockaddr sender;
 			dispatcher >> UDPStream::packet >> sender >> header;
-			std::cout << "dispatched" << std::endl;
 			switch (header) {
 				case LOGIN: {
 					std::string nick;
