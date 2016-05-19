@@ -1,19 +1,23 @@
-#include "PlaygroundScreen.h"
-#include <SerraPloEngine/IAppCLient.h>
 #include <SerraPloEngine/ResourceManager.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include "PlaygroundScreen.h"
+#include "AppClient.h"
 
 #define FIXED_ASPECT_RATIO 16 / 9
+static AppClient *m_client;
 
-PlaygroundScreen::PlaygroundScreen() {}
+PlaygroundScreen::PlaygroundScreen() {
+	m_client = dynamic_cast<AppClient*>(gameApp);
+}
 
 PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
 	// Initialize camera with viewport dimensions
-	int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
-	m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight);
+	m_client = dynamic_cast<AppClient*>(gameApp);
+	int nw = (m_client->screenHeight * FIXED_ASPECT_RATIO);
+	m_camera.Resize(nw + (m_client->screenWidth - nw) / 2, m_client->screenHeight);
 
 	//Initialize texture shaders
 	m_mainProgram.LoadShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
@@ -21,20 +25,20 @@ void PlaygroundScreen::Build() {
 	m_lightProgram.LoadShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
 
 	// Load the player model
-	m_player = &gameApp->gameObjectManager.Find("car_base");
+	m_player = &m_client->gameObjectManager.Find("car_base");
 	
 	// Add the gameobjects needed in this scene
 	m_renderer.Add(m_player);
 	for (int i = 0; i < 4; i++) {
-		m_playerwheels[i] = gameApp->gameObjectManager.Find("car_wheel");
+		m_playerwheels[i] = m_client->gameObjectManager.Find("car_wheel");
 		m_renderer.Add(&m_playerwheels[i]);
 	}
 	//m_renderer.Add(&gameApp->gameObjectManager.Find("character_bb8"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("object_skybox"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("object_circuit"));
-	m_renderer.Add(&gameApp->gameObjectManager.Find("character_slycooper"));
+	m_renderer.Add(&m_client->gameObjectManager.Find("object_skybox"));
+	m_renderer.Add(&m_client->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(&m_client->gameObjectManager.Find("character_slycooper"));
 
-	m_renderer.AddDebug(&gameApp->gameObjectManager.Find("debug_colisions"));
+	m_renderer.AddDebug(&m_client->gameObjectManager.Find("debug_colisions"));
 
 	m_carPhy.AddTransform(&m_player->transform);
 	/*for (int i = 0; i < 116; i++) markersCol[i] = gameApp->gameObjectManager.Find("cube");
@@ -96,11 +100,11 @@ void PlaygroundScreen::Update() {
 
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
-	if (gameApp->inputManager.isKeyDown(SDLK_w)) temp[0] = true, gameApp->mainSocket << UDPStream::packet << MOVE << 'w' << gameApp->serverAddress;
-	if (gameApp->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
-	if (gameApp->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
-	if (gameApp->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
-	if (gameApp->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
+	if (m_client->inputManager.isKeyDown(SDLK_w)) temp[0] = true, m_client->mainSocket << UDPStream::packet << MOVE << 'w' << m_client->serverAddress;
+	if (m_client->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
+	if (m_client->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
+	if (m_client->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
+	if (m_client->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 	m_carPhy.Update(temp, gameApp->deltaTime);
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
 	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.25f;
@@ -121,20 +125,20 @@ void PlaygroundScreen::Update() {
 void PlaygroundScreen::checkInput() {
 	SDL_Event evnt;
 	while (SDL_PollEvent(&evnt)) {
-		gameApp->OnSDLEvent(evnt);
+		m_client->OnSDLEvent(evnt);
 		if (evnt.type == SDL_WINDOWEVENT) {
 			switch (evnt.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-				SDL_GetWindowSize(gameApp->window.SDLWindow, &gameApp->screenWidth, &gameApp->screenHeight);
-				glViewport(0, 0, gameApp->screenWidth, gameApp->screenHeight); // Set the OpenGL viewport to window dimensions
-				int nw = (gameApp->screenHeight * FIXED_ASPECT_RATIO);
-				m_camera.Resize(nw + (gameApp->screenWidth - nw) / 2, gameApp->screenHeight);
+				SDL_GetWindowSize(m_client->window.SDLWindow, &m_client->screenWidth, &m_client->screenHeight);
+				glViewport(0, 0, m_client->screenWidth, m_client->screenHeight); // Set the OpenGL viewport to window dimensions
+				int nw = (m_client->screenHeight * FIXED_ASPECT_RATIO);
+				m_camera.Resize(nw + (m_client->screenWidth - nw) / 2, m_client->screenHeight);
 				break;
 			}
 		}
 	}
-	if (gameApp->inputManager.isKeyPressed(SDLK_e)) RendererList::DEBUG_DRAW = !RendererList::DEBUG_DRAW;
-	if (gameApp->inputManager.isKeyPressed(SDLK_q)) RendererList::DEBUG_MODE = (RendererList::DEBUG_MODE == GL_TRIANGLES) ? GL_LINES : GL_TRIANGLES;
+	if (m_client->inputManager.isKeyPressed(SDLK_e)) RendererList::DEBUG_DRAW = !RendererList::DEBUG_DRAW;
+	if (m_client->inputManager.isKeyPressed(SDLK_q)) RendererList::DEBUG_MODE = (RendererList::DEBUG_MODE == GL_TRIANGLES) ? GL_LINES : GL_TRIANGLES;
 }
 
 void PlaygroundScreen::Draw() {

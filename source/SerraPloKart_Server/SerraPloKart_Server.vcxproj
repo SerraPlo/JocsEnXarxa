@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AppServer.h" />
+    <ClInclude Include="ClientProxy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppServer.cpp" />

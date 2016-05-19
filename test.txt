@@ -33,3 +33,11 @@
 "C:\Users\Pol\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ServerWin32Debug.exe" localhost:5000
 
 "C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\build\Win32Debug\CTFM_ClientWin32Debug.exe" localhost:5000
+
+//////////////
+// PROJECTE //
+//////////////
+
+"C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\build\Win32Debug\SerraPloKart_Server.exe"
+cd C:\Users\jserrano\Documents\GitHub\JocsEnXarxa\deps\external\include\UDPStream
+cl /EHsc main.cc

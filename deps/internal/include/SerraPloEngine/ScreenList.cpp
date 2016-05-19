@@ -3,16 +3,12 @@
 
 namespace SerraPlo {
 
-	ScreenList::ScreenList(IAppClient* game) :
+	ScreenList::ScreenList(IApp* game) :
 		m_gameApp(game),
 		m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
 
 	ScreenList::~ScreenList() {
-		Destroy(); // Remove each screen when leaving the game
-	}
-
-	void ScreenList::Destroy() {
-		for (auto s : m_screens) s->Destroy(); // Remove each
+		for (auto s : m_screens) s->Destroy(), delete s; // Remove elements of the screen and destroy the screen
 		m_screens.resize(0); // Keep the capacity of the list removing the elements whithout deallocating memory
 		m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN; // Set current screen index to -1
 	}

@@ -13,7 +13,7 @@ namespace SerraPlo {
 		CHANGE_PREVIOUS			// State to change to the previous screen 
 	};
 
-	class IAppClient;	// Forward declaration of the main game app interface
+	class IApp;	// Forward declaration of the main game app interface
 
 	// Game screen class interface to use as a template for each screen
 	class IScreen {
@@ -21,7 +21,7 @@ namespace SerraPlo {
 		//friend class IApp;			// Enable IApp class to use IScreen protected attributes
 	public:
 		ScreenState currentState	{ ScreenState::NONE };		// Current state of the screen, NONE by default
-		IAppClient* gameApp			{ nullptr };				// Reference pointer to current game app
+		IApp* gameApp				{ nullptr };				// Reference pointer to current game app
 		int screenIndex				{ SCREEN_INDEX_NO_SCREEN };	// Self screen index in game app, -1 by default
 
 		explicit IScreen() = default;

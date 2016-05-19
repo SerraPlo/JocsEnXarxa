@@ -170,9 +170,6 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="GLTexture.h" />
-    <ClInclude Include="IAppClient.h" />
-    <ClInclude Include="IAppServer.h" />
-    <ClInclude Include="IClientProxy.h" />
     <ClInclude Include="IScreen.h" />
     <ClInclude Include="IApp.h" />
     <ClInclude Include="InputManager.h" />
@@ -181,6 +178,7 @@
     <ClInclude Include="ScreenList.h" />
     <ClInclude Include="Timing.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,8 +186,6 @@
     <ClCompile Include="DebugPrimitives.cpp" />
     <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="IAppClient.cpp" />
-    <ClCompile Include="IAppServer.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ScreenList.cpp" />
     <ClCompile Include="Timing.cpp" />

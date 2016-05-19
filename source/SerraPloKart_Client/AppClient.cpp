@@ -1,72 +1,104 @@
 ﻿#include <SerraPloEngine/ScreenList.h>
 #include <SerraPloEngine/ResourceManager.h>
+#include <SerraPloEngine/Utils.h>
+#include <SerraPloEngine/Timing.h>
 #include "AppClient.h"
-#include <SerraPloEngine/DebugPrimitives.h>
 
-static void EnableGLHint() {
-	//Indicates the accuracy of fog calculation.If per - pixel fog calculation is not efficiently supported by the GL implementation, 
-	//hinting GL_DONT_CARE or GL_FASTEST can result in per - vertex calculation of fog effects.	
-	glHint(GL_FOG_HINT, GL_NICEST);
-	//Indicates the accuracy of the derivative calculation for the GL shading language fragment processing built - in functions : dFdx, dFdy, and fwidth.
-	glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GL_NICEST);
-	//Indicates the quality of filtering when generating mipmap images.
-	glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-	//Indicates the sampling quality of antialiased lines.If a larger filter function is applied, hinting GL_NICEST can result in more pixel fragments being generated during rasterization.
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	//Indicates the quality of color, texture coordinate, and fog coordinate interpolation.If perspective - corrected parameter interpolation is not efficiently supported by the GL implementation, 
-	//hinting GL_DONT_CARE or GL_FASTEST can result in simple linear interpolation of colors and / or texture coordinates.
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	//Indicates the sampling quality of antialiased points.If a larger filter function is applied, hinting GL_NICEST can result in more pixel fragments being generated during rasterization.
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-	//Indicates the sampling quality of antialiased polygons.Hinting GL_NICEST can result in more pixel fragments being generated during rasterization, if a larger filter function is applied.
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-	//Indicates the quality and performance of the compressing texture images. Hinting GL_FASTEST indicates that texture images should be compressed as quickly as possible, 
-	//while GL_NICEST indicates that texture images should be compressed with as little image quality loss as possible. 
-	//GL_NICEST should be selected if the texture is to be retrieved by glGetCompressedTexImage for reuse.
-	glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST);
-}
+void AppClient::Init() {
+	InitSystems();	// Initialize game systems
 
-void AppClient::OnInit() {
-	glClearDepth(1.0);			// Set the base depth when depth buffer
-	glEnable(GL_DEPTH_TEST);	// Activate the Z-buffer
-	glEnable(GL_BLEND);			// Enable alpha blending
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glFrontFace(GL_CW);
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
-	EnableGLHint();
+	unsigned int flags = 0;
+	//if (AskUserForWindow() == 0) flags = WindowFlags::RESIZABLE; // Create default window resizable
+	//else flags = WindowFlags::FULLSCREEN; // Create default window fullscreen
+	window.create("SerraPlo Kart Client", &screenWidth, &screenHeight, flags);
 
 	// Temp window for loading screen purposes
-	SDL_Window *msgbox = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 100, SDL_WINDOW_SHOWN | SDL_WINDOW_BORDERLESS);
-	SDL_Renderer *msgboxR = SDL_CreateRenderer(msgbox, 0, SDL_RENDERER_ACCELERATED);
-	SDL_SetRenderDrawColor(msgboxR, 255, 255, 255, 255);
-	SDL_Surface *text_surface = nullptr;
-	SDL_RenderClear(msgboxR);
-	TTF_Font *font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), 40);
-	if ((text_surface = TTF_RenderText_Blended(font, "Loading assets...", { 0,0,0 })) != nullptr) {
-		SDL_Texture *texture = nullptr;
-		if ((texture = SDL_CreateTextureFromSurface(msgboxR, text_surface)) != nullptr) {
-			SDL_RenderCopy(msgboxR, texture, nullptr, nullptr);
-			SDL_RenderPresent(msgboxR);
-			SDL_DestroyTexture(texture);
-		}
-		SDL_FreeSurface(text_surface);
+	TODO_LoadingScreen([&]() { 
+		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
+		// Add the screens of the derived app into the list
+		PlaygroundScreen *gameplayScreen{ new PlaygroundScreen };
+		m_screenList->AddScreen(gameplayScreen);
+		m_screenList->SetScreen(gameplayScreen->screenIndex);
+		m_currentScreen = m_screenList->GetCurScreen(); // Set the current screen reference
+		m_currentScreen->OnEntry(); // Initialize the first screen when enter
+		m_currentScreen->currentState = ScreenState::RUNNING; // Then set the screen to the running state
+	});
+}
+
+void AppClient::OnSDLEvent(SDL_Event & evnt) {
+	switch (evnt.type) { // Check for SDL event type
+		case SDL_QUIT:
+		m_currentScreen->currentState = ScreenState::EXIT_APP; // Set screen state to exit application
+		break; case SDL_MOUSEMOTION:
+		inputManager.m_mouseCoords = { static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y) }; // Store the mouse coordinates each time mouse moves through the screen
+		break; case SDL_KEYDOWN:
+		inputManager.pressKey(evnt.key.keysym.sym); // Store which key has been pressed
+		break; case SDL_KEYUP:
+		inputManager.releaseKey(evnt.key.keysym.sym); // Store which key has been released
+		break; case SDL_MOUSEBUTTONDOWN:
+		inputManager.pressKey(evnt.button.button); // Store when mouse button is pressed
+		break; case SDL_MOUSEBUTTONUP:
+		inputManager.releaseKey(evnt.button.button); // Store when mouse button is released
+		break; case SDL_MOUSEWHEEL:
+		inputManager.zoom = evnt.wheel.y;
 	}
-
-	//std::thread(LoadGame).detach();
-	window.changeName("SerraPlo Kart Client");
-	gameObjectManager.Load(LoadAsset("gameObjects.json"));
-
-	SDL_DestroyRenderer(msgboxR);
-	SDL_DestroyWindow(msgbox);
 }
 
-void AppClient::AddScreens() {
-	m_testScreen = std::make_unique<PlaygroundScreen>();
-	m_screenList->AddScreen(m_testScreen.get());
-	m_screenList->SetScreen(m_testScreen->screenIndex);
+#define CHANGE_TO(MoveTo)	m_currentScreen->OnExit(); /* Call the leaving method of the current screen */ \
+							m_currentScreen = m_screenList->MoveTo(); /* Set the current screen to the next one in the list */ \
+							if (m_currentScreen) { /* If the new screen exists */ \
+								m_currentScreen->currentState = ScreenState::RUNNING; /* Set the state of the new screen to running */ \
+								m_currentScreen->OnEntry(); /* Then call the function to initialize the scene */ \
+							}
+
+void AppClient::Update() {
+	if (m_currentScreen) { // If current screen exists
+		switch (m_currentScreen->currentState) { // Check for the state of the screen
+			case ScreenState::RUNNING:
+			if (inputManager.isKeyDown(SDLK_ESCAPE)) m_currentScreen->currentState = ScreenState::EXIT_APP;
+			inputManager.update();	// Update the input manager instance
+			m_currentScreen->Update(); // Update the current screen if running
+			break;
+			case ScreenState::CHANGE_NEXT:
+			CHANGE_TO(MoveNext);
+			break;
+			case ScreenState::CHANGE_PREVIOUS:
+			CHANGE_TO(MovePrev);
+			break;
+			case ScreenState::EXIT_APP:
+			Exit(); // Call exit function to end the execution
+			break;
+			default: break;
+		}
+	} else Exit(); // Call exit function if screen doesn't exist
 }
 
-void AppClient::OnExit() {}
+void AppClient::Draw() const {
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color and depth buffer
+	if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
+		m_currentScreen->Draw(); // Then call the draw method of the screen
+	}
+}
 
-#undef TARGET_FPS
+void AppClient::Run() {
+	Init(); // Call the init everything function
+	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
+	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
+
+	while (m_isRunning) { // While game is running
+		fpsLimiter.begin();					// Init FPS counter
+		Update();							// Main update function
+		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
+		Draw();								// Main draw function
+		fps = fpsLimiter.fps;				// Get the current fps of the class instance
+		deltaTime = fpsLimiter.deltaTime;			// Get the current fps of the class instance
+		fpsLimiter.end();					// Calculate and restore FPS
+		window.swapBuffer();				// Swap OpenGL buffers if double-buffering is supported
+	}
+}
+
+void AppClient::Exit() {
+	m_currentScreen->OnExit(); // Call the leaving method of the current screen
+	m_isRunning = false; // Execution ends
+}
