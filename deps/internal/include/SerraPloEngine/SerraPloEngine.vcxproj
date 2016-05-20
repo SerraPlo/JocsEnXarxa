@@ -161,7 +161,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CarPhysics.h" />
     <ClInclude Include="ColManager.h" />
-    <ClInclude Include="DebugPrimitives.h" />
+    <ClInclude Include="Primitives.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
@@ -183,7 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="DebugPrimitives.cpp" />
+    <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />

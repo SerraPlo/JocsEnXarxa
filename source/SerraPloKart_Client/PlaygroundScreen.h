@@ -5,27 +5,30 @@
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
 #include "RendererList.h"
+#include <SerraPloEngine/Primitives.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
 #define MAX_POINT_LIGHTS 1
 #define MAX_SPOT_LIGHTS 1
 
+class AppClient;
+
 class PlaygroundScreen : public IScreen {
 public:
-	explicit PlaygroundScreen();
-	~PlaygroundScreen();
+	explicit PlaygroundScreen() = default;
+	~PlaygroundScreen() = default;
 
-	virtual void Build() override;
-	virtual void Destroy() override;
-	virtual void OnEntry() override;
-	virtual void OnExit() override;
-	virtual void Update() override;
-	virtual void Draw() override;
-	virtual int GetNextScreenIndex() const override;
-	virtual int GetPrevScreenIndex() const override;
+	void Build() override;
+	void Destroy() override;
+	void OnEntry() override;
+	void OnExit() override;
+	void Update() override;
+	void Draw() override;
+	int GetNextScreenIndex() const override;
+	int GetPrevScreenIndex() const override;
 private:
-	void checkInput();
+	void CheckInput();
 
 	// Shader programs
 	ShaderProgram m_mainProgram;
@@ -45,4 +48,9 @@ private:
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
+
+	// Casted client main game pointer reference
+	AppClient *m_client;
+
+	GLText m_textNick;
 };

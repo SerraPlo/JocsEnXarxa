@@ -2,7 +2,7 @@
 
 namespace SerraPlo {
 
-#define TARGET_FPS 120.0f
+#define TARGET_FPS 60.0f
 
 	enum KEY_MESSAGE {
 		LOGIN, MOVE

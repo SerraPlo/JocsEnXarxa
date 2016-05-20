@@ -1,23 +1,27 @@
-﻿#include <SerraPloEngine/ScreenList.h>
-#include <SerraPloEngine/ResourceManager.h>
+﻿#include <SerraPloEngine/ResourceManager.h>
 #include <SerraPloEngine/Utils.h>
 #include <SerraPloEngine/Timing.h>
+#include <SerraPloEngine/IScreen.h>
 #include "AppClient.h"
+#include <thread>
 
 void AppClient::Init() {
-	InitSystems();	// Initialize game systems
-
+	InitSDL(); // Initialize everything related to SDL for the window
 	unsigned int flags = 0;
 	//if (AskUserForWindow() == 0) flags = WindowFlags::RESIZABLE; // Create default window resizable
 	//else flags = WindowFlags::FULLSCREEN; // Create default window fullscreen
 	window.create("SerraPlo Kart Client", &screenWidth, &screenHeight, flags);
+	InitOpenGL(); // Initialize OpenGL systems after GLWindow creation
+
+	nick = GetUserNick(window); // Ask user for the nick
+	mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
 
 	// Temp window for loading screen purposes
-	TODO_LoadingScreen([&]() { 
+	SetLoadingScreen(window, [&]() {
 		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
 		// Add the screens of the derived app into the list
-		PlaygroundScreen *gameplayScreen{ new PlaygroundScreen };
-		m_screenList->AddScreen(gameplayScreen);
+		gameplayScreen = std::make_unique<PlaygroundScreen>();
+		m_screenList->AddScreen(gameplayScreen.get());
 		m_screenList->SetScreen(gameplayScreen->screenIndex);
 		m_currentScreen = m_screenList->GetCurScreen(); // Set the current screen reference
 		m_currentScreen->OnEntry(); // Initialize the first screen when enter
@@ -100,5 +104,9 @@ void AppClient::Run() {
 
 void AppClient::Exit() {
 	m_currentScreen->OnExit(); // Call the leaving method of the current screen
+	if (m_screenList) {
+		m_screenList->Destroy();
+		m_screenList.reset();
+	}
 	m_isRunning = false; // Execution ends
 }

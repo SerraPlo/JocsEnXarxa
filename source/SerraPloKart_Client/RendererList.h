@@ -6,8 +6,6 @@
 #include <vector>
 using namespace SerraPlo;
 
-#define LIGHT_DEBUG_MODE true
-
 class RendererList {
 	std::vector<GameObject*> m_objectList;
 	std::vector<GameObject*> m_debugList;
@@ -20,13 +18,17 @@ public:
 
 	explicit RendererList() = default;
 	~RendererList() = default;
+
 	void Add(GameObject *newObject);
 	void AddDebug(GameObject *newObject);
 	void Add(DirLight *newLight);
 	void Add(PointLight *newLight);
 	void Add(SpotLight *newLight);
+
+	void SendLightAttributes(ShaderProgram &program, Camera &camera);
+	static void SendMaterialAttributes(ShaderProgram &program, Camera &camera);
+
 	void DrawObjects(ShaderProgram &program, Camera &camera);
 	void DrawDebug(ShaderProgram &program, Camera &camera);
-	void DrawLights(ShaderProgram &program, Camera &camera);
 };
 

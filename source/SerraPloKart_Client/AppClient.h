@@ -3,7 +3,6 @@
 #include <SerraPloEngine/Window.h>
 #include <SerraPloEngine/InputManager.h>
 #include <SerraPloEngine/ScreenList.h>
-#include <SerraPloEngine/IScreen.h>
 #include <SerraPloEngine/GameObjectManager.h>
 #include <UDPStream/UDPStream.hh>
 #include <memory>
@@ -14,8 +13,9 @@
 #define IP_PORT "127.0.0.1:5000"
 
 class AppClient : public IApp {
-	std::unique_ptr<ScreenList> m_screenList{ std::make_unique<ScreenList>(this) };	// Unique pointer instance to the list of screens of the game
-	IScreen *m_currentScreen{ nullptr };											// Reference pointer to the screen running at the moment
+	std::unique_ptr<ScreenList> m_screenList{ std::make_unique<ScreenList>(dynamic_cast<IApp*>(this)) };	// Unique pointer instance to the list of screens of the game
+	IScreen *m_currentScreen{ nullptr }; // Reference pointer to the screen running at the moment
+	std::unique_ptr<PlaygroundScreen> gameplayScreen;
 
 	explicit AppClient() : serverAddress(IP_PORT) {};
 	AppClient(AppClient const&) = delete;

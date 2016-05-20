@@ -5,17 +5,11 @@
 #include "AppClient.h"
 
 #define FIXED_ASPECT_RATIO 16 / 9
-static AppClient *m_client;
-
-PlaygroundScreen::PlaygroundScreen() {
-	m_client = dynamic_cast<AppClient*>(gameApp);
-}
-
-PlaygroundScreen::~PlaygroundScreen() {}
 
 void PlaygroundScreen::Build() {
-	// Initialize camera with viewport dimensions
 	m_client = dynamic_cast<AppClient*>(gameApp);
+	
+	// Initialize camera with viewport dimensions
 	int nw = (m_client->screenHeight * FIXED_ASPECT_RATIO);
 	m_camera.Resize(nw + (m_client->screenWidth - nw) / 2, m_client->screenHeight);
 
@@ -55,12 +49,16 @@ void PlaygroundScreen::Destroy() {
 
 void PlaygroundScreen::OnEntry() {
 	//SDL_ShowCursor(0);
+	
+	// Set nick to text plane
+	m_textNick.message = m_client->nick;
+	m_textNick.scale = {2,1,2};
 
 	// LIGHTNING
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
-	m_dirLight.ambient = { 0.6f, 0.6f, 0.6f };
-	m_dirLight.diffuse = { 0.9f, 0.9f, 0.7f };
+	m_dirLight.ambient = { 0.7f, 0.7f, 0.7f };
+	m_dirLight.diffuse = { 1.0f, 1.0f, 0.7f };
 	m_dirLight.specular = { 0.5f, 0.5f, 0.5f };
 	m_renderer.Add(&m_dirLight);
 
@@ -89,6 +87,11 @@ void PlaygroundScreen::OnEntry() {
 
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
+
+	m_mainProgram.bind();
+	m_renderer.SendLightAttributes(m_mainProgram, m_camera);
+	m_renderer.SendMaterialAttributes(m_mainProgram, m_camera);
+	m_mainProgram.unbind();
 }
 
 void PlaygroundScreen::OnExit() {
@@ -96,7 +99,7 @@ void PlaygroundScreen::OnExit() {
 }
 
 void PlaygroundScreen::Update() {
-	checkInput();
+	CheckInput();
 
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
@@ -120,9 +123,13 @@ void PlaygroundScreen::Update() {
 
 	m_camera.Translate(m_player->transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
+
+	// Update text nick plane
+	m_textNick.position = m_player->transform.position + glm::vec3{ 0,3,0 };
+	m_textNick.rotation = m_player->transform.rotation;
 }
 
-void PlaygroundScreen::checkInput() {
+void PlaygroundScreen::CheckInput() {
 	SDL_Event evnt;
 	while (SDL_PollEvent(&evnt)) {
 		m_client->OnSDLEvent(evnt);
@@ -144,14 +151,13 @@ void PlaygroundScreen::checkInput() {
 void PlaygroundScreen::Draw() {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
-		if (RendererList::DEBUG_DRAW) m_renderer.DrawDebug(m_mainProgram, m_camera);
+		m_textNick.Draw(m_mainProgram);
 	m_mainProgram.unbind();
 
-#if LIGHT_DEBUG_MODE
-	m_lightProgram.bind();
-		m_renderer.DrawLights(m_lightProgram, m_camera);
-	m_lightProgram.unbind();
-#endif
+	if (RendererList::DEBUG_DRAW)
+		m_lightProgram.bind(),
+			m_renderer.DrawDebug(m_lightProgram, m_camera),
+		m_lightProgram.unbind();
 }
 
 int PlaygroundScreen::GetNextScreenIndex() const {

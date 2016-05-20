@@ -78,13 +78,13 @@
     <ClInclude Include="CarPhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugPrimitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ColManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,7 +110,7 @@
     <ClCompile Include="GLMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugPrimitives.cpp">
+    <ClCompile Include="Primitives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

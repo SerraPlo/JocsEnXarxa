@@ -28,6 +28,8 @@ namespace SerraPlo {
 
 		// Get the current screen object
 		IScreen* GetCurScreen() const;
+
+		void Destroy();
 	};
 
 }

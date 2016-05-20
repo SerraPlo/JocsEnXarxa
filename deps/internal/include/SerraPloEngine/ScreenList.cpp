@@ -8,9 +8,7 @@ namespace SerraPlo {
 		m_currentScreenIndex(SCREEN_INDEX_NO_SCREEN){}
 
 	ScreenList::~ScreenList() {
-		for (auto s : m_screens) s->Destroy(), delete s; // Remove elements of the screen and destroy the screen
-		m_screens.resize(0); // Keep the capacity of the list removing the elements whithout deallocating memory
-		m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN; // Set current screen index to -1
+		//Destroy();
 	}
 
 	IScreen* ScreenList::MoveNext() {
@@ -41,6 +39,12 @@ namespace SerraPlo {
 	IScreen* ScreenList::GetCurScreen() const {
 		if (m_currentScreenIndex == SCREEN_INDEX_NO_SCREEN) return nullptr; // Check if current screen exists
 		return m_screens[m_currentScreenIndex]; // If exists, return the current running screen
+	}
+
+	void ScreenList::Destroy() {
+		for (auto s : m_screens) s->Destroy(); // Remove elements of the screen and destroy the screen
+		m_screens.resize(0); // Keep the capacity of the list removing the elements whithout deallocating memory
+		m_currentScreenIndex = SCREEN_INDEX_NO_SCREEN; // Set current screen index to -1
 	}
 
 }

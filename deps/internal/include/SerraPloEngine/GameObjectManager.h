@@ -12,12 +12,12 @@ namespace SerraPlo {
 			Load(filePath);
 		};
 		~GameObjectManager() {
-			for (auto& entity : this->gameObjectList) {
-				//glDeleteVertexArrays(1, &entity.second.mesh.vao);
+			//for (auto& entity : this->gameObjectList) {
+				//glDeleteVertexArrays(1, &entity.second.model.meshData->vao);
 				//glDeleteBuffers(1, &entity.second.mesh.vbo);
 				//glDeleteBuffers(1, &entity.second.mesh.ebo);
 				//delete entity.second;
-			}
+			//}
 		}
 		void Load(const std::string &filePath) {
 			JsonBox::Value fileData;
