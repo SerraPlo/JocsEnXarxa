@@ -5,7 +5,7 @@
 #include "AppClient.h"
 #include <thread>
 
-void AppClient::Init() {
+void AppClient::Init(void) {
 	InitSDL(); // Initialize everything related to SDL for the window
 	unsigned int flags = 0;
 	//if (AskUserForWindow() == 0) flags = WindowFlags::RESIZABLE; // Create default window resizable
@@ -14,11 +14,16 @@ void AppClient::Init() {
 	InitOpenGL(); // Initialize OpenGL systems after GLWindow creation
 
 	nick = GetUserNick(window); // Ask user for the nick
-	mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
 
 	// Temp window for loading screen purposes
 	SetLoadingScreen(window, [&]() {
 		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
+		/*while (true) {
+			mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
+			int header;
+			mainSocket >> UDPStream::packet >> header;
+			if (header == BEGIN) break;
+		}*/
 		// Add the screens of the derived app into the list
 		gameplayScreen = std::make_unique<PlaygroundScreen>();
 		m_screenList->AddScreen(gameplayScreen.get());
@@ -55,7 +60,7 @@ void AppClient::OnSDLEvent(SDL_Event & evnt) {
 								m_currentScreen->OnEntry(); /* Then call the function to initialize the scene */ \
 							}
 
-void AppClient::Update() {
+void AppClient::Update(void) {
 	if (m_currentScreen) { // If current screen exists
 		switch (m_currentScreen->currentState) { // Check for the state of the screen
 			case ScreenState::RUNNING:
@@ -77,7 +82,7 @@ void AppClient::Update() {
 	} else Exit(); // Call exit function if screen doesn't exist
 }
 
-void AppClient::Draw() const {
+void AppClient::Draw(void) const {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color and depth buffer
 	if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
@@ -85,11 +90,21 @@ void AppClient::Draw() const {
 	}
 }
 
-void AppClient::Run() {
+void ReceiveMsg(UDPStream *mainSocket) { ///TODO
+	int header;
+	*mainSocket >> UDPStream::packet >> header;
+	switch (header) {
+
+		default: break;
+	}
+}
+
+void AppClient::Run(void) {
 	Init(); // Call the init everything function
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
+	std::thread(ReceiveMsg, &mainSocket).detach(); ///TODO
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();					// Init FPS counter
 		Update();							// Main update function
@@ -102,7 +117,7 @@ void AppClient::Run() {
 	}
 }
 
-void AppClient::Exit() {
+void AppClient::Exit(void) {
 	m_currentScreen->OnExit(); // Call the leaving method of the current screen
 	if (m_screenList) {
 		m_screenList->Destroy();

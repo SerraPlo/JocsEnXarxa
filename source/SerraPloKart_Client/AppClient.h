@@ -23,11 +23,11 @@ class AppClient : public IApp {
 	~AppClient() = default;
 
 	// Initialize everything related to game internals
-	virtual void Init() override;
+	virtual void Init(void) override;
 	// Main update function of the game
-	void Update();
+	void Update(void);
 	// Main draw function of the game
-	void Draw() const;
+	void Draw(void) const;
 public:
 	int screenWidth{ INIT_SCREEN_WIDTH }, screenHeight{ INIT_SCREEN_HEIGHT };
 	UDPStream mainSocket;
@@ -45,7 +45,7 @@ public:
 	// Manage main SDL event types
 	void OnSDLEvent(SDL_Event &evnt);
 	// Where magic occurs, to be used to play the whole game
-	virtual void Run() override;
+	virtual void Run(void) override;
 	// Destroy screen list and set game running to false
-	virtual void Exit() override;
+	virtual void Exit(void) override;
 };

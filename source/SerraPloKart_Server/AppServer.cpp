@@ -11,15 +11,14 @@ void AppServer::Update() {
 		sockaddr sender;
 		dispatcher >> UDPStream::packet >> sender >> header;
 		switch (header) {
-			case LOGIN:
-			{
+			case LOGIN: {
 				std::string nick;
 				dispatcher >> nick;
 				clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN };
-				std::cout << nick << " is logged in" << std::endl;
+				std::cout << nick << " has logged in. Added to client database." << std::endl;
+				dispatcher << UDPStream::packet << sender << BEGIN;
 			} break;
-			case MOVE:
-			{
+			case MOVE: {
 				char pressed_key;
 				dispatcher >> pressed_key;
 				std::cout << clientList[sender.hash].nick << " is moving " << std::endl;
@@ -29,12 +28,12 @@ void AppServer::Update() {
 				}
 			}
 		}
-		for (auto variable : clientList) {
+		for (auto client : clientList) {
 			//dispatcher << UDPStream::packet << variable.second.nick << std::vector<int>({ 0,1,2,3 }) << variable.second.pos; 
 			//for (auto eachPlayer : clientList) dispatcher << eachPlayer.second.player;
 		}
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
-		std::cout << "Client Received wrongly serialized data" << std::endl;
+		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 }
 
@@ -43,6 +42,7 @@ void AppServer::Run() {
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
+	std::cout << "SerraPlo's Kart Server has been initialized." << std::endl << "Listening to new player..." << std::endl;
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();			// Init FPS counter
 		Update();					// Main update function
