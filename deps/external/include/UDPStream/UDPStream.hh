@@ -1,14 +1,8 @@
-//MIT Licensed, Copyright NWDD 2016
-//TODO: unordered_map / ordered_map
-//TODO: vector of non-pod
-//TODO: pointers in struct
-//TODO: clean lines 54+
-
 #pragma once
 #include <cstdint>
 static uint64_t inet_addr(const char* host, uint16_t family = 2, const uint64_t buffer = 0, const uint64_t retval = 0) {
 	switch (*host) {
-		case '.':case ':':  return inet_addr(host + 1, family, 0, (retval >> 8) | (buffer << (64 - 8)));
+		case '.':case ':':	return inet_addr(host + 1, family, 0, (retval >> 8) | (buffer << (64 - 8)));
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': return inet_addr(host + 1, family, buffer * 10 + (host[0] - '0'), retval);
 		default: return ((buffer & 0xFF) << 8 | buffer >> 8) << 16 | family | retval;
 	}
@@ -29,7 +23,7 @@ extern "C" {
 #define IF_WIN(w,l) w
 	__declspec(dllimport) int __stdcall WSAStartup(unsigned short, void*);
 #else
-#define __stdcall
+#define __stdcall __cdecl
 #define IF_WIN(w,l) l
 #endif
 	int __stdcall bind(int, sockaddr*, int);
@@ -58,13 +52,13 @@ struct UDP {
 #define UDPSIterable(type_macro) \
 template<class T> UDPStream &operator<<(const type_macro<T> output) { *this << uint32_t(output.size()); return emplace_back(reinterpret_cast<const uint8_t*>(&output[0]), output.size()*sizeof(T)); }\
 template<class T> UDPStream &operator>>(type_macro<T>& output){\
-    uint32_t sz;\
-    *this >> sz;\
-    if (index + sz > data.size())\
-        throw wrong();\
-    output = type_macro<T>(reinterpret_cast<T*>(&data[0]+index),reinterpret_cast<T*>(&data[0]+index+(sz*sizeof(T))));\
-    index += sz*sizeof(T);\
-    return *this;\
+	uint32_t sz;\
+	*this >> sz;\
+	if (index + sz > data.size())\
+		throw wrong();\
+	output = type_macro<T>(reinterpret_cast<T*>(&data[0]+index),reinterpret_cast<T*>(&data[0]+index+(sz*sizeof(T))));\
+	index += sz*sizeof(T);\
+	return *this;\
 }
 static std::ostream dummy(0);
 static size_t charplen(const char* str, size_t s = 0) { return (str[s]) ? charplen(str, s + 1) : s; }

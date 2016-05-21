@@ -104,9 +104,9 @@ void PlaygroundScreen::Update() {
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
 	if (m_client->inputManager.isKeyDown(SDLK_w)) temp[0] = true, m_client->mainSocket << UDPStream::packet << MOVE << 'w' << m_client->serverAddress;
-	if (m_client->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
-	if (m_client->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
-	if (m_client->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
+	if (m_client->inputManager.isKeyDown(SDLK_a)) temp[2] = true, m_client->mainSocket << UDPStream::packet << MOVE << 'a' << m_client->serverAddress;
+	if (m_client->inputManager.isKeyDown(SDLK_s)) temp[1] = true, m_client->mainSocket << UDPStream::packet << MOVE << 's' << m_client->serverAddress;
+	if (m_client->inputManager.isKeyDown(SDLK_d)) temp[3] = true, m_client->mainSocket << UDPStream::packet << MOVE << 'd' << m_client->serverAddress;
 	if (m_client->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 	m_carPhy.Update(temp, gameApp->deltaTime);
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);

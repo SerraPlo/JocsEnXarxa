@@ -4,6 +4,7 @@
 #include <SerraPloEngine/IScreen.h>
 #include "AppClient.h"
 #include <thread>
+#include <atomic>
 
 void AppClient::Init(void) {
 	InitSDL(); // Initialize everything related to SDL for the window
@@ -18,12 +19,16 @@ void AppClient::Init(void) {
 	// Temp window for loading screen purposes
 	SetLoadingScreen(window, [&]() {
 		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
-		/*while (true) {
-			mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
-			int header;
-			mainSocket >> UDPStream::packet >> header;
-			if (header == BEGIN) break;
-		}*/
+		mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
+		while (true) {
+			try {
+				int header;
+				mainSocket >> UDPStream::packet >> header;
+				if (header == BEGIN) break;
+			} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
+				std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
+			} catch (UDPStream::empty) {} //if the package is empty or have not received anything
+		}
 		// Add the screens of the derived app into the list
 		gameplayScreen = std::make_unique<PlaygroundScreen>();
 		m_screenList->AddScreen(gameplayScreen.get());
@@ -90,21 +95,11 @@ void AppClient::Draw(void) const {
 	}
 }
 
-void ReceiveMsg(UDPStream *mainSocket) { ///TODO
-	int header;
-	*mainSocket >> UDPStream::packet >> header;
-	switch (header) {
-
-		default: break;
-	}
-}
-
 void AppClient::Run(void) {
 	Init(); // Call the init everything function
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
-	std::thread(ReceiveMsg, &mainSocket).detach(); ///TODO
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();					// Init FPS counter
 		Update();							// Main update function
@@ -118,6 +113,7 @@ void AppClient::Run(void) {
 }
 
 void AppClient::Exit(void) {
+	mainSocket << UDPStream::packet << EXIT << serverAddress;
 	m_currentScreen->OnExit(); // Call the leaving method of the current screen
 	if (m_screenList) {
 		m_screenList->Destroy();
