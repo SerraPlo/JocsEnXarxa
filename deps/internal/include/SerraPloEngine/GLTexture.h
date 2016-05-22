@@ -1,9 +1,14 @@
 #pragma once
 #include <GL\glew.h>
-#include <SOIL2/SOIL2.h>
-#pragma comment(lib, "SOIL.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
+
+#include <SOIL2/SOIL2.h>
+#ifdef _DEBUG
+#pragma comment(lib, "soil2-debug.lib")
+#else
+#pragma comment(lib, "soil2.lib")
+#endif
 
 namespace SerraPlo {
 
