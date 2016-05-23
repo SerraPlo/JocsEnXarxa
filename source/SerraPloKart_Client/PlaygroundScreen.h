@@ -19,16 +19,16 @@ public:
 	explicit PlaygroundScreen() = default;
 	~PlaygroundScreen() = default;
 
-	void Build() override;
-	void Destroy() override;
-	void OnEntry() override;
-	void OnExit() override;
-	void Update() override;
-	void Draw() override;
-	int GetNextScreenIndex() const override;
-	int GetPrevScreenIndex() const override;
+	void Build(void) override;
+	void Destroy(void) override;
+	void OnEntry(void) override;
+	void OnExit(void) override;
+	void Update(void) override;
+	void Draw(void) override;
+	int GetNextScreenIndex(void) const override;
+	int GetPrevScreenIndex(void) const override;
 private:
-	void CheckInput();
+	void CheckInput(void);
 
 	// Shader programs
 	ShaderProgram m_mainProgram;
@@ -51,6 +51,6 @@ private:
 
 	// Casted client main game pointer reference
 	AppClient *m_client;
-
+	// Nick texture set above the player
 	GLText m_textNick;
 };

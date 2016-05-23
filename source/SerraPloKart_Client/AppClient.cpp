@@ -4,7 +4,6 @@
 #include <SerraPloEngine/IScreen.h>
 #include "AppClient.h"
 #include <thread>
-#include <atomic>
 
 void AppClient::Init(void) {
 	InitSDL(); // Initialize everything related to SDL for the window
@@ -19,12 +18,13 @@ void AppClient::Init(void) {
 	// Temp window for loading screen purposes
 	SetLoadingScreen(window, [&]() {
 		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
-		mainSocket << UDPStream::packet << LOGIN << nick << serverAddress;
 		while (true) {
 			try {
+				if (!(clock() % MS_RESEND_DELAY)) mainSocket << UDPStream::packet << LOGIN << nick << serverAddress, std::cout << "Nick sent. Waiting server response..." << std::endl;
 				int header;
 				mainSocket >> UDPStream::packet >> header;
-				if (header == BEGIN) break;
+				if (header == BEGIN) { std::cout << "Server accepted entry. Game begins." << std::endl; break; }
+				else if (header == EXIT) { std::cout << "Server refused entry. Disconecting..." << std::endl; Exit(); }
 			} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 				std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 			} catch (UDPStream::empty) {} //if the package is empty or have not received anything
@@ -37,6 +37,8 @@ void AppClient::Init(void) {
 		m_currentScreen->OnEntry(); // Initialize the first screen when enter
 		m_currentScreen->currentState = ScreenState::RUNNING; // Then set the screen to the running state
 	});
+
+	m_aliveCounter = float(clock());
 }
 
 void AppClient::OnSDLEvent(SDL_Event & evnt) {
@@ -65,7 +67,29 @@ void AppClient::OnSDLEvent(SDL_Event & evnt) {
 								m_currentScreen->OnEntry(); /* Then call the function to initialize the scene */ \
 							}
 
+void AppClient::ProcessMsgs(void) {
+	try {
+		int header;
+		mainSocket >> UDPStream::packet >> header;
+		switch (header) {
+			case EXIT: {
+				std::cout << "Server closed. Disconecting..." << std::endl;
+				Exit();
+			} break;
+			case ALIVE: {
+				std::cout << "Server is alive" << std::endl;
+				m_aliveCounter = float(clock());
+			} break;
+			default: break;
+		}
+	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
+		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
+	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
+	if (clock() > m_aliveCounter + MS_ALIVE_DELAY+1000) std::cout << "Server closed. Disconecting..." << std::endl, Exit();
+}
+
 void AppClient::Update(void) {
+	ProcessMsgs();
 	if (m_currentScreen) { // If current screen exists
 		switch (m_currentScreen->currentState) { // Check for the state of the screen
 			case ScreenState::RUNNING:

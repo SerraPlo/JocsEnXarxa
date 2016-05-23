@@ -16,17 +16,16 @@ class AppServer : public IApp {
 	~AppServer() = default;
 
 	// Initialize everything related to game internals
-	virtual void Init() override;
+	virtual void Init(void) override;
 	// Main update function of the game
-	void Update();
+	void Update(void);
 public:
 	static AppServer& Instance() {
 		static AppServer instance;
 		return instance;
 	}
-
 	// Where magic occurs, to be used to play the whole game
-	virtual void Run() override;
+	virtual void Run(void) override;
 	// Destroy screen list and set game running to false
-	virtual void Exit() override;
+	virtual void Destroy(void);
 };

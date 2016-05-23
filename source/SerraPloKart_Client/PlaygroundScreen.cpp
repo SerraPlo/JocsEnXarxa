@@ -6,7 +6,7 @@
 
 #define FIXED_ASPECT_RATIO 16 / 9
 
-void PlaygroundScreen::Build() {
+void PlaygroundScreen::Build(void) {
 	m_client = dynamic_cast<AppClient*>(gameApp);
 	
 	// Initialize camera with viewport dimensions
@@ -43,11 +43,11 @@ void PlaygroundScreen::Build() {
 	}*/
 }
 
-void PlaygroundScreen::Destroy() {
+void PlaygroundScreen::Destroy(void) {
 
 }
 
-void PlaygroundScreen::OnEntry() {
+void PlaygroundScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 	
 	// Set nick to text plane
@@ -94,11 +94,11 @@ void PlaygroundScreen::OnEntry() {
 	m_mainProgram.unbind();
 }
 
-void PlaygroundScreen::OnExit() {
+void PlaygroundScreen::OnExit(void) {
 	
 }
 
-void PlaygroundScreen::Update() {
+void PlaygroundScreen::Update(void) {
 	CheckInput();
 
 	static bool temp[5];
@@ -129,7 +129,7 @@ void PlaygroundScreen::Update() {
 	m_textNick.rotation = m_player->transform.rotation;
 }
 
-void PlaygroundScreen::CheckInput() {
+void PlaygroundScreen::CheckInput(void) {
 	SDL_Event evnt;
 	while (SDL_PollEvent(&evnt)) {
 		m_client->OnSDLEvent(evnt);
@@ -148,7 +148,7 @@ void PlaygroundScreen::CheckInput() {
 	if (m_client->inputManager.isKeyPressed(SDLK_q)) RendererList::DEBUG_MODE = (RendererList::DEBUG_MODE == GL_TRIANGLES) ? GL_LINES : GL_TRIANGLES;
 }
 
-void PlaygroundScreen::Draw() {
+void PlaygroundScreen::Draw(void) {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
 		m_textNick.Draw(m_mainProgram);
@@ -160,10 +160,10 @@ void PlaygroundScreen::Draw() {
 		m_lightProgram.unbind();
 }
 
-int PlaygroundScreen::GetNextScreenIndex() const {
+int PlaygroundScreen::GetNextScreenIndex(void) const {
 	return SCREEN_INDEX_NO_SCREEN;
 }
 
-int PlaygroundScreen::GetPrevScreenIndex() const {
+int PlaygroundScreen::GetPrevScreenIndex(void) const {
 	return SCREEN_INDEX_NO_SCREEN;
 }

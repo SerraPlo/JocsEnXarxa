@@ -1,12 +1,19 @@
 ﻿#include <SerraPloEngine/Timing.h>
 #include "AppServer.h"
+#include <ctime>
 
-void AppServer::Init() {
+void AppServer::Init(void) {
 
 }
 
-void AppServer::Update() {
+void AppServer::Update(void) {
 	try {
+		if (clock() > m_aliveCounter + MS_ALIVE_DELAY) {
+			std::cout << "Sending alive..." << std::endl; 
+			dispatcher << UDPStream::packet << ALIVE;
+			for (auto client : clientList) dispatcher << client.second.address;
+			m_aliveCounter = float(clock());
+		}
 		int header;
 		sockaddr sender;
 		dispatcher >> UDPStream::packet >> sender >> header;
@@ -14,9 +21,11 @@ void AppServer::Update() {
 			case LOGIN: {
 				std::string nick;
 				dispatcher >> nick;
-				clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN };
-				std::cout << nick << " has logged in. Added to client database." << std::endl;
-				dispatcher << UDPStream::packet << BEGIN << sender;
+				if (clientList.find(sender.hash) == clientList.end()) {
+					clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN };
+					std::cout << nick << " has logged in. Added to client database." << std::endl;
+					dispatcher << UDPStream::packet << BEGIN << sender;
+				}
 			} break;
 			case EXIT: {
 				auto it = clientList.find(sender.hash);
@@ -35,15 +44,12 @@ void AppServer::Update() {
 			}
 		}
 		if (clientList.empty()) std::cout << "All players disconnected. Shutting down..." << std::endl, system("pause"); ///TODO
-		//for (auto client : clientList) {
-			//SEND TO ALL
-		//}
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 }
 
-void AppServer::Run() {
+void AppServer::Run(void) {
 	Init(); // Call the init everything function
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
@@ -58,9 +64,11 @@ void AppServer::Run() {
 		fps = fpsLimiter.fps;		// Get the current fps of the class instance
 		deltaTime = fpsLimiter.deltaTime;
 		fpsLimiter.end();			// Calculate and restore FPS
-	} 
+	}
 }
 
-void AppServer::Exit() {
+void AppServer::Destroy(void) {
+	dispatcher << UDPStream::packet << EXIT;
+	for (auto client : clientList) dispatcher << client.second.address;
 	m_isRunning = false; // Execution ends
 }
