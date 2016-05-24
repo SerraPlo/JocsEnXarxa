@@ -123,3 +123,11 @@ void RendererList::DrawDebug(ShaderProgram & program, Camera &camera) {
 		}
 	}
 }
+
+void RendererList::Clear() {
+	m_objectList.clear();
+	m_debugList.clear();
+	m_dirLight = nullptr;
+	m_pointLightList.clear();
+	m_spotLightList.clear();
+}

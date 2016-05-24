@@ -6,11 +6,10 @@ namespace SerraPlo {
 
 	// Possible states of a screen during the game
 	enum class ScreenState { 
-		NONE,					// Default empty state
-		RUNNING,				// State of updating the current screen
-		EXIT_APP,				// State of leaving the current game
-		CHANGE_NEXT,			// State to change to the next screen
-		CHANGE_PREVIOUS			// State to change to the previous screen 
+		NONE,		// Default empty state
+		RUNNING,	// State of updating the current screen
+		EXIT,		// State of leaving the current game
+		SLEEP
 	};
 
 	class IApp;	// Forward declaration of the main game app interface
@@ -41,11 +40,6 @@ namespace SerraPlo {
 		virtual void Update() = 0;
 		// Main draw screen function called in game loop
 		virtual void Draw() = 0;
-
-		// Return index of next screen when changing screens
-		virtual int GetNextScreenIndex() const = 0;
-		// Return index of previous screen when changing screens
-		virtual int GetPrevScreenIndex() const  = 0;
 	};
 
 }

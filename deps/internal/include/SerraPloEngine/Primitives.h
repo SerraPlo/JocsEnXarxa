@@ -16,15 +16,14 @@ namespace SerraPlo {
 
 	class GLText {
 	public:
-		TTF_Font *font;
 		GLuint vao, vbo;
 		glm::vec3 position{ 0,0,0 };
 		glm::vec3 rotation{ 0,0,0 };
 		glm::vec3 scale{ 0,0,0 };
 		std::string message{" "};
 		GLText();
-		~GLText();
-		void Draw(ShaderProgram &program);
+		~GLText() = default;
+		void Draw(ShaderProgram &program, TTF_Font *font);
 	};
 }
 

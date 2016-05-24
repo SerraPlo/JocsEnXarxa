@@ -18,24 +18,36 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlaygroundScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AppClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RendererList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SinglePlayerScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PlaygroundScreen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AppClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RendererList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SinglePlayerScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -45,7 +57,5 @@
     <None Include="..\..\assets\shaders\light.frag" />
     <None Include="..\..\assets\shaders\light.vert" />
     <None Include="..\..\assets\gameObjects.json" />
-    <None Include="..\..\assets\shaders\text.frag" />
-    <None Include="..\..\assets\shaders\text.vert" />
   </ItemGroup>
 </Project>

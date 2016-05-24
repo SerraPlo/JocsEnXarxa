@@ -3,7 +3,7 @@
 #include <SerraPloEngine/Timing.h>
 #include <SerraPloEngine/IScreen.h>
 #include "AppClient.h"
-#include <thread>
+#include <ctime>
 
 void AppClient::Init(void) {
 	InitSDL(); // Initialize everything related to SDL for the window
@@ -11,42 +11,33 @@ void AppClient::Init(void) {
 	//if (AskUserForWindow() == 0) flags = WindowFlags::RESIZABLE; // Create default window resizable
 	//else flags = WindowFlags::FULLSCREEN; // Create default window fullscreen
 	window.create("SerraPlo Kart Client", &screenWidth, &screenHeight, flags);
+	renderer = SDL_CreateRenderer(window.SDLWindow, 0, SDL_RENDERER_ACCELERATED);
+	font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), FONT_SIZE);
+	TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
 	InitOpenGL(); // Initialize OpenGL systems after GLWindow creation
 
-	nick = GetUserNick(window); // Ask user for the nick
-
-	// Temp window for loading screen purposes
-	SetLoadingScreen(window, [&]() {
-		gameObjectManager.Load(LoadAsset("gameObjects.json")); 
-		while (true) {
-			try {
-				if (!(clock() % MS_RESEND_DELAY)) mainSocket << UDPStream::packet << LOGIN << nick << serverAddress, std::cout << "Nick sent. Waiting server response..." << std::endl;
-				int header;
-				mainSocket >> UDPStream::packet >> header;
-				if (header == BEGIN) { std::cout << "Server accepted entry. Game begins." << std::endl; break; }
-				else if (header == EXIT) { std::cout << "Server refused entry. Disconecting..." << std::endl; Exit(); }
-			} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
-				std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
-			} catch (UDPStream::empty) {} //if the package is empty or have not received anything
-		}
-		// Add the screens of the derived app into the list
-		gameplayScreen = std::make_unique<PlaygroundScreen>();
-		m_screenList->AddScreen(gameplayScreen.get());
-		m_screenList->SetScreen(gameplayScreen->screenIndex);
-		m_currentScreen = m_screenList->GetCurScreen(); // Set the current screen reference
-		m_currentScreen->OnEntry(); // Initialize the first screen when enter
-		m_currentScreen->currentState = ScreenState::RUNNING; // Then set the screen to the running state
-	});
+	// Add the screens of the derived app into the list
+	m_menuScreen = std::make_unique<MenuScreen>();
+	m_screenList->AddScreen(m_menuScreen.get(), MENU_SCREEN);
+	m_loginScreen = std::make_unique<LoginScreen>();
+	m_screenList->AddScreen(m_loginScreen.get(), LOGIN_SCREEN);
+	m_gameplayScreen = std::make_unique<SinglePlayerScreen>();
+	m_screenList->AddScreen(m_gameplayScreen.get(), SINGLE_PLAYER_SCREEN);
+	m_currentScreen = m_screenList->SetScreen(MENU_SCREEN);
 
 	m_aliveCounter = float(clock());
+}
+
+void AppClient::ChangeScreen(int index) {
+	m_currentScreen = m_screenList->SetScreen(index);
 }
 
 void AppClient::OnSDLEvent(SDL_Event & evnt) {
 	switch (evnt.type) { // Check for SDL event type
 		case SDL_QUIT:
-		m_currentScreen->currentState = ScreenState::EXIT_APP; // Set screen state to exit application
+		m_currentScreen->currentState = ScreenState::EXIT; // Set screen state to exit application
 		break; case SDL_MOUSEMOTION:
-		inputManager.m_mouseCoords = { static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y) }; // Store the mouse coordinates each time mouse moves through the screen
+		inputManager.mouseCoords = { static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y) }; // Store the mouse coordinates each time mouse moves through the screen
 		break; case SDL_KEYDOWN:
 		inputManager.pressKey(evnt.key.keysym.sym); // Store which key has been pressed
 		break; case SDL_KEYUP:
@@ -60,18 +51,15 @@ void AppClient::OnSDLEvent(SDL_Event & evnt) {
 	}
 }
 
-#define CHANGE_TO(MoveTo)	m_currentScreen->OnExit(); /* Call the leaving method of the current screen */ \
-							m_currentScreen = m_screenList->MoveTo(); /* Set the current screen to the next one in the list */ \
-							if (m_currentScreen) { /* If the new screen exists */ \
-								m_currentScreen->currentState = ScreenState::RUNNING; /* Set the state of the new screen to running */ \
-								m_currentScreen->OnEntry(); /* Then call the function to initialize the scene */ \
-							}
-
 void AppClient::ProcessMsgs(void) {
 	try {
 		int header;
 		mainSocket >> UDPStream::packet >> header;
 		switch (header) {
+			case BEGIN: {
+				std::cout << "Server accepted entry. Game begins." << std::endl; 
+				ChangeScreen(SINGLE_PLAYER_SCREEN);
+			} break;
 			case EXIT: {
 				std::cout << "Server closed. Disconecting..." << std::endl;
 				Exit();
@@ -85,7 +73,7 @@ void AppClient::ProcessMsgs(void) {
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
-	if (clock() > m_aliveCounter + MS_ALIVE_DELAY+1000) std::cout << "Server closed. Disconecting..." << std::endl, Exit();
+	//if (clock() > m_aliveCounter + MS_ALIVE_DELAY+1000) std::cout << "Server closed. Disconecting..." << std::endl, Exit();
 }
 
 void AppClient::Update(void) {
@@ -93,20 +81,14 @@ void AppClient::Update(void) {
 	if (m_currentScreen) { // If current screen exists
 		switch (m_currentScreen->currentState) { // Check for the state of the screen
 			case ScreenState::RUNNING:
-			if (inputManager.isKeyDown(SDLK_ESCAPE)) m_currentScreen->currentState = ScreenState::EXIT_APP;
+			if (inputManager.isKeyDown(SDLK_ESCAPE)) m_currentScreen->currentState = ScreenState::EXIT;
 			inputManager.update();	// Update the input manager instance
 			m_currentScreen->Update(); // Update the current screen if running
 			break;
-			case ScreenState::CHANGE_NEXT:
-			CHANGE_TO(MoveNext);
-			break;
-			case ScreenState::CHANGE_PREVIOUS:
-			CHANGE_TO(MovePrev);
-			break;
-			case ScreenState::EXIT_APP:
+			case ScreenState::EXIT:
 			Exit(); // Call exit function to end the execution
 			break;
-			default: break;
+			case ScreenState::SLEEP: default: break;
 		}
 	} else Exit(); // Call exit function if screen doesn't exist
 }
@@ -130,9 +112,8 @@ void AppClient::Run(void) {
 		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
 		Draw();								// Main draw function
 		fps = fpsLimiter.fps;				// Get the current fps of the class instance
-		deltaTime = fpsLimiter.deltaTime;			// Get the current fps of the class instance
+		deltaTime = fpsLimiter.deltaTime;	// Get the current fps of the class instance
 		fpsLimiter.end();					// Calculate and restore FPS
-		window.swapBuffer();				// Swap OpenGL buffers if double-buffering is supported
 	}
 }
 
@@ -143,5 +124,8 @@ void AppClient::Exit(void) {
 		m_screenList->Destroy();
 		m_screenList.reset();
 	}
+	SDL_DestroyRenderer(renderer);
+	TTF_CloseFont(font);
+	DestroySDL();
 	m_isRunning = false; // Execution ends
 }

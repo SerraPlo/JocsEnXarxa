@@ -152,15 +152,10 @@ namespace SerraPlo {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
-
-		font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), 40);
 	}
 
-	GLText::~GLText() {
-		TTF_CloseFont(font);
-	}
 
-	void GLText::Draw(ShaderProgram &program) {
+	void GLText::Draw(ShaderProgram &program, TTF_Font *font) {
 		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 150,0,150 });
 		
 		GLuint textureid;

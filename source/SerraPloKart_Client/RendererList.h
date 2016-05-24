@@ -30,5 +30,7 @@ public:
 
 	void DrawObjects(ShaderProgram &program, Camera &camera);
 	void DrawDebug(ShaderProgram &program, Camera &camera);
+
+	void Clear();
 };
 

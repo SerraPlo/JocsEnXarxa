@@ -2,7 +2,7 @@
 
 namespace SerraPlo {
 
-	InputManager::InputManager() : m_mouseCoords(0.0f,0.0f)
+	InputManager::InputManager() : mouseCoords(0.0f,0.0f)
 	{}
 
 	void InputManager::update() {

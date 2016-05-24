@@ -19,6 +19,9 @@ namespace SerraPlo {
 				//delete entity.second;
 			//}
 		}
+		bool Empty() {
+			return gameObjectList.empty();
+		}
 		void Load(const std::string &filePath) {
 			JsonBox::Value fileData;
 			fileData.loadFromFile(filePath);

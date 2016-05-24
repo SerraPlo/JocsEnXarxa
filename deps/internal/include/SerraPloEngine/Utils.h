@@ -4,7 +4,9 @@
 #pragma comment(lib, "glew32.lib")
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_ttf.h>
+#include <SDL2\SDL_image.h>
 #pragma comment(lib, "SDL2_ttf.lib")
+#pragma comment(lib, "SDL2_image.lib")
 #include <functional>
 #include "ResourceManager.h"
 #include <iostream>
@@ -38,8 +40,15 @@ namespace SerraPlo {
 	void InitSDL(void) {
 		SDL_Init(SDL_INIT_EVERYTHING);	// Initialize everything in SDL (VIDEO, AUDIO, EVENTS,...)
 		TTF_Init();						// Initialize SDL_ttf for text purposes
+		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 		// Tell we want a double buffered windows to avoid flickering
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	}
+
+	void DestroySDL(void) {
+		IMG_Quit();
+		TTF_Quit();
+		SDL_Quit();
 	}
 
 	// Initialize SDL attributes
@@ -65,62 +74,7 @@ namespace SerraPlo {
 		return buttonID;
 	}
 
-#define TEXT_WIDTH 700
-#define TEXT_HEIGHT 100
-#define TEXT_MAX_SIZE 10
-#define FONT_SIZE 70
-
-	std::string GetUserNick(GLWindow &window) {
-		SDL_Renderer *msgboxR = SDL_CreateRenderer(window.SDLWindow, 0, SDL_RENDERER_ACCELERATED);
-		SDL_SetRenderDrawColor(msgboxR, 255, 255, 255, 255);
-		TTF_Font *font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), FONT_SIZE);
-		SDL_StartTextInput();
-		std::string text = "";
-		SDL_Surface *text_surface = nullptr;
-		SDL_Texture *texture = nullptr;
-		SDL_bool done = SDL_FALSE;
-		while (!done) {
-			SDL_RenderClear(msgboxR);
-			text_surface = TTF_RenderText_Blended(font, "Enter your nickname: ", { 0,0,0 });
-			texture = SDL_CreateTextureFromSurface(msgboxR, text_surface);
-			SDL_RenderCopy(msgboxR, texture, &SDL_Rect{ 0 , 0, TEXT_WIDTH, TEXT_HEIGHT },
-						   &SDL_Rect{ *window.screenWidth / 2 - TEXT_WIDTH / 2 , *window.screenHeight / 2 - TEXT_HEIGHT / 2 - 100, TEXT_WIDTH, TEXT_HEIGHT });
-			SDL_DestroyTexture(texture);
-			SDL_FreeSurface(text_surface);
-
-			text_surface = TTF_RenderText_Blended(font, text.c_str(), { 100,0,100 });
-			texture = SDL_CreateTextureFromSurface(msgboxR, text_surface);
-			SDL_RenderCopy(msgboxR, texture, &SDL_Rect{ 0, 0, int(FONT_SIZE*text.size()), TEXT_HEIGHT },
-						   &SDL_Rect{ *window.screenWidth / 2 - TEXT_WIDTH / 2 , *window.screenHeight / 2 - TEXT_HEIGHT / 2 + 100, int(FONT_SIZE * text.size()), TEXT_HEIGHT });
-			SDL_RenderPresent(msgboxR);
-			SDL_DestroyTexture(texture);
-			SDL_FreeSurface(text_surface);
-
-			SDL_Event event;
-			if (SDL_PollEvent(&event)) {
-				switch (event.type) {
-					case SDL_QUIT:
-					exit(EXIT_SUCCESS);
-					case SDL_KEYDOWN:
-					if (event.key.keysym.sym == SDLK_RETURN && !text.empty()) done = SDL_TRUE;
-					if (event.key.keysym.sym == SDLK_BACKSPACE) text = text.substr(0, text.size() - 1);
-					if (event.key.keysym.sym == SDLK_ESCAPE) exit(EXIT_SUCCESS);
-					break;
-					case SDL_TEXTINPUT:
-					if (text.size() < TEXT_MAX_SIZE) text += event.text.text;
-					break;
-					case SDL_TEXTEDITING:
-					break;
-				}
-			}
-		}
-		SDL_StopTextInput();
-		SDL_DestroyRenderer(msgboxR);
-		TTF_CloseFont(font);
-		return text;
-	}
-
-	void SetLoadingScreen(GLWindow &window, std::function<void(void)> loadFunction) {
+	/*void SetLoadingScreen(GLWindow &window, std::function<void(void)> loadFunction) {
 		SDL_Renderer *msgboxR = SDL_CreateRenderer(window.SDLWindow, 0, SDL_RENDERER_ACCELERATED);
 		SDL_SetRenderDrawColor(msgboxR, 255, 255, 255, 255);
 		SDL_Surface *text_surface = nullptr;
@@ -138,6 +92,6 @@ namespace SerraPlo {
 		//-------------
 		SDL_DestroyRenderer(msgboxR);
 		TTF_CloseFont(font);
-	}
+	}*/
 
 }

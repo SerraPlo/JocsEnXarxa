@@ -141,13 +141,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppClient.cpp" />
+    <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PlaygroundScreen.cpp" />
+    <ClCompile Include="MenuScreen.cpp" />
+    <ClCompile Include="SinglePlayerScreen.cpp" />
     <ClCompile Include="RendererList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClient.h" />
-    <ClInclude Include="PlaygroundScreen.h" />
+    <ClInclude Include="LoginScreen.h" />
+    <ClInclude Include="MenuScreen.h" />
+    <ClInclude Include="SinglePlayerScreen.h" />
     <ClInclude Include="RendererList.h" />
   </ItemGroup>
   <ItemGroup>
@@ -156,8 +160,6 @@
     <None Include="..\..\assets\shaders\light.vert" />
     <None Include="..\..\assets\shaders\main.frag" />
     <None Include="..\..\assets\shaders\main.vert" />
-    <None Include="..\..\assets\shaders\text.frag" />
-    <None Include="..\..\assets\shaders\text.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
