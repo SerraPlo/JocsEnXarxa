@@ -21,8 +21,8 @@ void AppClient::Init(void) {
 	m_screenList->AddScreen(m_menuScreen.get(), MENU_SCREEN);
 	m_loginScreen = std::make_unique<LoginScreen>();
 	m_screenList->AddScreen(m_loginScreen.get(), LOGIN_SCREEN);
-	m_gameplayScreen = std::make_unique<SinglePlayerScreen>();
-	m_screenList->AddScreen(m_gameplayScreen.get(), SINGLE_PLAYER_SCREEN);
+	m_gameplayScreen = std::make_unique<MultiplayerScreen>();
+	m_screenList->AddScreen(m_gameplayScreen.get(), MULTIPLAYER_SCREEN);
 	m_currentScreen = m_screenList->SetScreen(MENU_SCREEN);
 
 	m_aliveCounter = float(clock());
@@ -58,7 +58,7 @@ void AppClient::ProcessMsgs(void) {
 		switch (header) {
 			case BEGIN: {
 				std::cout << "Server accepted entry. Game begins." << std::endl; 
-				ChangeScreen(SINGLE_PLAYER_SCREEN);
+				//ChangeScreen(MULTIPLAYER_SCREEN);
 			} break;
 			case EXIT: {
 				std::cout << "Server closed. Disconecting..." << std::endl;
@@ -81,7 +81,6 @@ void AppClient::Update(void) {
 	if (m_currentScreen) { // If current screen exists
 		switch (m_currentScreen->currentState) { // Check for the state of the screen
 			case ScreenState::RUNNING:
-			if (inputManager.isKeyDown(SDLK_ESCAPE)) m_currentScreen->currentState = ScreenState::EXIT;
 			inputManager.update();	// Update the input manager instance
 			m_currentScreen->Update(); // Update the current screen if running
 			break;

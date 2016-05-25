@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <SerraPloEngine\IScreen.h>
-#include <SerraPloEngine\Sprite.h>
+#include <SerraPloEngine\Text2D.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -23,11 +23,10 @@ public:
 	void Draw(void) override;
 private:
 	AppClient *m_app; // Casted client main game pointer reference (IApp -> AppClient)
-	std::string m_nickText{ " " };
+	std::string m_nickText{ "" };
 	// Text to show on screen
-	Text m_loginMessage;
-	Text m_loadMessage;
-	InputText m_userInput;
-	bool loading{ false }; ///TODO: loading screen not cutre
+	Text2D m_loginMessage;
+	Text2D m_loadMessage;
+	InputText2D m_userInput;
 };
 

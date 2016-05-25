@@ -174,7 +174,8 @@
     <ClInclude Include="IOManager.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ScreenList.h" />
-    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Sprite2D.h" />
+    <ClInclude Include="Text2D.h" />
     <ClInclude Include="Timing.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utils.h" />
