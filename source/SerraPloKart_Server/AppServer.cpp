@@ -22,7 +22,8 @@ void AppServer::Update(void) {
 				std::string nick;
 				dispatcher >> nick;
 				if (clientList.find(sender.hash) == clientList.end()) {
-					clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN };
+					clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN, Transform(), CarPhysics()};
+					clientList[sender.hash].carPhy.AddTransform(&clientList[sender.hash].transform);
 					std::cout << nick << " has logged in. Added to client database." << std::endl;
 					dispatcher << UDPStream::packet << BEGIN << sender;
 				}
@@ -33,14 +34,15 @@ void AppServer::Update(void) {
 				clientList.erase(it);
 			} break;
 			case MOVE: {
-				char pressed_key;
-				dispatcher >> pressed_key;
-				switch (pressed_key) {
-					case 'w': std::cout << clientList[sender.hash].nick << " is moving forward." << std::endl; break;
-					case 'a': std::cout << clientList[sender.hash].nick << " is turning left." << std::endl; break;
-					case 's': std::cout << clientList[sender.hash].nick << " is braking." << std::endl; break;
-					case 'd': std::cout << clientList[sender.hash].nick << " is turning right." << std::endl;
+				input10 input;
+				dispatcher >> input;
+				for (int i = 0; i < 10; i++) {
+					bool temp[4];
+					temp[0] = input.w[i]; temp[1] = input.a[i];
+					temp[2] = input.s[i]; temp[3] = input.d[i];
+					clientList[sender.hash].carPhy.Update(temp, input.dt[i]);
 				}
+				std::cout << clientList[sender.hash].transform.position.x << "," << clientList[sender.hash].transform.position.z << std::endl;
 			}
 		}
 		if (clientList.empty()) std::cout << "All players disconnected. Shutting down..." << std::endl, system("pause"); ///TODO
@@ -48,7 +50,9 @@ void AppServer::Update(void) {
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 }
+void AppServer::UpdatePhysics(input10 a) {
 
+}
 void AppServer::Run(void) {
 	Init(); // Call the init everything function
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter

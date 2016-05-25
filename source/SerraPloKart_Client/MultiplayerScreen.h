@@ -11,6 +11,13 @@ using namespace SerraPlo;
 
 #define MAX_POINT_LIGHTS 1
 #define MAX_SPOT_LIGHTS 1
+struct input10 {
+	bool w[10];
+	bool a[10];
+	bool s[10];
+	bool d[10];
+	float dt[10];
+};
 
 class AppClient;
 class MultiplayerScreen : public IScreen {
@@ -46,4 +53,7 @@ private:
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
 	// Nick texture set above the player
 	GLText m_textNick;
+
+	int m_inputCounter = 0;
+	input10 m_in2send;
 };

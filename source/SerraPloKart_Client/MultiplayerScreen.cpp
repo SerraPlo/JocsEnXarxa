@@ -100,15 +100,22 @@ void MultiplayerScreen::OnExit(void) {
 
 void MultiplayerScreen::Update(void) {
 	CheckInput();
-
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
-	if (m_app->inputManager.isKeyDown(SDLK_w)) temp[0] = true/*, m_app->mainSocket << UDPStream::packet << MOVE << 'w' << m_app->serverAddress*/;
-	if (m_app->inputManager.isKeyDown(SDLK_a)) temp[2] = true/*, m_app->mainSocket << UDPStream::packet << MOVE << 'a' << m_app->serverAddress*/;
-	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true/*, m_app->mainSocket << UDPStream::packet << MOVE << 's' << m_app->serverAddress*/;
-	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true/*, m_app->mainSocket << UDPStream::packet << MOVE << 'd' << m_app->serverAddress*/;
+	if (m_app->inputManager.isKeyDown(SDLK_w)) temp[0] = true;
+	if (m_app->inputManager.isKeyDown(SDLK_a)) temp[2] = true;
+	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
+	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 	m_carPhy.Update(temp, gameApp->deltaTime);
+	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
+	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];
+	m_in2send.dt[m_inputCounter] = gameApp->deltaTime;
+	m_inputCounter++;
+	if (m_inputCounter >= 10) {//send cada 10 updates
+		m_inputCounter = 0;
+		m_app->mainSocket << UDPStream::packet << MOVE << m_in2send << m_app->serverAddress;
+	}
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
 	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.25f;
 	m_playerwheels[1].transform.position = m_player->transform.position + m_carPhy.front*2.0f - perFront*1.25f;
