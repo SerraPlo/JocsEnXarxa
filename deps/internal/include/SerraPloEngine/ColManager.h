@@ -21,7 +21,7 @@ public:
 	int nBoxs;
 	int nCircles;
 	ColManager() {};
-	~ColManager() { delete[] boxs; delete[] circles; };
+	~ColManager() { delete[] boxs; delete[] circles;};
 	float projectionScalar(glm::vec2 a, glm::vec2 b) {
 		float projection = ((b.x*a.x) + (b.y*a.y)) / (a.x*a.x + a.y*a.y);
 		return (projection*a.x*a.x) + (projection *a.y*a.y);

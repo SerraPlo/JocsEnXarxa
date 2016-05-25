@@ -46,7 +46,7 @@ void LoginScreen::Update(void) {
 		m_userInput.position = { m_app->screenWidth / 2 - (m_userInput.width / 2)*1.25f, m_app->screenHeight* 0.5f };
 	} else {
 		static float counterSend = 0;
-		if (!m_app->gameAssetsLoaded) m_app->gameObjectManager.Load(LoadAsset("gameObjects.json")), m_app->gameAssetsLoaded = true;
+		if (m_app->gameObjectManager.Empty()) m_app->gameObjectManager.Load(LoadAsset("gameObjects.json"));
 		try {
 			if (clock() > counterSend + MS_RESEND_DELAY) counterSend = clock(), m_app->ChangeScreen(MULTIPLAYER_SCREEN),
 				m_app->mainSocket << UDPStream::packet << LOGIN << m_app->nick << m_app->serverAddress, 
@@ -60,7 +60,7 @@ void LoginScreen::Update(void) {
 
 void LoginScreen::Draw(void) {
 	SDL_RenderClear(m_app->renderer);
-		(m_app->nick.empty()) ? m_loginMessage.Draw(m_app->renderer), m_userInput.Draw(m_app->renderer, int(40 * m_nickText.size())) :
+		(m_app->nick.empty()) ? m_loginMessage.Draw(m_app->renderer), m_userInput.Draw(m_app->renderer, int(FONT_SIZE * m_nickText.size())) :
 								m_loadMessage.Draw(m_app->renderer);
 	SDL_RenderPresent(m_app->renderer);
 }

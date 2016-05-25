@@ -3,16 +3,24 @@
 #include <ctime>
 
 void AppServer::Init(void) {
-
+	m_aliveCounter = clock();
+	m_counterUpdate = clock();
 }
 
 void AppServer::Update(void) {
 	try {
 		if (clock() > m_aliveCounter + MS_ALIVE_DELAY) {
-			std::cout << "Sending alive..." << std::endl; 
+			std::cout << "Sending alive..." << std::endl;
 			dispatcher << UDPStream::packet << ALIVE;
-			for (auto client : clientList) dispatcher << client.second.address;
+			for (auto &client : clientList) dispatcher << client.second->address;
 			m_aliveCounter = float(clock());
+		}
+		if (clock() >= m_counterUpdate + 100.0f && !clientList.empty()) {
+			for (auto &client : clientList) {
+				dispatcher << UDPStream::packet << UPDATE << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
+				for (auto &client2 : clientList) dispatcher << client2.second->address;
+			}
+			m_counterUpdate = clock();
 		}
 		int header;
 		sockaddr sender;
@@ -22,27 +30,30 @@ void AppServer::Update(void) {
 				std::string nick;
 				dispatcher >> nick;
 				if (clientList.find(sender.hash) == clientList.end()) {
-					clientList[sender.hash] = { sender, nick, ScreenState::NONE, SCREEN_INDEX_NO_SCREEN, Transform(), CarPhysics()};
-					clientList[sender.hash].carPhy.AddTransform(&clientList[sender.hash].transform);
+					clientList[sender.hash] = new ClientProxy(sender,nick);
+					clientList[sender.hash]->carPhy.AddTransform(&clientList[sender.hash]->transform);
 					std::cout << nick << " has logged in. Added to client database." << std::endl;
-					dispatcher << UDPStream::packet << BEGIN << sender;
+					dispatcher << UDPStream::packet << BEGIN <<  sender;
 				}
 			} break;
 			case EXIT: {
-				auto it = clientList.find(sender.hash);
-				std::cout << it->second.nick << " has been disconnected." << std::endl;
-				clientList.erase(it);
+				auto &it = clientList.find(sender.hash);
+				std::cout << it->second->nick << " has been disconnected." << std::endl;
+				clientList.erase(it);   //<----------------------------------------------------------------------------TODO : maybe
 			} break;
-			case MOVE: {
+			case UPDATE: {
 				input10 input;
-				dispatcher >> input;
+				dispatcher >> input.w >> input.a >> input.s >> input.d >> input.dt;
+				bool temp[5];
 				for (int i = 0; i < 10; i++) {
-					bool temp[4];
+					//memset(temp, false, 5);
 					temp[0] = input.w[i]; temp[1] = input.a[i];
 					temp[2] = input.s[i]; temp[3] = input.d[i];
-					clientList[sender.hash].carPhy.Update(temp, input.dt[i]);
+					temp[4] = false;
+					clientList[sender.hash]->carPhy.Update(temp, input.dt[i]);
 				}
-				std::cout << clientList[sender.hash].transform.position.x << "," << clientList[sender.hash].transform.position.z << std::endl;
+				//std::cout << clientList[sender.hash].transform.position.x << "," << clientList[sender.hash].transform.position.z << std::endl;
+				//std::cout << clientList[sender.hash].transform.rotation.y << std::endl;
 			}
 		}
 		if (clientList.empty()) std::cout << "All players disconnected. Shutting down..." << std::endl, system("pause"); ///TODO
@@ -50,9 +61,7 @@ void AppServer::Update(void) {
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 }
-void AppServer::UpdatePhysics(input10 a) {
 
-}
 void AppServer::Run(void) {
 	Init(); // Call the init everything function
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
@@ -73,6 +82,6 @@ void AppServer::Run(void) {
 
 void AppServer::Destroy(void) {
 	dispatcher << UDPStream::packet << EXIT;
-	for (auto client : clientList) dispatcher << client.second.address;
+	for (auto &client : clientList) dispatcher << client.second->address, delete client.second;
 	m_isRunning = false; // Execution ends
 }

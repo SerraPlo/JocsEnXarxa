@@ -5,11 +5,14 @@
 #include <SerraPloEngine/CarPhysics.h>
 using namespace SerraPlo;
 
-struct ClientProxy {
+class ClientProxy {
+public:
 	sockaddr address;
 	std::string nick;
-	ScreenState currentScreenState;
-	int screenIndex;
+	ScreenState currentScreenState{ ScreenState::NONE };
+	int screenIndex{ SCREEN_INDEX_NO_SCREEN };
 	Transform transform;
 	CarPhysics carPhy;
+	ClientProxy(sockaddr addr, const std::string &str) : address(addr), nick(str) {};
+	~ClientProxy() = default;
 };

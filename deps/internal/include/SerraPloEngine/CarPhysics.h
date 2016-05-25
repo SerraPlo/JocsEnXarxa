@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <cmath>
 #include "ColManager.h"
+#include "ResourceManager.h"
 
 #define BRAKE_FORCE 100000.0f
 
@@ -34,7 +35,7 @@ public:
 	float steer = 0.0;
 	float steerAngle = 0.0;
 
-	CarPhysics() { glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f); collisions.InitStructures("../../assets/models/circuit_col/colisions.txt"); }
+	CarPhysics() { glm::vec3 front = glm::vec3(0.0f, 0.0f, 0.0f); collisions.InitStructures(SerraPlo::LoadAsset("models/circuit_col/colisions.txt")); }
 
 	~CarPhysics() = default;
 
@@ -107,7 +108,10 @@ public:
 		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
 		
 		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
-		if (collisions.CalculateCollision(positionsCol) == -1) transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
+		//std::cout << positionsCol[0].x << "," << positionsCol[0].y<<std::endl;
+		if (collisions.CalculateCollision(positionsCol) == -1) {
+			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
+		}
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 

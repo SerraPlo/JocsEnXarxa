@@ -5,16 +5,11 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 
 #define PORT 5000
-struct input10 {
-	bool w[10];
-	bool a[10];
-	bool s[10];
-	bool d[10];
-	float dt[10];
-};
+
 class AppServer : public IApp {
 	UDPStream dispatcher;
-	std::map<uint64_t, ClientProxy> clientList;
+	std::map<uint64_t, ClientProxy*> clientList;
+	float m_counterUpdate = 0.0f;
 
 	explicit AppServer() : dispatcher(PORT) {};
 	AppServer(AppServer const&) = delete;
@@ -25,7 +20,7 @@ class AppServer : public IApp {
 	virtual void Init(void) override;
 	// Main update function of the game
 	void Update(void);
-	void UpdatePhysics(input10 a);
+	
 public:
 	static AppServer& Instance() {
 		static AppServer instance;

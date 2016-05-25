@@ -68,6 +68,23 @@ void AppClient::ProcessMsgs(void) {
 				std::cout << "Server is alive" << std::endl;
 				m_aliveCounter = float(clock());
 			} break;
+			case UPDATE: {
+				Enemy a;
+				mainSocket >> a.nick >> a.transform.position.x >> a.transform.position.z >> a.transform.rotation.y;
+				std::cout << a.nick << std::endl;
+				if (a.nick == nick);//mirar trampes TODo
+				else {
+					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
+					for (auto &enemy : enemies) {
+						if (enemy.nick == a.nick) {
+							enemy.transform = a.transform;
+							virgin = false;
+							break;
+						} 
+					}
+					if(virgin) enemies.push_back(a);
+				}
+			} break;
 			default: break;
 		}
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read

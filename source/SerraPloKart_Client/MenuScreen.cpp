@@ -38,7 +38,7 @@ void MenuScreen::Update(void) {
 	if (SDL_PollEvent(&evnt)) m_app->OnSDLEvent(evnt);
 	m_singlePlayer.Update(m_app->inputManager);
 	m_multiplayer.Update(m_app->inputManager);
-	if (m_multiplayer.pressed) m_app->ChangeScreen((!m_app->gameAssetsLoaded) ? LOGIN_SCREEN : MULTIPLAYER_SCREEN);
+	if (m_multiplayer.pressed) m_app->ChangeScreen((m_app->gameObjectManager.Empty()) ? LOGIN_SCREEN : MULTIPLAYER_SCREEN);
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->m_currentScreen->currentState = ScreenState::EXIT;
 }
 

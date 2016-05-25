@@ -10,14 +10,20 @@
 #include "LoginScreen.h"
 #include "MultiplayerScreen.h"
 
-#define INIT_SCREEN_WIDTH 1200
-#define INIT_SCREEN_HEIGHT 900
+#define INIT_SCREEN_WIDTH 600
+#define INIT_SCREEN_HEIGHT 450
 #define IP_PORT "127.0.0.1:5000"
 #define FONT_SIZE 70
 
 enum SreenType { MENU_SCREEN, LOGIN_SCREEN, MULTIPLAYER_SCREEN, SINGLE_PLAYER_SCREEN };
 
 class AppClient : public IApp {
+
+	struct Enemy {
+		std::string nick = "";
+		Transform transform;
+	};
+	
 	std::unique_ptr<ScreenList> m_screenList{ std::make_unique<ScreenList>(dynamic_cast<IApp*>(this)) }; // Unique pointer instance to the list of screens of the game
 	///TODO: optimize to local
 	std::unique_ptr<MenuScreen> m_menuScreen;
@@ -45,10 +51,12 @@ public:
 	GLWindow window;			// Main instance of the OpenGL window
 	InputManager inputManager;	// Main instance of the input manager class
 	GameObjectManager gameObjectManager;
+
+	std::vector<Enemy> enemies;
 	std::string nick{ "" };
+	
 	SDL_Renderer *renderer{ nullptr };
 	TTF_Font *font{ nullptr };
-	bool gameAssetsLoaded{ false };
 
 	static AppClient& Instance() {
 		static AppClient instance;

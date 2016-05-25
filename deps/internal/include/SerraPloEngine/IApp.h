@@ -7,7 +7,14 @@ namespace SerraPlo {
 #define MS_RESEND_DELAY 4000
 
 	enum KEY_MESSAGE {
-		LOGIN, BEGIN, EXIT, ALIVE, MOVE
+		LOGIN, BEGIN, EXIT, ALIVE, UPDATE, NEWPLAYER
+	};
+	struct input10 {
+		bool w[10];
+		bool a[10];
+		bool s[10];
+		bool d[10];
+		float dt[10];
 	};
 
 	// Game app interface to the store the main runing game engine as a template

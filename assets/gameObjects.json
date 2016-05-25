@@ -44,6 +44,17 @@
     "rotation": [ 0, 0, 0 ],
     "scale": [ 1, 1, 1 ]
   },
+  "car_baseEnemy": {
+    "name": "Base",
+    "description": "asdgsdgsd",
+    "model": "models/car/base.obj",
+    "diffuse": "models/plch/red.jpg",
+    "specular": [ 0, 0, 0 ],
+    "shininess": 5,
+    "position": [ 0, 0, 0 ],
+    "rotation": [ 0, 0, 0 ],
+    "scale": [ 1, 1, 1 ]
+  },
   "car_wheel": {
     "name": "Circuit",
     "description": "asdgsdgsd",
