@@ -8,8 +8,9 @@
 using namespace SerraPlo;
 
 class RendererList {
-	std::vector<GameObject*> m_objectList;
-	std::vector<GameObject*> m_debugList;
+	std::vector<GameObject*> m_sceneObjectList;
+	std::vector<GameObject> m_globalObjectList;
+	std::vector<GameObject> m_debugList;
 	DirLight *m_dirLight;
 	std::vector<PointLight*> m_pointLightList;
 	std::vector<SpotLight*> m_spotLightList;
@@ -22,7 +23,7 @@ public:
 
 	void Add(GameObject *newObject);
 	void Add(GlobalGameObject *newObject);
-	void AddDebug(GameObject *newObject);
+	void AddDebug(GlobalGameObject *newObject);
 	void Add(DirLight *newLight);
 	void Add(PointLight *newLight);
 	void Add(SpotLight *newLight);
@@ -31,7 +32,7 @@ public:
 	static void SendMaterialAttributes(ShaderProgram &program, Camera &camera);
 
 	void DrawObjects(ShaderProgram &program, Camera &camera, GameObjectManager &objectManager);
-	void DrawDebug(ShaderProgram &program, Camera &camera);
+	void DrawDebug(ShaderProgram &program, Camera &camera, GameObjectManager &objectManager);
 
 	void Clear();
 };

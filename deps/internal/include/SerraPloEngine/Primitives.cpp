@@ -3,6 +3,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vector>
+#include <SDL2/SDL_ttf.h>
+#pragma comment(lib, "SDL2_ttf.lib")
 
 namespace SerraPlo {
 

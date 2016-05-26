@@ -7,10 +7,7 @@
 #include <SDL2\SDL_image.h>
 #pragma comment(lib, "SDL2_ttf.lib")
 #pragma comment(lib, "SDL2_image.lib")
-#include <functional>
-#include "ResourceManager.h"
-#include <iostream>
-#include "Window.h"
+#include "PathLoader.h"
 
 namespace SerraPlo {
 
@@ -54,15 +51,16 @@ namespace SerraPlo {
 
 	// Initialize SDL attributes
 	void InitOpenGL(bool enableGLHint = true) {
+		glewExperimental = true;
+		if (glewInit() != GLEW_OK) SP_THROW_ERROR("GLEW could not be initialized.");
 		glClearDepth(1.0);			// Set the base depth when depth buffer
 		glEnable(GL_DEPTH_TEST);	// Activate the Z-buffer
-		glEnable(GL_BLEND);			// Enable alpha blending
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glFrontFace(GL_CW);
-		glCullFace(GL_BACK);
-		glEnable(GL_CULL_FACE);
+		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Enable alpha blending
+		glCullFace(GL_BACK); glEnable(GL_CULL_FACE); //glFrontFace(GL_CW);
 		glLineWidth(5.0f);
 		if (enableGLHint) EnableGLHint();
+		SDL_GL_SetSwapInterval(0); // Set V-Sync
+		printf("***  OpenGL Version: %s  ***\n", reinterpret_cast<char const*>(glGetString(GL_VERSION)));
 	}
 
 	// Create a message box in which to ask the user whether to play on fullscreen or windowed mode
@@ -74,25 +72,5 @@ namespace SerraPlo {
 		SDL_ShowMessageBox(&messageBoxData, &buttonID); // Whether to play on fullscreen mode or default normal mode
 		return buttonID;
 	}
-
-	/*void SetLoadingScreen(GLWindow &window, std::function<void(void)> loadFunction) {
-		SDL_Renderer *msgboxR = SDL_CreateRenderer(window.SDLWindow, 0, SDL_RENDERER_ACCELERATED);
-		SDL_SetRenderDrawColor(msgboxR, 255, 255, 255, 255);
-		SDL_Surface *text_surface = nullptr;
-		SDL_RenderClear(msgboxR);
-		TTF_Font *font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), FONT_SIZE);
-		text_surface = TTF_RenderText_Blended(font, "Loading...", { 0,0,0 });
-		SDL_Texture *texture = SDL_CreateTextureFromSurface(msgboxR, text_surface);
-		SDL_RenderCopy(msgboxR, texture, &SDL_Rect{ 0 , 0, TEXT_WIDTH, TEXT_HEIGHT },
-					   &SDL_Rect{ *window.screenWidth / 2 - TEXT_WIDTH / 2 , *window.screenHeight / 2 - TEXT_HEIGHT / 2, TEXT_WIDTH, TEXT_HEIGHT });
-		SDL_RenderPresent(msgboxR);
-		SDL_DestroyTexture(texture);
-		SDL_FreeSurface(text_surface);
-		//-------------
-		loadFunction();
-		//-------------
-		SDL_DestroyRenderer(msgboxR);
-		TTF_CloseFont(font);
-	}*/
 
 }

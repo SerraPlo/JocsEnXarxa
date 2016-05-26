@@ -158,9 +158,9 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CarPhysics.h" />
-    <ClInclude Include="ColManager.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Primitives.h" />
-    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="ResourcesManager.h" />
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GLMaterial.h" />
@@ -172,24 +172,24 @@
     <ClInclude Include="IApp.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IOManager.h" />
-    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="PathLoader.h" />
     <ClInclude Include="ScreenList.h" />
     <ClInclude Include="Sprite2D.h" />
     <ClInclude Include="Text2D.h" />
     <ClInclude Include="Timing.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utils.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="GLWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Primitives.cpp" />
-    <ClCompile Include="GLMesh.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ScreenList.cpp" />
+    <ClCompile Include="Sprite2D.cpp" />
     <ClCompile Include="Timing.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="GLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

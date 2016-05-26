@@ -1,12 +1,11 @@
 #pragma once
-#include <SDL2\SDL.h>
 
 namespace SerraPlo {
 
 	class FPSLimiter {
 		float m_targetFPS;
-		Uint32 m_startTicks;
-		Uint32 m_frameTicks;
+		unsigned __int32 m_startTicks;
+		unsigned __int32 m_frameTicks;
 
 		void calculateFPS();
 	public:

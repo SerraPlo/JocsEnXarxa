@@ -4,20 +4,16 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "GLMaterial.h"
-#include "ResourceManager.h"
-#include "ShaderProgram.h"
-#include <glm/gtc/type_ptr.hpp>
 #pragma comment(lib, "assimp.lib") 
 
 namespace SerraPlo {
 
 	struct GLMesh {
-		GLMaterial material;				// Set of mesh textures and material attributes
 		std::vector<float> vertices;		// Array of mesh vertices
 		std::vector<unsigned int> indices;	// Array of mesh elements
 		GLuint vao, vbo, ebo;				/// TODO: optimize 1 VAO & 1 VBO for multiple meshes
 		unsigned int numElements;			// How many faces does the mesh have
+		unsigned int materialID;			// Which material should be binded to the mesh
 		explicit GLMesh() = default;
 		GLMesh(aiMesh* mesh) { Load(mesh); }
 		void Load(aiMesh* mesh) {
@@ -52,41 +48,6 @@ namespace SerraPlo {
 			glVertexAttribPointer(GLuint(2), 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
 			glEnableVertexAttribArray(2); // uv
 			glBindVertexArray(0);
-		}
-	};
-
-#include <algorithm>
-
-	struct GLModel {
-		GLMesh *meshData{ nullptr };
-		int numMeshes{ 0 };
-		explicit GLModel() = default;
-		//GLModel(const GLModel &model) { numMeshes = model.numMeshes; meshData = new GLMesh[numMeshes]; meshData = model.meshData; };
-		GLModel& operator=(const GLModel& model) {
-			numMeshes = model.numMeshes; meshData = new GLMesh[numMeshes]; meshData = model.meshData;
-			return *this;
-		}
-		explicit GLModel::GLModel(const char* meshPath, const char* diffusePath, const char* normalPath, JsonBox::Array specular, JsonBox::Array emissive, float shininess) {
-			const aiScene* pScene = aiImportFile(meshPath, aiProcessPreset_TargetRealtime_MaxQuality); // Load scene
-			if (pScene->mNumMeshes == 1) { //if not scene to load, only obj
-				numMeshes = 1;
-				meshData = new GLMesh(pScene->mMeshes[0]);
-				meshData->material = GLMaterial(diffusePath, normalPath, specular, emissive, shininess); // Create material for mesh
-			} else {
-				numMeshes = pScene->mNumMeshes;
-				meshData = new GLMesh[pScene->mNumMeshes];
-				for (int i = 0; i < numMeshes; ++i) {
-					meshData[i].Load(pScene->mMeshes[i]); // Add each mesh to model
-					const aiMaterial* material = pScene->mMaterials[pScene->mMeshes[i]->mMaterialIndex]; // Load material from mesh
-					int texIndex = 0; aiString path; // To fill variables
-					if (material->GetTexture(aiTextureType_DIFFUSE, texIndex, &path) == AI_SUCCESS) { // Load diffuse texture from material
-						std::string aiDiffPath = path.data; // Get texture path
-						auto pos = aiDiffPath.rfind("models");
-						meshData[i].material = GLMaterial(LoadAsset(aiDiffPath.substr(pos, aiDiffPath.size()-pos)).c_str(), normalPath, specular, emissive, shininess); // Create material for mesh
-					}
-				}
-			}
-			aiReleaseImport(pScene); // Delete scene imported
 		}
 	};
 

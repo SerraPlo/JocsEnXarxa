@@ -9,6 +9,7 @@ namespace SerraPlo {
 	enum KEY_MESSAGE {
 		LOGIN, BEGIN, EXIT, ALIVE, UPDATE, NEWPLAYER
 	};
+
 	struct input10 {
 		bool w[10];
 		bool a[10];

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <cmath>
-#include "ColManager.h"
-#include "ResourceManager.h"
+#include "CollisionManager.h"
+#include "PathLoader.h"
 
 #define BRAKE_FORCE 100000.0f
 
@@ -21,7 +21,7 @@ struct Config {
 
 class CarPhysics {
 public:
-	ColManager collisions;
+	CollisionManager collisions;
 	Transform *transform{ nullptr };
 	glm::vec3 front;
 	float accel = 0.0f;

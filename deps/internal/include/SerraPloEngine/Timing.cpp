@@ -1,6 +1,6 @@
 #include "Timing.h"
 #include <iostream>
-#include <algorithm>
+#include <SDL2\SDL.h>
 
 namespace SerraPlo {
 
@@ -42,7 +42,8 @@ namespace SerraPlo {
 		if (frameTimeAverage > 0) fps = 1000.0f / frameTimeAverage;
 		else fps = 60.0f;
 
-		deltaTime = std::min(fps, 1/m_targetFPS);
+		static auto min = [](float a, float b) -> float { !(b < a) ? a : b; };
+		deltaTime = min(fps, 1/m_targetFPS);
 	}
 
 	void FPSLimiter::printFPS() const {

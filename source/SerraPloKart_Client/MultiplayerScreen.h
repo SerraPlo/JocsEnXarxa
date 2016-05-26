@@ -11,7 +11,7 @@ using namespace SerraPlo;
 
 #define MAX_POINT_LIGHTS 1
 #define MAX_SPOT_LIGHTS 1
-#define MAX_PLAYERS 10
+#define MAX_ENEMIES 9
 
 class AppClient;
 class MultiplayerScreen : public IScreen {
@@ -43,15 +43,11 @@ private:
 	GameObject m_player;
 	GameObject m_playerwheels[4];
 
-	GameObject m_enemies[MAX_PLAYERS];
-	GameObject m_enemyWheels[MAX_PLAYERS][4];
-
-	GameObject circuit;
-	GameObject skybox;
-	GameObject debugCollision;
+	GameObject m_enemies[MAX_ENEMIES];
+	GameObject m_enemyWheels[MAX_ENEMIES][4];
 
 	GLText m_textNick; 
-	GLText m_textNickEnemies[MAX_PLAYERS];
+	GLText m_textNickEnemies[MAX_ENEMIES];
 
 	CarPhysics m_carPhy;
 	// Lights

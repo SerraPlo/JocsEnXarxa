@@ -1,5 +1,4 @@
 #pragma once
-#include "ErrorManager.h"
 #include <GL\glew.h>
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32.lib")
@@ -7,7 +6,7 @@
 namespace SerraPlo {
 
 	class ShaderProgram {
-		GLuint programID			{ 0 };
+		GLuint m_programID			{ 0 };
 		GLuint m_vertexShaderID		{ 0 };
 		GLuint m_fragmentShaderID	{ 0 };
 		int m_numAttributes			{ 0 };
@@ -23,8 +22,8 @@ namespace SerraPlo {
 		GLint getUniformLocation(const std::string &uniformName) const;
 		GLint getAttribLocation(const std::string &attribName) const;
 
-		void bind() const;
-		void unbind() const;
+		inline void bind() const	{ glUseProgram(m_programID); };
+		inline void unbind() const	{ glUseProgram(0); };
 	};
 
 }

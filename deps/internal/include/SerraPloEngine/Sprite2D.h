@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 #include <SDL2\SDL.h>
-#include <SDL2\SDL_image.h>
-#pragma comment(lib, "SDL2_image.lib")
 #include "InputManager.h"
 
 namespace SerraPlo {
@@ -14,21 +12,8 @@ namespace SerraPlo {
 		int width, height;
 		Sprite2D() = default;
 		virtual ~Sprite2D() { SDL_DestroyTexture(texture); }
-		void Load(int x, int y, int w, int h, const std::string &path, SDL_Window *window, SDL_Renderer *renderer) {
-			SDL_Surface *loadSurface = IMG_Load(path.c_str());
-			SDL_Surface *screenSurface = SDL_GetWindowSurface(window);
-			SDL_Surface *textureSurface = SDL_ConvertSurface(loadSurface, screenSurface->format, NULL);
-			texture = SDL_CreateTextureFromSurface(renderer, textureSurface);
-			position = { x, y };
-			width = w;
-			height = h;
-			SDL_FreeSurface(loadSurface);
-			SDL_FreeSurface(textureSurface);
-		}
-		virtual void Draw(SDL_Renderer *renderer) {
-			SDL_Rect destRect = { position.x, position.y, width, height };
-			SDL_RenderCopy(renderer, texture, nullptr, &destRect);
-		}
+		void Load(int x, int y, int w, int h, const std::string &path, SDL_Window *window, SDL_Renderer *renderer);
+		virtual void Draw(SDL_Renderer *renderer);
 	};
 
 	class Button2D : public Sprite2D {
@@ -38,35 +23,9 @@ namespace SerraPlo {
 		bool pressed{ false };
 		Button2D() = default;
 		~Button2D() { SDL_DestroyTexture(texture), SDL_DestroyTexture(textureHover); }
-		void Reset() {
-			hover = false;
-			pressed = false;
-		}
-		void Load(int x, int y, int w, int h, const std::string &pathDefault, const std::string &pathHover, SDL_Window *window, SDL_Renderer *renderer) {
-			SDL_Surface *loadSurface = IMG_Load(pathDefault.c_str());
-			SDL_Surface *textureSurface = SDL_ConvertSurfaceFormat(loadSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-			texture = SDL_CreateTextureFromSurface(renderer, textureSurface);
-			loadSurface = IMG_Load(pathHover.c_str());
-			textureSurface = SDL_ConvertSurfaceFormat(loadSurface, SDL_PIXELFORMAT_ARGB8888, 0);
-			textureHover = SDL_CreateTextureFromSurface(renderer, textureSurface);
-			position = { x, y };
-			width = w;
-			height = h;
-			SDL_FreeSurface(loadSurface);
-			SDL_FreeSurface(textureSurface);
-		}
-		void Update(InputManager &inputManager) {
-			hover = false;
-			if (inputManager.mouseCoords.x > position.x && inputManager.mouseCoords.x < position.x + width &&
-				inputManager.mouseCoords.y > position.y && inputManager.mouseCoords.y < position.y + height) {
-				hover = true;
-				if (inputManager.isKeyPressed(SDL_BUTTON_LEFT)) pressed = true;
-			}
-		}
-		void Draw(SDL_Renderer *renderer) override {
-			SDL_Rect destRect = { position.x, position.y, width, height };
-			if (hover && textureHover != nullptr) SDL_RenderCopy(renderer, textureHover, nullptr, &destRect);
-			else SDL_RenderCopy(renderer, texture, nullptr, &destRect);
-		}
+		void Reset() { hover = false; pressed = false; }
+		void Load(int x, int y, int w, int h, const std::string &pathDefault, const std::string &pathHover, SDL_Window *window, SDL_Renderer *renderer);
+		void Update(InputManager &inputManager);
+		void Draw(SDL_Renderer *renderer) override;
 	};
 }

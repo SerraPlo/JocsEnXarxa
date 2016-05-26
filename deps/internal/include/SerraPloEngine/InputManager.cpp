@@ -2,13 +2,10 @@
 
 namespace SerraPlo {
 
-	InputManager::InputManager() : mouseCoords(0.0f,0.0f)
-	{}
+	InputManager::InputManager() : mouseCoords(0.0f,0.0f) {}
 
 	void InputManager::update() {
-		for (auto &it : m_keyMap) {
-			m_prevKeyMap[it.first] = it.second;
-		}
+		for (auto &it : m_keyMap) m_prevKeyMap[it.first] = it.second;
 		zoom = 0;
 	}
 
@@ -26,8 +23,7 @@ namespace SerraPlo {
 		return false;
 	}
 
-	bool InputManager::isKeyDown(const std::unordered_map<unsigned int, bool> &keyMap, unsigned keyID)
-	{
+	bool InputManager::isKeyDown(const std::unordered_map<unsigned int, bool> &keyMap, unsigned keyID) {
 		auto it = keyMap.find(keyID);
 		if (it != keyMap.end()) return it->second; //key found
 		return false;

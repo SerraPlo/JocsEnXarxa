@@ -2,10 +2,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
-#include <SDL2/SDL_ttf.h>
-#pragma comment(lib, "SDL2_ttf.lib")
 
 namespace SerraPlo {
+
 	class DebugCube {
 	public:
 		GLuint vao, vbo, textureID{0};
@@ -26,6 +25,7 @@ namespace SerraPlo {
 		~GLText() = default;
 		void Draw(ShaderProgram &program, TTF_Font *font);
 	};
+
 }
 
 

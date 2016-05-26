@@ -23,15 +23,15 @@ void MultiplayerScreen::Destroy(void) {
 	///TODO: optimize without destroy function
 	m_player.Destroy();
 	for (int i = 0; i < 4; ++i) m_playerwheels[i].Destroy();
-	for (int i = 0; i < MAX_PLAYERS; ++i) m_enemies[i].Destroy();
-	for (int i = 0; i < MAX_PLAYERS; ++i) for (int j = 0; j < 4; ++j) m_enemyWheels[i][j].Destroy();
+	for (int i = 0; i < MAX_ENEMIES; ++i) m_enemies[i].Destroy();
+	for (int i = 0; i < MAX_ENEMIES; ++i) for (int j = 0; j < 4; ++j) m_enemyWheels[i][j].Destroy();
 }
 
 void MultiplayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Load the player model
-	m_player = m_app->gameObjectManager.FindCopy("car_base");
+	m_player = m_app->gameObjectManager.FindCopy("kart_base");
 	m_renderer.Add(&m_player);
 	for (int i = 0; i < 4; i++) {
 		m_playerwheels[i] = m_app->gameObjectManager.FindCopy("car_wheel");
@@ -43,8 +43,8 @@ void MultiplayerScreen::OnEntry(void) {
 
 	// Load the enemies models
 	GLTexture redDiffuse(LoadAsset("models/plch/red.jpg").c_str());
-	for (int i = 0; i < MAX_PLAYERS; i++) {
-		m_enemies[i] = m_app->gameObjectManager.FindCopy("car_base");
+	for (int i = 0; i < MAX_ENEMIES; i++) {
+		m_enemies[i] = m_app->gameObjectManager.FindCopy("kart_base");
 		m_enemies[i].materials[0].diffuse = redDiffuse;
 		m_renderer.Add(&m_enemies[i]);
 		m_textNickEnemies[i].scale = { 2,1,2 };
@@ -56,13 +56,10 @@ void MultiplayerScreen::OnEntry(void) {
 	}
 
 	// Add the gameobjects needed in this scene
-	skybox = m_app->gameObjectManager.FindCopy("object_skybox");
-	m_renderer.Add(&skybox);
-	circuit = m_app->gameObjectManager.FindCopy("object_circuit");
-	m_renderer.Add(&circuit);
-	//m_renderer.Add(&m_app->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(&m_app->gameObjectManager.Find("object_circuit"));
+	m_renderer.Add(&m_app->gameObjectManager.Find("object_skybox"));
 	//m_renderer.Add(&m_app->gameObjectManager.Find("character_slycooper"));
-	//m_renderer.AddDebug(&m_app->gameObjectManager.Find("debug_colisions"));
+	m_renderer.AddDebug(&m_app->gameObjectManager.Find("debug_colisions"));
 
 	m_carPhy.AddTransform(&m_player.transform);
 
@@ -206,12 +203,12 @@ void MultiplayerScreen::Draw(void) {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera, m_app->gameObjectManager);
 		m_textNick.Draw(m_mainProgram, m_app->font);
-		for (int i = 0; i < MAX_PLAYERS;i++) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
+		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
 	m_mainProgram.unbind();
 
 	if (RendererList::DEBUG_DRAW)
 		m_lightProgram.bind(),
-			m_renderer.DrawDebug(m_lightProgram, m_camera),
+			m_renderer.DrawDebug(m_lightProgram, m_camera, m_app->gameObjectManager),
 		m_lightProgram.unbind();
 
 	m_app->window.swapBuffer(); // Swap OpenGL buffers if double-buffering is supported

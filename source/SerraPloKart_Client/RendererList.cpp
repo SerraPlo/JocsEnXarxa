@@ -7,22 +7,27 @@ bool RendererList::DEBUG_DRAW = false;
 GLuint RendererList::DEBUG_MODE = GL_TRIANGLES;
 
 void RendererList::Add(GameObject *newObject) {
-	m_objectList.push_back(newObject);
+	m_sceneObjectList.push_back(newObject);
 }
 
 void RendererList::Add(GlobalGameObject *newObject) {
-	/// TODO: optimize without static
-	static GameObject temp(newObject->id);
+	GameObject temp(newObject->id);
 	temp.transform = newObject->transform;
 	auto &itModel = newObject->model;
 	temp.numMaterials = itModel.numMeshes;
 	temp.materials = new GLMaterial[temp.numMaterials];
 	for (int i = 0; i < temp.numMaterials; ++i) temp.materials[i] = newObject->model.meshData[i].material; ///TODO: now only for .obj
-	m_objectList.push_back(&temp);
+	m_globalObjectList.push_back(temp);
 }
 
-void RendererList::AddDebug(GameObject *newObject) {
-	m_debugList.push_back(newObject);
+void RendererList::AddDebug(GlobalGameObject *newObject) {
+	GameObject temp(newObject->id);
+	temp.transform = newObject->transform;
+	auto &itModel = newObject->model;
+	temp.numMaterials = itModel.numMeshes;
+	temp.materials = new GLMaterial[temp.numMaterials];
+	for (int i = 0; i < temp.numMaterials; ++i) temp.materials[i] = newObject->model.meshData[i].material;
+	m_debugList.push_back(temp);
 }
 
 void RendererList::Add(DirLight *newLight) {
@@ -82,7 +87,7 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera, GameObjec
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 
 	glActiveTexture(GL_TEXTURE0);
-	for (auto gameObject : m_objectList) {
+	for (auto gameObject : m_sceneObjectList) {
 		// Transform properties
 		Transform &transformTemp = gameObject->transform;
 		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
@@ -104,7 +109,27 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera, GameObjec
 			glDrawElements(GL_TRIANGLES, mesh.meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
 		}
 		glBindVertexArray(0);
-
+	}
+	for (auto gameObject : m_globalObjectList) {
+		// Transform properties
+		Transform &transformTemp = gameObject.transform;
+		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
+		model = glm::scale(model, transformTemp.scale);
+		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+		// Draw game object
+		GLModel &mesh = objectManager.gameObjectList[gameObject.id].model;
+		for (int i = 0; i < mesh.numMeshes; ++i) {
+			glBindTexture(GL_TEXTURE_2D, gameObject.materials[i].diffuse.id);
+			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject.materials[i].specular));
+			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject.materials[i].emissive));
+			glUniform1f(program.getUniformLocation("material.shininess"), gameObject.materials[i].shininess);
+			glBindVertexArray(mesh.meshData[i].vao);
+			glDrawElements(GL_TRIANGLES, mesh.meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		}
+		glBindVertexArray(0);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(0);
@@ -122,24 +147,26 @@ void RendererList::DrawObjects(ShaderProgram &program, Camera &camera, GameObjec
 		glDrawElements(GL_TRIANGLES, debugLight.elements, GL_UNSIGNED_INT, nullptr); \
 		glBindVertexArray(0);
 
-void RendererList::DrawDebug(ShaderProgram & program, Camera &camera) {
+void RendererList::DrawDebug(ShaderProgram & program, Camera &camera, GameObjectManager &objectManager) {
 	static DebugLight debugLight;
 	for (auto gameLight : m_pointLightList) { RENDER_LIGHT_TEMPLATE(); }
 	for (auto gameLight : m_spotLightList) { RENDER_LIGHT_TEMPLATE(); }
 	for (auto gameObject : m_debugList) {
-		glm::mat4 model = glm::translate(glm::mat4(), gameObject->transform.position);
+		glm::mat4 model = glm::translate(glm::mat4(), gameObject.transform.position);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniform3fv(program.getUniformLocation("lightColor"), 1, glm::value_ptr(glm::vec3{0, 0.5, 0}));
-		/*for (int i = 0; i < gameObject->model.numMeshes; ++i) {
-			glBindVertexArray(gameObject->model.meshData[i].vao);
-			glDrawElements(DEBUG_MODE, gameObject->model.meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		GLModel &mesh = objectManager.gameObjectList[gameObject.id].model;
+		for (int i = 0; i < mesh.numMeshes; ++i) {
+			glBindVertexArray(mesh.meshData[i].vao);
+			glDrawElements(DEBUG_MODE, mesh.meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
-		}*/
+		}
 	}
 }
 
 void RendererList::Clear() {
-	m_objectList.clear();
+	m_sceneObjectList.clear();
+	m_globalObjectList.clear();
 	m_debugList.clear();
 	m_dirLight = nullptr;
 	m_pointLightList.clear();

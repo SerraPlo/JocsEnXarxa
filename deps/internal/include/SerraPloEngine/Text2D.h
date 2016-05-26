@@ -29,14 +29,4 @@ namespace SerraPlo {
 		}
 	};
 
-	class InputText2D : public Text2D {
-	public:
-		InputText2D() = default;
-		~InputText2D() = default;
-		/*void Draw(SDL_Renderer *renderer, int characterSize) const {
-			SDL_Rect destRect = { position.x, position.y, characterSize, height };
-			SDL_RenderCopy(renderer, texture, nullptr, &destRect);
-		}*/
-	};
-
 }
