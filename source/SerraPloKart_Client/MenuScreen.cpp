@@ -5,18 +5,19 @@
 void MenuScreen::Build(void) {
 	m_app = dynamic_cast<AppClient*>(gameApp);
 
-	m_title.Load(LoadAsset("images/title.jpg"), m_app->window.SDLWindow, m_app->renderer);
-	m_title.position = { 0,0 };
+	m_title.Load(0, 0, m_app->screenWidth, m_app->screenHeight, LoadAsset("images/title.jpg"), m_app->window.SDLWindow, m_app->renderer);
 
-	m_singlePlayer.Load(LoadAsset("images/single_player_default.png"), 
+	m_singlePlayer.Load(int(m_app->screenWidth*0.65f), int(m_app->screenHeight*0.5f),
+						int(m_app->screenWidth*0.3f), int(m_app->screenHeight*0.2f),
+						LoadAsset("images/single_player_default.png"),
 						LoadAsset("images/single_player_hover.png"),
 						m_app->window.SDLWindow, m_app->renderer);
-	m_singlePlayer.position = { m_app->screenWidth*0.65f, m_app->screenHeight*0.5f };
 
-	m_multiplayer.Load(LoadAsset("images/multiplayer_default.png"), 
+	m_multiplayer.Load(int(m_app->screenWidth*0.65f), int(m_app->screenHeight*0.7f),
+					   int(m_app->screenWidth*0.3f), int(m_app->screenHeight*0.2f),
+					   LoadAsset("images/multiplayer_default.png"),
 					   LoadAsset("images/multiplayer_hover.png"),
 						m_app->window.SDLWindow, m_app->renderer);
-	m_multiplayer.position = { m_app->screenWidth*0.65f, m_app->screenHeight*0.7f };
 }
 
 void MenuScreen::Destroy(void) {

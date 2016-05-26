@@ -16,6 +16,7 @@ namespace SerraPlo {
 
 	class GLText {
 	public:
+		GLuint textureid;
 		GLuint vao, vbo;
 		glm::vec3 position{ 0,0,0 };
 		glm::vec3 rotation{ 0,0,0 };

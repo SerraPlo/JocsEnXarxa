@@ -72,7 +72,7 @@ void AppClient::ProcessMsgs(void) {
 				Enemy a;
 				mainSocket >> a.nick >> a.transform.position.x >> a.transform.position.z >> a.transform.rotation.y;
 				std::cout << a.nick << std::endl;
-				if (a.nick == nick);//mirar trampes TODo
+				if (a.nick == nick);//mirar trampes TODO
 				else {
 					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
 					for (auto &enemy : enemies) {
@@ -95,18 +95,18 @@ void AppClient::ProcessMsgs(void) {
 
 void AppClient::Update(void) {
 	ProcessMsgs();
-	if (m_currentScreen) { // If current screen exists
-		switch (m_currentScreen->currentState) { // Check for the state of the screen
-			case ScreenState::RUNNING:
-			inputManager.update();	// Update the input manager instance
-			m_currentScreen->Update(); // Update the current screen if running
-			break;
-			case ScreenState::EXIT:
-			Exit(); // Call exit function to end the execution
-			break;
-			case ScreenState::SLEEP: default: break;
-		}
-	} else Exit(); // Call exit function if screen doesn't exist
+	//if (m_currentScreen) { // If current screen exists
+	switch (m_currentScreen->currentState) { // Check for the state of the screen
+		case ScreenState::RUNNING:
+		inputManager.update();	// Update the input manager instance
+		m_currentScreen->Update(); // Update the current screen if running
+		break;
+		case ScreenState::EXIT:
+		Exit(); // Call exit function to end the execution
+		break;
+		case ScreenState::SLEEP: default: break;
+	}
+	//} else Exit(); // Call exit function if screen doesn't exist
 }
 
 void AppClient::Draw(void) const {
@@ -126,7 +126,9 @@ void AppClient::Run(void) {
 		fpsLimiter.begin();					// Init FPS counter
 		Update();							// Main update function
 		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
+		//clock_t benchmark = clock();
 		Draw();								// Main draw function
+		//std::cout << clock() - benchmark << std::endl;
 		fps = fpsLimiter.fps;				// Get the current fps of the class instance
 		deltaTime = fpsLimiter.deltaTime;	// Get the current fps of the class instance
 		fpsLimiter.end();					// Calculate and restore FPS

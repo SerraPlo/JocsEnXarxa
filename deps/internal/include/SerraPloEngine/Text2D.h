@@ -24,9 +24,8 @@ namespace SerraPlo {
 			}
 		}
 		void Draw(SDL_Renderer *renderer) const {
-			SDL_Rect srcRect = { 0, 0, width, height };
 			SDL_Rect destRect = { position.x, position.y, width, height };
-			SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
+			SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 		}
 	};
 
@@ -34,11 +33,10 @@ namespace SerraPlo {
 	public:
 		InputText2D() = default;
 		~InputText2D() = default;
-		void Draw(SDL_Renderer *renderer, int characterSize) const {
-			SDL_Rect srcRect = { 0, 0, characterSize, height };
+		/*void Draw(SDL_Renderer *renderer, int characterSize) const {
 			SDL_Rect destRect = { position.x, position.y, characterSize, height };
-			SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
-		}
+			SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+		}*/
 	};
 
 }

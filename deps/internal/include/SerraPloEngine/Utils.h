@@ -43,6 +43,7 @@ namespace SerraPlo {
 		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 		// Tell we want a double buffered windows to avoid flickering
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	}
 
 	void DestroySDL(void) {

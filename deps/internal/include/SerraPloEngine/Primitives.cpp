@@ -1,10 +1,8 @@
 #include "Primitives.h"
-#include "ResourceManager.h"
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vector>
-#include <algorithm>
 
 namespace SerraPlo {
 
@@ -16,15 +14,6 @@ namespace SerraPlo {
 	};
 
 	DebugCube::DebugCube() {
-		glm::vec3 p1 = { -0.5f, -0.5f, 0.5f };
-		glm::vec3 p2 = { 0.5f, -0.5f, 0.5f };
-		glm::vec3 p3 = { -0.5f, 0.5f, 0.5f };
-		glm::vec3 p4 = { 0.5f, 0.5f, 0.5f };
-		glm::vec3 p5 = { -0.5f, -0.5f, -0.5f };
-		glm::vec3 p6 = { 0.5f, -0.5f, -0.5f };
-		glm::vec3 p7 = { -0.5f, 0.5f, -0.5f };
-		glm::vec3 p8 = { 0.5f, 0.5f, -0.5f };
-
 		glm::vec2 uv1 = { 0, 0 };
 		glm::vec2 uv2 = { 1, 0 };
 		glm::vec2 uv3 = { 0, 1 };
@@ -152,26 +141,26 @@ namespace SerraPlo {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
-	}
 
-
-	void GLText::Draw(ShaderProgram &program, TTF_Font *font) {
-		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 150,0,150 });
-		
-		GLuint textureid;
-		//int p = int(pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2))));
-		SDL_Surface* ns = SDL_CreateRGBSurface(SDL_SWSURFACE, surf->w, surf->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-		SDL_BlitSurface(surf, NULL, ns, NULL);
-		SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 		glGenTextures(1, &textureid);
 		glBindTexture(GL_TEXTURE_2D, textureid);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ns->w, ns->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ns->pixels);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+
+	void GLText::Draw(ShaderProgram &program, TTF_Font *font) {
+		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 150,0,150 });
+		//int p = int(pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2))));
+		SDL_Surface* ns = SDL_CreateRGBSurface(SDL_SWSURFACE, surf->w, surf->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+		SDL_BlitSurface(surf, NULL, ns, NULL);
+		SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 		glBindTexture(GL_TEXTURE_2D, textureid);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ns->w, ns->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ns->pixels);
 		//SDL_SaveBMP(surf, LoadAsset("blended.bmp").c_str());
 
 		glm::mat4 model;
@@ -185,10 +174,10 @@ namespace SerraPlo {
 		glDisable(GL_CULL_FACE);
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glEnable(GL_CULL_FACE);
-
 		SDL_FreeSurface(surf);
 	}
 }

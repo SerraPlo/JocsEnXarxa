@@ -3,6 +3,7 @@
 #include <SerraPloEngine/Light.h>
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/Camera.h>
+#include <SerraPloEngine/GameObjectManager.h>
 #include <vector>
 using namespace SerraPlo;
 
@@ -20,6 +21,7 @@ public:
 	~RendererList() = default;
 
 	void Add(GameObject *newObject);
+	void Add(GlobalGameObject *newObject);
 	void AddDebug(GameObject *newObject);
 	void Add(DirLight *newLight);
 	void Add(PointLight *newLight);
@@ -28,7 +30,7 @@ public:
 	void SendLightAttributes(ShaderProgram &program, Camera &camera);
 	static void SendMaterialAttributes(ShaderProgram &program, Camera &camera);
 
-	void DrawObjects(ShaderProgram &program, Camera &camera);
+	void DrawObjects(ShaderProgram &program, Camera &camera, GameObjectManager &objectManager);
 	void DrawDebug(ShaderProgram &program, Camera &camera);
 
 	void Clear();

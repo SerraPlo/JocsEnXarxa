@@ -3,8 +3,8 @@
 #include <ctime>
 
 void AppServer::Init(void) {
-	m_aliveCounter = clock();
-	m_counterUpdate = clock();
+	m_aliveCounter = float(clock());
+	m_counterUpdate = float(clock());
 }
 
 void AppServer::Update(void) {
@@ -20,7 +20,7 @@ void AppServer::Update(void) {
 				dispatcher << UDPStream::packet << UPDATE << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
 				for (auto &client2 : clientList) dispatcher << client2.second->address;
 			}
-			m_counterUpdate = clock();
+			m_counterUpdate = float(clock());
 		}
 		int header;
 		sockaddr sender;

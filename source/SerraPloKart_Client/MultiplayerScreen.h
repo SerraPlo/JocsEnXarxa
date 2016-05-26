@@ -40,11 +40,15 @@ private:
 	// Game objects
 	RendererList m_renderer;
 
-	GameObject *m_player;
+	GameObject m_player;
 	GameObject m_playerwheels[4];
 
 	GameObject m_enemies[MAX_PLAYERS];
 	GameObject m_enemyWheels[MAX_PLAYERS][4];
+
+	GameObject circuit;
+	GameObject skybox;
+	GameObject debugCollision;
 
 	GLText m_textNick; 
 	GLText m_textNickEnemies[MAX_PLAYERS];

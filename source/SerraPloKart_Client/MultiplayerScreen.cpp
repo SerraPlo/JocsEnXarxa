@@ -20,15 +20,19 @@ void MultiplayerScreen::Build(void) {
 }
 
 void MultiplayerScreen::Destroy(void) {
-	
+	///TODO: optimize without destroy function
+	m_player.Destroy();
+	for (int i = 0; i < 4; ++i) m_playerwheels[i].Destroy();
+	for (int i = 0; i < MAX_PLAYERS; ++i) m_enemies[i].Destroy();
+	for (int i = 0; i < MAX_PLAYERS; ++i) for (int j = 0; j < 4; ++j) m_enemyWheels[i][j].Destroy();
 }
 
 void MultiplayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Load the player model
-	m_player = &m_app->gameObjectManager.Find("car_base");
-	m_renderer.Add(m_player);
+	m_player = m_app->gameObjectManager.FindCopy("car_base");
+	m_renderer.Add(&m_player);
 	for (int i = 0; i < 4; i++) {
 		m_playerwheels[i] = m_app->gameObjectManager.FindCopy("car_wheel");
 		m_renderer.Add(&m_playerwheels[i]);
@@ -38,24 +42,29 @@ void MultiplayerScreen::OnEntry(void) {
 	m_textNick.scale = { 2,1,2 };
 
 	// Load the enemies models
+	GLTexture redDiffuse(LoadAsset("models/plch/red.jpg").c_str());
 	for (int i = 0; i < MAX_PLAYERS; i++) {
-		m_enemies[i] = m_app->gameObjectManager.FindCopy("car_baseEnemy");
+		m_enemies[i] = m_app->gameObjectManager.FindCopy("car_base");
+		m_enemies[i].materials[0].diffuse = redDiffuse;
 		m_renderer.Add(&m_enemies[i]);
 		m_textNickEnemies[i].scale = { 2,1,2 };
 		for (int j = 0; j < 4; j++) {
 			m_enemyWheels[i][j] = m_app->gameObjectManager.FindCopy("car_wheel");
+			m_enemyWheels[i][j].materials[0].diffuse = redDiffuse;
 			m_renderer.Add(&m_enemyWheels[i][j]);
 		}
 	}
 
 	// Add the gameobjects needed in this scene
+	skybox = m_app->gameObjectManager.FindCopy("object_skybox");
+	m_renderer.Add(&skybox);
+	circuit = m_app->gameObjectManager.FindCopy("object_circuit");
+	m_renderer.Add(&circuit);
+	//m_renderer.Add(&m_app->gameObjectManager.Find("object_circuit"));
+	//m_renderer.Add(&m_app->gameObjectManager.Find("character_slycooper"));
+	//m_renderer.AddDebug(&m_app->gameObjectManager.Find("debug_colisions"));
 
-	m_renderer.Add(&m_app->gameObjectManager.Find("object_skybox"));
-	m_renderer.Add(&m_app->gameObjectManager.Find("object_circuit"));
-	m_renderer.Add(&m_app->gameObjectManager.Find("character_slycooper"));
-	m_renderer.AddDebug(&m_app->gameObjectManager.Find("debug_colisions"));
-
-	m_carPhy.AddTransform(&m_player->transform);
+	m_carPhy.AddTransform(&m_player.transform);
 
 	// LIGHTNING
 	// Init directional light
@@ -103,7 +112,7 @@ void MultiplayerScreen::OnExit(void) {
 }
 
 void MultiplayerScreen::UpdateEnemies() {
-	for (int i = 0; i < m_app->enemies.size(); i++) {
+	for (size_t i = 0; i < m_app->enemies.size(); i++) {
 		m_enemies[i].transform = m_app->enemies[i].transform;
 		glm::vec3 f = glm::vec3(sin((m_enemies[i].transform.rotation.y*M_PI) / 180), 0.0f, cos((m_enemies[i].transform.rotation.y*M_PI) / 180));
 		glm::vec3 pF = glm::vec3(-f.z, 0.0f, f.x);
@@ -150,24 +159,24 @@ void MultiplayerScreen::Update(void) {
 		//std::cout << m_player->transform.position.x <<","<< m_player->transform.position.z<< std::endl;
 	}
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
-	m_playerwheels[0].transform.position = m_player->transform.position + m_carPhy.front*2.0f + perFront*1.25f;
-	m_playerwheels[1].transform.position = m_player->transform.position + m_carPhy.front*2.0f - perFront*1.25f;
-	m_playerwheels[2].transform.position = m_player->transform.position - m_carPhy.front*2.0f + perFront*1.25f;
-	m_playerwheels[3].transform.position = m_player->transform.position - m_carPhy.front*2.0f - perFront*1.25f;
+	m_playerwheels[0].transform.position = m_player.transform.position + m_carPhy.front*2.0f + perFront*1.25f;
+	m_playerwheels[1].transform.position = m_player.transform.position + m_carPhy.front*2.0f - perFront*1.25f;
+	m_playerwheels[2].transform.position = m_player.transform.position - m_carPhy.front*2.0f + perFront*1.25f;
+	m_playerwheels[3].transform.position = m_player.transform.position - m_carPhy.front*2.0f - perFront*1.25f;
 
-	m_playerwheels[0].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
-	m_playerwheels[1].transform.rotation = m_player->transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
-	m_playerwheels[2].transform.rotation = m_player->transform.rotation;
-	m_playerwheels[3].transform.rotation = m_player->transform.rotation;
+	m_playerwheels[0].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
+	m_playerwheels[1].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
+	m_playerwheels[2].transform.rotation = m_player.transform.rotation;
+	m_playerwheels[3].transform.rotation = m_player.transform.rotation;
 
 	//std::cout << m_player->transform.position.x << "," << m_player->transform.position.z << std::endl;
 
-	m_camera.Translate(m_player->transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
-	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player->transform.position);
+	m_camera.Translate(m_player.transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
+	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.transform.position);
 
 	// Update text nick plane
-	m_textNick.position = m_player->transform.position + glm::vec3{ 0,3,0 };
-	m_textNick.rotation = m_player->transform.rotation;
+	m_textNick.position = m_player.transform.position + glm::vec3{ 0,3,0 };
+	m_textNick.rotation = m_player.transform.rotation;
 
 	UpdateEnemies();
 
@@ -195,9 +204,9 @@ void MultiplayerScreen::CheckInput(void) {
 
 void MultiplayerScreen::Draw(void) {
 	m_mainProgram.bind();
-		m_renderer.DrawObjects(m_mainProgram, m_camera);
+		m_renderer.DrawObjects(m_mainProgram, m_camera, m_app->gameObjectManager);
 		m_textNick.Draw(m_mainProgram, m_app->font);
-		for (int i = 0; i < 10;i++) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
+		for (int i = 0; i < MAX_PLAYERS;i++) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
 	m_mainProgram.unbind();
 
 	if (RendererList::DEBUG_DRAW)

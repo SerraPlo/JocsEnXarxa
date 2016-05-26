@@ -1,5 +1,4 @@
 #pragma once
-#include <glm/glm.hpp>
 #include <string>
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_image.h>
@@ -15,20 +14,20 @@ namespace SerraPlo {
 		int width, height;
 		Sprite2D() = default;
 		virtual ~Sprite2D() { SDL_DestroyTexture(texture); }
-		void Load(const std::string &path, SDL_Window *window, SDL_Renderer *renderer) {
+		void Load(int x, int y, int w, int h, const std::string &path, SDL_Window *window, SDL_Renderer *renderer) {
 			SDL_Surface *loadSurface = IMG_Load(path.c_str());
 			SDL_Surface *screenSurface = SDL_GetWindowSurface(window);
 			SDL_Surface *textureSurface = SDL_ConvertSurface(loadSurface, screenSurface->format, NULL);
 			texture = SDL_CreateTextureFromSurface(renderer, textureSurface);
-			width = textureSurface->w;
-			height = textureSurface->h;
+			position = { x, y };
+			width = w;
+			height = h;
 			SDL_FreeSurface(loadSurface);
 			SDL_FreeSurface(textureSurface);
 		}
 		virtual void Draw(SDL_Renderer *renderer) {
-			SDL_Rect srcRect = { 0, 0, width, height };
 			SDL_Rect destRect = { position.x, position.y, width, height };
-			SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
+			SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 		}
 	};
 
@@ -38,21 +37,21 @@ namespace SerraPlo {
 		bool hover{ false };
 		bool pressed{ false };
 		Button2D() = default;
-		~Button2D() = default;
+		~Button2D() { SDL_DestroyTexture(texture), SDL_DestroyTexture(textureHover); }
 		void Reset() {
 			hover = false;
 			pressed = false;
 		}
-		void Load(const std::string &pathDefault, const std::string &pathHover, SDL_Window *window, SDL_Renderer *renderer) {
-			SDL_Surface *screenSurface = SDL_GetWindowSurface(window);
+		void Load(int x, int y, int w, int h, const std::string &pathDefault, const std::string &pathHover, SDL_Window *window, SDL_Renderer *renderer) {
 			SDL_Surface *loadSurface = IMG_Load(pathDefault.c_str());
 			SDL_Surface *textureSurface = SDL_ConvertSurfaceFormat(loadSurface, SDL_PIXELFORMAT_ARGB8888, 0);
 			texture = SDL_CreateTextureFromSurface(renderer, textureSurface);
 			loadSurface = IMG_Load(pathHover.c_str());
 			textureSurface = SDL_ConvertSurfaceFormat(loadSurface, SDL_PIXELFORMAT_ARGB8888, 0);
 			textureHover = SDL_CreateTextureFromSurface(renderer, textureSurface);
-			width = textureSurface->w;
-			height = textureSurface->h;
+			position = { x, y };
+			width = w;
+			height = h;
 			SDL_FreeSurface(loadSurface);
 			SDL_FreeSurface(textureSurface);
 		}
@@ -65,10 +64,9 @@ namespace SerraPlo {
 			}
 		}
 		void Draw(SDL_Renderer *renderer) override {
-			SDL_Rect srcRect = { 0, 0, width, height };
 			SDL_Rect destRect = { position.x, position.y, width, height };
-			if (hover && textureHover != nullptr) SDL_RenderCopy(renderer, textureHover, &srcRect, &destRect);
-			else SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
+			if (hover && textureHover != nullptr) SDL_RenderCopy(renderer, textureHover, nullptr, &destRect);
+			else SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 		}
 	};
 }
