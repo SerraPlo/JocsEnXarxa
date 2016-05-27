@@ -1,6 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
-#include <string>
+#include <glm/vec2.hpp>
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_ttf.h>
 #pragma comment(lib, "SDL2_ttf.lib")

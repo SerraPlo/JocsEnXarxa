@@ -13,11 +13,8 @@ namespace SerraPlo {
 	};
 
 	class IApp;	// Forward declaration of the main game app interface
-
 	// Game screen class interface to use as a template for each screen
 	class IScreen {
-		//friend class ScreenList;	// Enable ScreenList class to use IScreen protected attributes
-		//friend class IApp;			// Enable IApp class to use IScreen protected attributes
 	public:
 		ScreenState currentState	{ ScreenState::NONE };		// Current state of the screen, NONE by default
 		IApp* gameApp				{ nullptr };				// Reference pointer to current game app

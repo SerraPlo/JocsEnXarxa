@@ -1,4 +1,4 @@
-﻿#include <SerraPloEngine/ResourceManager.h>
+﻿#include <SerraPloEngine/PathLoader.h>
 #include <SerraPloEngine/Utils.h>
 #include <SerraPloEngine/Timing.h>
 #include <SerraPloEngine/IScreen.h>
@@ -12,20 +12,45 @@ void AppClient::Init(void) {
 	//else flags = WindowFlags::FULLSCREEN; // Create default window fullscreen
 	window.create("SerraPlo Kart Client", &screenWidth, &screenHeight, flags);
 	renderer = SDL_CreateRenderer(window.SDLWindow, 0, SDL_RENDERER_ACCELERATED);
-	font = TTF_OpenFont(LoadAsset("fonts/ARIAL.TTF").c_str(), FONT_SIZE);
+	font = TTF_OpenFont(GetPathToAsset("fonts/ARIAL.TTF").c_str(), FONT_SIZE);
 	TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
 	InitOpenGL(); // Initialize OpenGL systems after GLWindow creation
 
 	// Add the screens of the derived app into the list
 	m_menuScreen = std::make_unique<MenuScreen>();
-	m_screenList->AddScreen(m_menuScreen.get(), MENU_SCREEN);
+	m_screenList->AddScreen(m_menuScreen.get(), SCREEN_MENU);
 	m_loginScreen = std::make_unique<LoginScreen>();
-	m_screenList->AddScreen(m_loginScreen.get(), LOGIN_SCREEN);
+	m_screenList->AddScreen(m_loginScreen.get(), SCREEN_LOGIN);
 	m_gameplayScreen = std::make_unique<MultiplayerScreen>();
-	m_screenList->AddScreen(m_gameplayScreen.get(), MULTIPLAYER_SCREEN);
-	m_currentScreen = m_screenList->SetScreen(MENU_SCREEN);
+	m_screenList->AddScreen(m_gameplayScreen.get(), SCREEN_MULTIPLAYER);
+	m_currentScreen = m_screenList->SetScreen(SCREEN_MENU);
 
 	m_aliveCounter = float(clock());
+}
+
+void AppClient::LoadAssets(void) {
+	clock_t bench = clock();
+	std::cout << "==== LOAD ASSETS BEGIN ====" << std::endl;
+	assetManager.LoadMesh("mesh_kart_default", "models/kart/kart_default.obj");
+	assetManager.LoadMesh("mesh_wheel_front", "models/kart/wheel_front.obj");
+	assetManager.LoadMesh("mesh_wheel_back", "models/kart/wheel_back.obj");
+	assetManager.LoadMesh("mesh_colisions", "models/circuit_col/colisions.dae");
+	assetManager.LoadMesh("mesh_skybox", "models/skybox/skybox.obj");
+	std::cout << "Meshes loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
+	bench = clock();
+
+	assetManager.LoadMaterial("material_kart_default", "models/kart/textures/body_dummy_alb.png");
+	assetManager.LoadMaterial("material_red", "images/plch/red.jpg");
+	assetManager.LoadMaterial("material_green", "images/plch/green.jpg");
+	assetManager.LoadMaterial("material_blue", "images/plch/blue.jpg");
+	assetManager.LoadMaterial("material_skybox", "models/skybox/skybox_diffuse.jpg");
+	std::cout << "Materials loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
+	bench = clock();
+
+	//assetManager.Load("mesh_skybox", "material_skybox", "models/skybox/skybox.obj");
+	assetManager.Load("mesh_circuit", "material_circuit", "models/circuit/circuit.dae");
+	std::cout << "Circuit loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
+	std::cout << "==== LOAD ASSETS END ====" << std::endl;
 }
 
 void AppClient::ChangeScreen(int index) {
@@ -56,23 +81,23 @@ void AppClient::ProcessMsgs(void) {
 		int header;
 		mainSocket >> UDPStream::packet >> header;
 		switch (header) {
-			case BEGIN: {
+			case MSG_BEGIN: {
 				std::cout << "Server accepted entry. Game begins." << std::endl; 
-				//ChangeScreen(MULTIPLAYER_SCREEN);
+				//ChangeScreen(SCREEN_MULTIPLAYER);
 			} break;
-			case EXIT: {
+			case MSG_EXIT: {
 				std::cout << "Server closed. Disconecting..." << std::endl;
 				Exit();
 			} break;
-			case ALIVE: {
+			case MSG_ALIVE: {
 				std::cout << "Server is alive" << std::endl;
 				m_aliveCounter = float(clock());
 			} break;
-			case UPDATE: {
+			case MSG_UPDATE: {
 				Enemy a;
 				mainSocket >> a.nick >> a.transform.position.x >> a.transform.position.z >> a.transform.rotation.y;
 				std::cout << a.nick << std::endl;
-				if (a.nick == nick);//mirar trampes TODO
+				if (a.nick == nick); ///mirar trampes TODO
 				else {
 					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
 					for (auto &enemy : enemies) {
@@ -122,21 +147,35 @@ void AppClient::Run(void) {
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
+	const int BENCH_DELAY = 200;
+	int benchCounter = 0;
+	clock_t benchUpdate = 0;
+	clock_t benchDraw = 0;
+	clock_t bench;
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();					// Init FPS counter
+		bench = clock();
 		Update();							// Main update function
+		benchUpdate += clock() - bench;
 		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
-		//clock_t benchmark = clock();
+		bench = clock();
 		Draw();								// Main draw function
-		//std::cout << clock() - benchmark << std::endl;
+		benchDraw += clock() - bench;
+		fpsLimiter.end();					// Calculate and restore FPS
 		fps = fpsLimiter.fps;				// Get the current fps of the class instance
 		deltaTime = fpsLimiter.deltaTime;	// Get the current fps of the class instance
-		fpsLimiter.end();					// Calculate and restore FPS
+		++benchCounter;
+		if (benchCounter > BENCH_DELAY)
+			std::cout << "------------------------------------------" << std::endl,
+			std::cout << "Update call:\t" << float(benchUpdate / BENCH_DELAY) << " ms" << std::endl,
+			std::cout << "Draw call:\t" << float(benchDraw / BENCH_DELAY) << " ms" << std::endl,
+			std::cout << "------------------------------------------" << std::endl,
+			benchCounter = benchUpdate = benchDraw = 0;
 	}
 }
 
 void AppClient::Exit(void) {
-	mainSocket << UDPStream::packet << EXIT << serverAddress;
+	mainSocket << UDPStream::packet << MSG_EXIT << serverAddress;
 	m_currentScreen->OnExit(); // Call the leaving method of the current screen
 	if (m_screenList) {
 		m_screenList->Destroy();

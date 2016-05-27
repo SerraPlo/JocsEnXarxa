@@ -24,9 +24,10 @@ public:
 private:
 	AppClient *m_app; // Casted client main game pointer reference (IApp -> AppClient)
 	std::string m_nickText{ "" };
+	float m_counterSend{ 0 };
 	// Text to show on screen
 	Text2D m_loginMessage;
 	Text2D m_loadMessage;
-	InputText2D m_userInput;
+	Text2D m_userInput;
 };
 

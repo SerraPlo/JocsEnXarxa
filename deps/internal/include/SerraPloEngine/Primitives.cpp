@@ -88,15 +88,15 @@ namespace SerraPlo {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_STATIC_DRAW);
 		///Configure vertex input
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
 		glEnableVertexAttribArray(0); // position
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 		glEnableVertexAttribArray(1); // normal
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, uv)));
 		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
 	}
-	void DebugCube::Draw(ShaderProgram &program) {
+	void DebugCube::Draw(ShaderProgram &program) const {
 		glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -136,11 +136,11 @@ namespace SerraPlo {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*vertices.size(), &vertices[0], GL_DYNAMIC_DRAW);
 		///Configure vertex input
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position)));
 		glEnableVertexAttribArray(0); // position
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 		glEnableVertexAttribArray(1); // normal
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, uv)));
 		glEnableVertexAttribArray(2); // uv
 		glBindVertexArray(0);
 
@@ -155,15 +155,15 @@ namespace SerraPlo {
 	}
 
 
-	void GLText::Draw(ShaderProgram &program, TTF_Font *font) {
+	void GLText::Draw(ShaderProgram &program, TTF_Font *font) const {
 		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 150,0,150 });
 		//int p = int(pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2))));
 		SDL_Surface* ns = SDL_CreateRGBSurface(SDL_SWSURFACE, surf->w, surf->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-		SDL_BlitSurface(surf, NULL, ns, NULL);
+		SDL_BlitSurface(surf, nullptr, ns, nullptr);
 		SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 		glBindTexture(GL_TEXTURE_2D, textureid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ns->w, ns->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ns->pixels);
-		//SDL_SaveBMP(surf, LoadAsset("blended.bmp").c_str());
+		//SDL_SaveBMP(surf, GetPathToAsset("blended.bmp").c_str());
 
 		glm::mat4 model;
 		model = glm::translate(model, position);

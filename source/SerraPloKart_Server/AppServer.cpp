@@ -11,13 +11,13 @@ void AppServer::Update(void) {
 	try {
 		if (clock() > m_aliveCounter + MS_ALIVE_DELAY) {
 			std::cout << "Sending alive..." << std::endl;
-			dispatcher << UDPStream::packet << ALIVE;
+			dispatcher << UDPStream::packet << MSG_ALIVE;
 			for (auto &client : clientList) dispatcher << client.second->address;
 			m_aliveCounter = float(clock());
 		}
 		if (clock() >= m_counterUpdate + 100.0f && !clientList.empty()) {
 			for (auto &client : clientList) {
-				dispatcher << UDPStream::packet << UPDATE << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
+				dispatcher << UDPStream::packet << MSG_UPDATE << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
 				for (auto &client2 : clientList) dispatcher << client2.second->address;
 			}
 			m_counterUpdate = float(clock());
@@ -26,22 +26,22 @@ void AppServer::Update(void) {
 		sockaddr sender;
 		dispatcher >> UDPStream::packet >> sender >> header;
 		switch (header) {
-			case LOGIN: {
+			case MSG_LOGIN: {
 				std::string nick;
 				dispatcher >> nick;
 				if (clientList.find(sender.hash) == clientList.end()) {
 					clientList[sender.hash] = new ClientProxy(sender,nick);
 					clientList[sender.hash]->carPhy.AddTransform(&clientList[sender.hash]->transform);
 					std::cout << nick << " has logged in. Added to client database." << std::endl;
-					dispatcher << UDPStream::packet << BEGIN <<  sender;
+					dispatcher << UDPStream::packet << MSG_BEGIN <<  sender;
 				}
 			} break;
-			case EXIT: {
+			case MSG_EXIT: {
 				auto &it = clientList.find(sender.hash);
 				std::cout << it->second->nick << " has been disconnected." << std::endl;
 				clientList.erase(it);   //<----------------------------------------------------------------------------TODO : maybe
 			} break;
-			case UPDATE: {
+			case MSG_UPDATE: {
 				input10 input;
 				dispatcher >> input.w >> input.a >> input.s >> input.d >> input.dt;
 				bool temp[5];
@@ -81,7 +81,7 @@ void AppServer::Run(void) {
 }
 
 void AppServer::Destroy(void) {
-	dispatcher << UDPStream::packet << EXIT;
+	dispatcher << UDPStream::packet << MSG_EXIT;
 	for (auto &client : clientList) dispatcher << client.second->address, delete client.second;
 	m_isRunning = false; // Execution ends
 }

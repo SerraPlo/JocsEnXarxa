@@ -51,4 +51,9 @@ namespace SerraPlo {
 		}
 	};
 
+	struct GlobalMesh {
+		GLMesh *meshData{ nullptr };
+		int numMeshes{ 0 };
+	};
+
 }

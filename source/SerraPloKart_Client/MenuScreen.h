@@ -1,6 +1,6 @@
 #pragma once
 #include <SerraPloEngine\IScreen.h>
-#include <SerraPloEngine\Sprite2D.h>
+#include <SerraPloEngine\Texture2D.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -19,7 +19,7 @@ public:
 private:
 	AppClient *m_app; // Casted client main game pointer reference (IApp -> AppClient)
 	// Sprites to load
-	Sprite2D m_title;
+	Texture2D m_title;
 	Button2D m_singlePlayer;
 	Button2D m_multiplayer;
 };

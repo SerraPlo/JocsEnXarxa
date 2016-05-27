@@ -43,7 +43,7 @@ namespace SerraPlo {
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	}
 
-	void DestroySDL(void) {
+	inline void DestroySDL(void) {
 		IMG_Quit();
 		TTF_Quit();
 		SDL_Quit();

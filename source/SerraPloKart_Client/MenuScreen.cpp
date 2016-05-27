@@ -1,22 +1,22 @@
 #include "MenuScreen.h"
 #include "AppClient.h"
-#include <SerraPloEngine\ResourceManager.h>
+#include <SerraPloEngine\PathLoader.h>
 
 void MenuScreen::Build(void) {
 	m_app = dynamic_cast<AppClient*>(gameApp);
 
-	m_title.Load(0, 0, m_app->screenWidth, m_app->screenHeight, LoadAsset("images/title.jpg"), m_app->window.SDLWindow, m_app->renderer);
+	m_title.Load(0, 0, m_app->screenWidth, m_app->screenHeight, GetPathToAsset("images/title.jpg"), m_app->window.SDLWindow, m_app->renderer);
 
 	m_singlePlayer.Load(int(m_app->screenWidth*0.65f), int(m_app->screenHeight*0.5f),
 						int(m_app->screenWidth*0.3f), int(m_app->screenHeight*0.2f),
-						LoadAsset("images/single_player_default.png"),
-						LoadAsset("images/single_player_hover.png"),
+						GetPathToAsset("images/single_player_default.png"),
+						GetPathToAsset("images/single_player_hover.png"),
 						m_app->window.SDLWindow, m_app->renderer);
 
 	m_multiplayer.Load(int(m_app->screenWidth*0.65f), int(m_app->screenHeight*0.7f),
 					   int(m_app->screenWidth*0.3f), int(m_app->screenHeight*0.2f),
-					   LoadAsset("images/multiplayer_default.png"),
-					   LoadAsset("images/multiplayer_hover.png"),
+					   GetPathToAsset("images/multiplayer_default.png"),
+					   GetPathToAsset("images/multiplayer_hover.png"),
 						m_app->window.SDLWindow, m_app->renderer);
 }
 
@@ -39,7 +39,7 @@ void MenuScreen::Update(void) {
 	if (SDL_PollEvent(&evnt)) m_app->OnSDLEvent(evnt);
 	m_singlePlayer.Update(m_app->inputManager);
 	m_multiplayer.Update(m_app->inputManager);
-	if (m_multiplayer.pressed) m_app->ChangeScreen((m_app->gameObjectManager.Empty()) ? LOGIN_SCREEN : MULTIPLAYER_SCREEN);
+	if (m_multiplayer.pressed) m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOGIN : SCREEN_MULTIPLAYER);
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->m_currentScreen->currentState = ScreenState::EXIT;
 }
 

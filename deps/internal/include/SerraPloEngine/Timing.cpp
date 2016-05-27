@@ -10,16 +10,17 @@ namespace SerraPlo {
 		m_targetFPS(120.0f), 
 		m_startTicks(0), 
 		m_frameTicks(0),
-		fps(0) {}
+		fps(0), deltaTime(0) {}
 
 	FPSLimiter::FPSLimiter(float targetFPS) : 
 		m_targetFPS(targetFPS),
 		m_startTicks(0),
 		m_frameTicks(0),
-		fps(0) {}
+		fps(0), deltaTime(0) {}
+
+	static float max(float a, float b) { return (a<b) ? b : a; };
 
 	void FPSLimiter::calculateFPS() {
-		float lastFps = fps;
 		static float frameTimes[NUM_SAMPLES];
 		static auto curFrame = 0;
 
@@ -42,8 +43,7 @@ namespace SerraPlo {
 		if (frameTimeAverage > 0) fps = 1000.0f / frameTimeAverage;
 		else fps = 60.0f;
 
-		static auto min = [](float a, float b) -> float { !(b < a) ? a : b; };
-		deltaTime = min(fps, 1/m_targetFPS);
+		deltaTime = max(1/fps, 1/m_targetFPS);
 	}
 
 	void FPSLimiter::printFPS() const {
@@ -59,6 +59,7 @@ namespace SerraPlo {
 	void FPSLimiter::end() {
 		calculateFPS();
 		m_frameTicks = SDL_GetTicks() - m_startTicks;
+		std::cout << deltaTime << std::endl;
 		if (1000.0f / m_targetFPS > m_frameTicks) SDL_Delay(static_cast<Uint32>(1000.0f / m_targetFPS - m_frameTicks));
 	}
 

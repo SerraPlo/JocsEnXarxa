@@ -12,5 +12,5 @@ newmtl Material__25
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\assets\models\skybox\skybox_diffuse.png
-	map_Kd C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\assets\models\skybox\skybox_diffuse.png
+	map_Ka C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\assets\models\skybox\skybox_diffuse.jpg
+	map_Kd C:\Users\Jordi\Documents\GitHub\JocsEnXarxa\assets\models\skybox\skybox_diffuse.jpg

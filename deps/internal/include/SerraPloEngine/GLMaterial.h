@@ -1,13 +1,20 @@
 #pragma once
+#include <glm/vec3.hpp>
 #include "GLTexture.h"
-#include <glm/glm.hpp>
 
 namespace SerraPlo {
+
 	struct GLMaterial {
 		GLTexture diffuse;
 		GLTexture normal;
-		glm::vec3 specular;
-		glm::vec3 emissive;
-		float shininess;
+		glm::vec3 specular{ 0,0,0 };
+		glm::vec3 emissive{ 0,0,0 };
+		float shininess{ 1 };
 	};
+
+	struct GlobalMaterial {
+		GLMaterial *materialData{ nullptr };
+		int numMaterials{ 0 };
+	};
+
 }

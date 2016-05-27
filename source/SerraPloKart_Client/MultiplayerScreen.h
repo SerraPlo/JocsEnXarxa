@@ -1,17 +1,16 @@
 #pragma once
 #include <SerraPloEngine/IScreen.h>
 #include <SerraPloEngine/ShaderProgram.h>
-#include <SerraPloEngine/Camera.h>
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
-#include "RendererList.h"
 #include <SerraPloEngine/Primitives.h>
+#include "RendererList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
 #define MAX_POINT_LIGHTS 1
 #define MAX_SPOT_LIGHTS 1
-#define MAX_ENEMIES 9
+#define MAX_ENEMIES 1
 
 class AppClient;
 class MultiplayerScreen : public IScreen {
@@ -32,24 +31,30 @@ private:
 
 	// Casted client main game pointer reference (IApp -> AppClient)
 	AppClient *m_app;
+
 	// Shader programs
 	ShaderProgram m_mainProgram;
 	ShaderProgram m_lightProgram;
+
 	// Camera
-	Camera m_camera;
+	GLCamera m_camera;
+
 	// Game objects
 	RendererList m_renderer;
-
 	GameObject m_player;
 	GameObject m_playerwheels[4];
-
 	GameObject m_enemies[MAX_ENEMIES];
 	GameObject m_enemyWheels[MAX_ENEMIES][4];
+	GameObject skybox;
+	GameObject circuit;
 
+	// Text objects
 	GLText m_textNick; 
 	GLText m_textNickEnemies[MAX_ENEMIES];
 
+	//Game physics
 	CarPhysics m_carPhy;
+
 	// Lights
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];

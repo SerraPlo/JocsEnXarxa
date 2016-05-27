@@ -1,4 +1,4 @@
-#include <SerraPloEngine/ResourceManager.h>
+#include <SerraPloEngine/PathLoader.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "MultiplayerScreen.h"
@@ -14,53 +14,67 @@ void MultiplayerScreen::Build(void) {
 	m_camera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
 
 	//Initialize texture shaders
-	m_mainProgram.LoadShaders(LoadAsset("shaders/main.vert"), LoadAsset("shaders/main.frag"));
+	m_mainProgram.LoadShaders(GetPathToAsset("shaders/main.vert"), GetPathToAsset("shaders/main.frag"));
 	//Initialize light shaders
-	m_lightProgram.LoadShaders(LoadAsset("shaders/light.vert"), LoadAsset("shaders/light.frag"));
+	m_lightProgram.LoadShaders(GetPathToAsset("shaders/light.vert"), GetPathToAsset("shaders/light.frag"));
 }
 
 void MultiplayerScreen::Destroy(void) {
-	///TODO: optimize without destroy function
-	m_player.Destroy();
-	for (int i = 0; i < 4; ++i) m_playerwheels[i].Destroy();
-	for (int i = 0; i < MAX_ENEMIES; ++i) m_enemies[i].Destroy();
-	for (int i = 0; i < MAX_ENEMIES; ++i) for (int j = 0; j < 4; ++j) m_enemyWheels[i][j].Destroy();
+
 }
 
 void MultiplayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
-	// Load the player model
-	m_player = m_app->gameObjectManager.FindCopy("kart_base");
-	m_renderer.Add(&m_player);
-	for (int i = 0; i < 4; i++) {
-		m_playerwheels[i] = m_app->gameObjectManager.FindCopy("car_wheel");
-		m_renderer.Add(&m_playerwheels[i]);
-	}
-	// Set nick to text plane
+	// Set player nick to text plane
 	m_textNick.message = m_app->nick;
 	m_textNick.scale = { 2,1,2 };
 
+	// Load player base kart model
+	m_player.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
+	m_player.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
+	m_renderer.Add(&m_player);
+
+	// Load player kart wheels
+	for (int i = 0; i < 2; ++i)
+		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_front"),
+		m_playerwheels[i].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
+		m_renderer.Add(&m_playerwheels[i]);
+	for (int i = 2; i < 4; ++i)
+		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_back"),
+		m_playerwheels[i].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
+		m_renderer.Add(&m_playerwheels[i]);
+
 	// Load the enemies models
-	GLTexture redDiffuse(LoadAsset("models/plch/red.jpg").c_str());
 	for (int i = 0; i < MAX_ENEMIES; i++) {
-		m_enemies[i] = m_app->gameObjectManager.FindCopy("kart_base");
-		m_enemies[i].materials[0].diffuse = redDiffuse;
+		m_enemies[i].meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
+		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_red");
 		m_renderer.Add(&m_enemies[i]);
 		m_textNickEnemies[i].scale = { 2,1,2 };
-		for (int j = 0; j < 4; j++) {
-			m_enemyWheels[i][j] = m_app->gameObjectManager.FindCopy("car_wheel");
-			m_enemyWheels[i][j].materials[0].diffuse = redDiffuse;
-			m_renderer.Add(&m_enemyWheels[i][j]);
-		}
+		for (int j = 0; j < 2; ++j)
+			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_front"),
+			m_enemyWheels[i][j].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
+			m_renderer.Add(&m_playerwheels[j]);
+		for (int j = 2; j < 4; ++j)
+			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_back"),
+			m_enemyWheels[i][j].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
+			m_renderer.Add(&m_playerwheels[j]);
 	}
 
-	// Add the gameobjects needed in this scene
-	m_renderer.Add(&m_app->gameObjectManager.Find("object_circuit"));
-	m_renderer.Add(&m_app->gameObjectManager.Find("object_skybox"));
-	//m_renderer.Add(&m_app->gameObjectManager.Find("character_slycooper"));
-	m_renderer.AddDebug(&m_app->gameObjectManager.Find("debug_colisions"));
+	/// TODO: set emissive color !! material parameters!
+	skybox.transform.position = { 0, -100, 0 };
+	skybox.transform.scale = { 3, 3, 3 };
+	skybox.meshRef = &m_app->assetManager.FindMesh("mesh_skybox");
+	skybox.materialRef = &m_app->assetManager.FindMaterial("material_skybox");
+	m_renderer.Add(&skybox);
 
+	circuit.transform.scale = { 1, 1, 0.2 };
+	circuit.meshRef = &m_app->assetManager.FindMesh("mesh_circuit");
+	circuit.materialRef = &m_app->assetManager.FindMaterial("material_circuit");
+	m_renderer.Add(&circuit);
+	//m_renderer.AddDebug(&m_app->assetManager.Find("debug_colisions"));
+
+	// Init player kart physics
 	m_carPhy.AddTransform(&m_player.transform);
 
 	// LIGHTNING
@@ -97,6 +111,7 @@ void MultiplayerScreen::OnEntry(void) {
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
 
+	// Send light and material attributes to fragment shader
 	m_mainProgram.bind();
 	m_renderer.SendLightAttributes(m_mainProgram, m_camera);
 	m_renderer.SendMaterialAttributes(m_mainProgram, m_camera);
@@ -149,7 +164,7 @@ void MultiplayerScreen::Update(void) {
 	if (m_inputCounter >= 10) {//send cada 10 updates
 		m_inputCounter = 0;
 		try {
-			m_app->mainSocket << UDPStream::packet << UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << m_app->serverAddress;
+			m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << m_app->serverAddress;
 		} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 			std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 		} catch (UDPStream::empty) {} //if the package is empty or have not received anything
@@ -177,7 +192,7 @@ void MultiplayerScreen::Update(void) {
 
 	UpdateEnemies();
 
-	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(MENU_SCREEN);
+	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
 }
 
 void MultiplayerScreen::CheckInput(void) {
@@ -201,14 +216,14 @@ void MultiplayerScreen::CheckInput(void) {
 
 void MultiplayerScreen::Draw(void) {
 	m_mainProgram.bind();
-		m_renderer.DrawObjects(m_mainProgram, m_camera, m_app->gameObjectManager);
+		m_renderer.DrawObjects(m_mainProgram, m_camera);
 		m_textNick.Draw(m_mainProgram, m_app->font);
 		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
 	m_mainProgram.unbind();
 
 	if (RendererList::DEBUG_DRAW)
 		m_lightProgram.bind(),
-			m_renderer.DrawDebug(m_lightProgram, m_camera, m_app->gameObjectManager),
+			m_renderer.DrawDebug(m_lightProgram, m_camera),
 		m_lightProgram.unbind();
 
 	m_app->window.swapBuffer(); // Swap OpenGL buffers if double-buffering is supported

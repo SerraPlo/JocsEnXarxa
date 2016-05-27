@@ -1,6 +1,5 @@
 #include "LoginScreen.h"
 #include "AppClient.h"
-#include <SerraPloEngine\ResourceManager.h>
 #include <ctime>
 
 void LoginScreen::Build(void) {
@@ -48,11 +47,10 @@ void LoginScreen::Update(void) {
 		m_userInput.height = int(m_app->screenHeight*0.2f);
 		m_userInput.position = { m_app->screenWidth / 2 - (m_userInput.width / 2), m_app->screenHeight* 0.6f };
 	} else {
-		static clock_t counterSend = 0;
-		if (m_app->gameObjectManager.Empty()) m_app->gameObjectManager.Load(LoadAsset("gameObjects.json"));
+		if (m_app->assetManager.Empty()) m_app->LoadAssets();
 		try {
-			if (clock() > counterSend + MS_RESEND_DELAY) counterSend = clock(), m_app->ChangeScreen(MULTIPLAYER_SCREEN),
-				m_app->mainSocket << UDPStream::packet << LOGIN << m_app->nick << m_app->serverAddress, 
+			if (clock() > m_counterSend + MS_RESEND_DELAY) m_counterSend = float(clock()), m_app->ChangeScreen(SCREEN_MULTIPLAYER),
+				m_app->mainSocket << UDPStream::packet << MSG_LOGIN << m_app->nick << m_app->serverAddress, 
 				std::cout << "Nick sent. Waiting server response..." << std::endl;
 		} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 			std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;

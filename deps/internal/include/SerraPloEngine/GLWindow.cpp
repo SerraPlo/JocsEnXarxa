@@ -1,13 +1,12 @@
 #include "GLWindow.h"
 #include "ErrorManager.h"
-#include <GL/glew.h>
 
 namespace SerraPlo {
 
 	GLWindow::GLWindow(int *sw, int *sh, const std::string &name) :
-		SDLWindow(nullptr),
-		m_glContext(nullptr),
 		m_engineName(name),
+		m_glContext(nullptr),
+		SDLWindow(nullptr),
 		screenWidth(sw),
 		screenHeight(sh)
 	{}
