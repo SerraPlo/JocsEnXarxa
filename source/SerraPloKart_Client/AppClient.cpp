@@ -32,9 +32,8 @@ void AppClient::LoadAssets(void) {
 	clock_t bench = clock();
 	std::cout << "==== LOAD ASSETS BEGIN ====" << std::endl;
 	assetManager.LoadMesh("mesh_kart_default", "models/kart/kart_default.obj");
-	assetManager.LoadMesh("mesh_wheel_front", "models/kart/wheel_front.obj");
-	assetManager.LoadMesh("mesh_wheel_back", "models/kart/wheel_back.obj");
-	assetManager.LoadMesh("mesh_colisions", "models/circuit_col/colisions.dae");
+	assetManager.LoadMesh("mesh_wheel", "models/kart/wheel.obj");
+	assetManager.LoadMesh("mesh_debug_collisions", "models/circuit_col/colisions.dae");
 	assetManager.LoadMesh("mesh_skybox", "models/skybox/skybox.obj");
 	std::cout << "Meshes loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();

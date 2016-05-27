@@ -36,12 +36,8 @@ void MultiplayerScreen::OnEntry(void) {
 	m_renderer.Add(&m_player);
 
 	// Load player kart wheels
-	for (int i = 0; i < 2; ++i)
-		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_front"),
-		m_playerwheels[i].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
-		m_renderer.Add(&m_playerwheels[i]);
-	for (int i = 2; i < 4; ++i)
-		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_back"),
+	for (int i = 0; i < 4; ++i)
+		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel"),
 		m_playerwheels[i].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
 		m_renderer.Add(&m_playerwheels[i]);
 
@@ -51,12 +47,8 @@ void MultiplayerScreen::OnEntry(void) {
 		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_red");
 		m_renderer.Add(&m_enemies[i]);
 		m_textNickEnemies[i].scale = { 2,1,2 };
-		for (int j = 0; j < 2; ++j)
-			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_front"),
-			m_enemyWheels[i][j].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
-			m_renderer.Add(&m_playerwheels[j]);
-		for (int j = 2; j < 4; ++j)
-			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel_back"),
+		for (int j = 0; j < 4; ++j)
+			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel"),
 			m_enemyWheels[i][j].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
 			m_renderer.Add(&m_playerwheels[j]);
 	}
@@ -72,7 +64,9 @@ void MultiplayerScreen::OnEntry(void) {
 	circuit.meshRef = &m_app->assetManager.FindMesh("mesh_circuit");
 	circuit.materialRef = &m_app->assetManager.FindMaterial("material_circuit");
 	m_renderer.Add(&circuit);
-	//m_renderer.AddDebug(&m_app->assetManager.Find("debug_colisions"));
+	
+	debugCollisions.meshRef = &m_app->assetManager.FindMesh("mesh_debug_collisions");
+	m_renderer.Add(&debugCollisions);
 
 	// Init player kart physics
 	m_carPhy.AddTransform(&m_player.transform);
@@ -171,10 +165,10 @@ void MultiplayerScreen::Update(void) {
 		//std::cout << m_player->transform.position.x <<","<< m_player->transform.position.z<< std::endl;
 	}
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
-	m_playerwheels[0].transform.position = m_player.transform.position + m_carPhy.front*2.0f + perFront*1.25f;
-	m_playerwheels[1].transform.position = m_player.transform.position + m_carPhy.front*2.0f - perFront*1.25f;
-	m_playerwheels[2].transform.position = m_player.transform.position - m_carPhy.front*2.0f + perFront*1.25f;
-	m_playerwheels[3].transform.position = m_player.transform.position - m_carPhy.front*2.0f - perFront*1.25f;
+	m_playerwheels[0].transform.position = m_player.transform.position + m_carPhy.front*.5f + perFront*1.5f;
+	m_playerwheels[1].transform.position = m_player.transform.position + m_carPhy.front*.5f - perFront*1.5f;
+	m_playerwheels[2].transform.position = m_player.transform.position - m_carPhy.front*2.0f + perFront*1.5f;
+	m_playerwheels[3].transform.position = m_player.transform.position - m_carPhy.front*2.0f - perFront*1.5f;
 
 	m_playerwheels[0].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
 	m_playerwheels[1].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);

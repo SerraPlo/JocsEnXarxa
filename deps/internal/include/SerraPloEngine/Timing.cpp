@@ -59,7 +59,6 @@ namespace SerraPlo {
 	void FPSLimiter::end() {
 		calculateFPS();
 		m_frameTicks = SDL_GetTicks() - m_startTicks;
-		std::cout << deltaTime << std::endl;
 		if (1000.0f / m_targetFPS > m_frameTicks) SDL_Delay(static_cast<Uint32>(1000.0f / m_targetFPS - m_frameTicks));
 	}
 

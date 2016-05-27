@@ -9,7 +9,7 @@ void RendererList::Add(GameObject *newObject) {
 	m_objectList.push_back(newObject);
 }
 
-void RendererList::Add(DebugObject newObject) {
+void RendererList::Add(DebugObject *newObject) {
 	m_debugList.push_back(newObject);
 }
 
@@ -79,7 +79,6 @@ void RendererList::DrawObjects(ShaderProgram &program, GLCamera &camera) {
 		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
 		model = glm::scale(model, transformTemp.scale);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-
 		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
 			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
 			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
@@ -112,18 +111,18 @@ void RendererList::DrawDebug(ShaderProgram & program, GLCamera &camera) {
 	for (auto gameLight : m_spotLightList) { RENDER_LIGHT_TEMPLATE(); }
 	for (auto debugObject : m_debugList) {
 		// Transform properties
-		glm::mat4 model = glm::translate(glm::mat4(), debugObject.transform.position);
-		model = glm::rotate(model, glm::radians(debugObject.transform.rotation.x), { 1,0,0 });
-		model = glm::rotate(model, glm::radians(debugObject.transform.rotation.y), { 0,1,0 });
-		model = glm::rotate(model, glm::radians(debugObject.transform.rotation.z), { 0,0,1 });
-		model = glm::scale(model, debugObject.transform.scale);
+		glm::mat4 model = glm::translate(glm::mat4(), debugObject->transform.position);
+		model = glm::rotate(model, glm::radians(debugObject->transform.rotation.x), { 1,0,0 });
+		model = glm::rotate(model, glm::radians(debugObject->transform.rotation.y), { 0,1,0 });
+		model = glm::rotate(model, glm::radians(debugObject->transform.rotation.z), { 0,0,1 });
+		model = glm::scale(model, debugObject->transform.scale);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 		// Material properties
-		glUniform3fv(program.getUniformLocation("lightColor"), 1, glm::value_ptr(debugObject.color));
+		glUniform3fv(program.getUniformLocation("lightColor"), 1, glm::value_ptr(debugObject->color));
 		// Mesh properties
-		for (int i = 0; i < debugObject.meshRef->numMeshes; ++i) {
-			glBindVertexArray(debugObject.meshRef->meshData[i].vao);
-			glDrawElements(DEBUG_MODE, debugObject.meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		for (int i = 0; i < debugObject->meshRef->numMeshes; ++i) {
+			glBindVertexArray(debugObject->meshRef->meshData[i].vao);
+			glDrawElements(DEBUG_MODE, debugObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
 		}
 	}

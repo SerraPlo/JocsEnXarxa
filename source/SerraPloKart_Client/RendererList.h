@@ -3,13 +3,12 @@
 #include <SerraPloEngine/GLLight.h>
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/GLCamera.h>
-#include <SerraPloEngine/AssetManager.h>
 #include <vector>
 using namespace SerraPlo;
 
 class RendererList {
 	std::vector<GameObject*> m_objectList;
-	std::vector<DebugObject> m_debugList;
+	std::vector<DebugObject*> m_debugList;
 	DirLight *m_dirLight;
 	std::vector<PointLight*> m_pointLightList;
 	std::vector<SpotLight*> m_spotLightList;
@@ -21,7 +20,7 @@ public:
 	~RendererList() = default;
 
 	void Add(GameObject *newObject);
-	void Add(DebugObject newObject);
+	void Add(DebugObject *newObject);
 	void Add(DirLight *newLight);
 	void Add(PointLight *newLight);
 	void Add(SpotLight *newLight);

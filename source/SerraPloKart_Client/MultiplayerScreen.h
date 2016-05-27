@@ -3,7 +3,7 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
-#include <SerraPloEngine/Primitives.h>
+#include <SerraPloEngine/GLPrimitives.h>
 #include "RendererList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
@@ -47,6 +47,7 @@ private:
 	GameObject m_enemyWheels[MAX_ENEMIES][4];
 	GameObject skybox;
 	GameObject circuit;
+	DebugObject debugCollisions;
 
 	// Text objects
 	GLText m_textNick; 

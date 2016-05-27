@@ -159,7 +159,7 @@
     <ClInclude Include="GLCamera.h" />
     <ClInclude Include="CarPhysics.h" />
     <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="Primitives.h" />
+    <ClInclude Include="GLPrimitives.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="ErrorManager.h" />
     <ClInclude Include="GameObject.h" />
@@ -185,7 +185,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="CarPhysics.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="Primitives.cpp" />
+    <ClCompile Include="GLPrimitives.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ScreenList.cpp" />
