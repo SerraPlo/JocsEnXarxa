@@ -10,7 +10,7 @@ using namespace SerraPlo;
 
 #define MAX_POINT_LIGHTS 1
 #define MAX_SPOT_LIGHTS 1
-#define MAX_ENEMIES 1
+#define MAX_ENEMIES 9
 
 class AppClient;
 class MultiplayerScreen : public IScreen {

@@ -44,7 +44,7 @@ void MultiplayerScreen::OnEntry(void) {
 	// Load the enemies models
 	for (int i = 0; i < MAX_ENEMIES; i++) {
 		m_enemies[i].meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
-		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_red");
+		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
 		m_renderer.Add(&m_enemies[i]);
 		m_textNickEnemies[i].scale = { 2,1,2 };
 		for (int j = 0; j < 4; ++j)

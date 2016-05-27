@@ -39,6 +39,15 @@ void AppClient::LoadAssets(void) {
 	bench = clock();
 
 	assetManager.LoadMaterial("material_kart_default", "models/kart/textures/body_dummy_alb.png");
+	assetManager.LoadMaterial("material_kart_00", "models/kart/textures/bodyk_std_hyh00_alb.png");
+	assetManager.LoadMaterial("material_kart_01", "models/kart/textures/bodyk_std_kop_alb.png");
+	assetManager.LoadMaterial("material_kart_02", "models/kart/textures/bodyk_std_knc_alb.png");
+	assetManager.LoadMaterial("material_kart_03", "models/kart/textures/bodyk_std_pchg_alb.png");
+	assetManager.LoadMaterial("material_kart_04", "models/kart/textures/bodyk_std_wlg_alb.png");
+	assetManager.LoadMaterial("material_kart_05", "models/kart/textures/bodyk_std_rst_alb.png");
+	assetManager.LoadMaterial("material_kart_06", "models/kart/textures/bodyk_std_dkg_alb.png");
+	assetManager.LoadMaterial("material_kart_07", "models/kart/textures/bodyk_std_mii10_alb.png");
+	assetManager.LoadMaterial("material_kart_08", "models/kart/textures/bodyk_std_wro_alb.png");
 	assetManager.LoadMaterial("material_red", "images/plch/red.jpg");
 	assetManager.LoadMaterial("material_green", "images/plch/green.jpg");
 	assetManager.LoadMaterial("material_blue", "images/plch/blue.jpg");
