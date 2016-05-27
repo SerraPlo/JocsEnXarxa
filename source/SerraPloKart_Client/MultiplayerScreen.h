@@ -8,8 +8,8 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
-#define MAX_POINT_LIGHTS 1
-#define MAX_SPOT_LIGHTS 1
+#define MAX_POINT_LIGHTS 2
+#define MAX_SPOT_LIGHTS 10
 #define MAX_ENEMIES 9
 
 class AppClient;

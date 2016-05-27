@@ -154,17 +154,20 @@ namespace SerraPlo {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-
-	void GLText::Draw(ShaderProgram &program, TTF_Font *font) const {
-		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, this->message.c_str(), SDL_Color{ 150,0,150 });
+	void GLText::SetText(const std::string& str, const SDL_Color &color, TTF_Font *font) const {
+		SDL_Surface *surf = TTF_RenderUTF8_Blended(font, str.c_str(), color);
 		//int p = int(pow(2, ceil(log(std::max(surf->w, surf->h)) / log(2))));
 		SDL_Surface* ns = SDL_CreateRGBSurface(SDL_SWSURFACE, surf->w, surf->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 		SDL_BlitSurface(surf, nullptr, ns, nullptr);
 		SDL_SetSurfaceBlendMode(surf, SDL_BLENDMODE_NONE);
 		glBindTexture(GL_TEXTURE_2D, textureid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ns->w, ns->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ns->pixels);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		//SDL_SaveBMP(surf, GetPathToAsset("blended.bmp").c_str());
+		SDL_FreeSurface(surf);
+	}
 
+	void GLText::Draw(ShaderProgram &program) const {
 		glm::mat4 model;
 		model = glm::translate(model, position);
 		model = glm::rotate(model, glm::radians(rotation.x), { 1,0,0 });
@@ -174,12 +177,16 @@ namespace SerraPlo {
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDisable(GL_CULL_FACE);
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureid);
 
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 36); // Draw plane with 36 vertices
 		glBindVertexArray(0);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(0);
 		glEnable(GL_CULL_FACE);
-		SDL_FreeSurface(surf);
+		
 	}
 }

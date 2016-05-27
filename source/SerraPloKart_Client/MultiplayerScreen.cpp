@@ -27,12 +27,16 @@ void MultiplayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Set player nick to text plane
-	m_textNick.message = m_app->nick;
+	m_textNick.SetText(m_app->nick, {100, 0, 100}, m_app->font);
 	m_textNick.scale = { 2,1,2 };
 
 	// Load player base kart model
+	m_player.transform.position = { 180, 0, 115 };
+	m_player.transform.rotation = { 0, -90, 0 };
 	m_player.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 	m_player.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
+	m_player.materialRef->materialData[0].shininess = 50;
+	m_player.materialRef->materialData[0].specular = {1,1,1};
 	m_renderer.Add(&m_player);
 
 	// Load player kart wheels
@@ -43,9 +47,12 @@ void MultiplayerScreen::OnEntry(void) {
 
 	// Load the enemies models
 	for (int i = 0; i < MAX_ENEMIES; i++) {
+		m_enemies[i].transform.position = { 180, 0, 105 };
+		m_enemies[i].transform.rotation = { 0, -90, 0 };
 		m_enemies[i].meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
 		m_renderer.Add(&m_enemies[i]);
+		m_textNickEnemies[i].position = m_enemies[i].transform.position-glm::vec3{0,10,0}; ///TODO: temp
 		m_textNickEnemies[i].scale = { 2,1,2 };
 		for (int j = 0; j < 4; ++j)
 			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel"),
@@ -74,33 +81,47 @@ void MultiplayerScreen::OnEntry(void) {
 	// LIGHTNING
 	// Init directional light
 	m_dirLight.direction = { -0.2f, -1.0f, -0.3f };
-	m_dirLight.ambient = { 0.7f, 0.7f, 0.7f };
-	m_dirLight.diffuse = { 1.0f, 1.0f, 0.7f };
-	m_dirLight.specular = { 0.5f, 0.5f, 0.5f };
+	m_dirLight.ambient = { 0.05f, 0.05f, 0.15f };
+	m_dirLight.diffuse = { 0.1f, 0.1f, 0.2f };
+	m_dirLight.specular = { 0.1f, 0.1f, 0.1f };
 	m_renderer.Add(&m_dirLight);
 
 	// Init point lights
-	m_pointLights[0].position = { 10, 0, 0 };
-	m_pointLights[0].ambient = { 0.5f, 0.0f, 0.5f };
-	m_pointLights[0].diffuse = { 1.0f, 0.0f, 1.0f };
-	m_pointLights[0].specular = { 1.0f, 1.0f, 1.0f };
-	m_pointLights[0].constant = 1.0f;
-	m_pointLights[0].linear = 0.09f;
-	m_pointLights[0].quadratic = 0.032f;
-	m_renderer.Add(&m_pointLights[0]);
+	m_pointLights[0].position = { 150, 0, 100 };
+	m_pointLights[1].position = { 150, 0, 120 };
+	for (int i = 0; i < MAX_POINT_LIGHTS; ++i) {
+		m_pointLights[i].ambient = { 0.3f, 1.0f, 0.3f };
+		m_pointLights[i].diffuse = { 0.5f, 1.0f, 0.5f };
+		m_pointLights[i].specular = { 1.0f, 1.0f, 1.0f };
+		m_pointLights[i].constant = 1.0f;
+		m_pointLights[i].linear = 0.09f;
+		m_pointLights[i].quadratic = 0.032f;
+		m_renderer.Add(&m_pointLights[i]);
+	}
 
 	// Init spot lights
-	m_spotLights[0].position = { -10,5,0 };
-	m_spotLights[0].direction = { 0, -1, 0 };
-	m_spotLights[0].ambient = { 0.0f, 0.5f, 0.0f };
-	m_spotLights[0].diffuse = { 0.0f, 1.0f, 0.0f };
-	m_spotLights[0].specular = { 1.0f, 1.0f, 1.0f };
-	m_spotLights[0].constant = 1.0f;
-	m_spotLights[0].linear = 0.09f;
-	m_spotLights[0].quadratic = 0.032f;
-	m_spotLights[0].cutOff = glm::cos(glm::radians(40.0f));
-	m_spotLights[0].outerCutOff = glm::cos(glm::radians(45.0f));
-	m_renderer.Add(&m_spotLights[0]);
+	m_spotLights[0].position = { -8, 8, 0 };
+	m_spotLights[1].position = { 5, 8, 40 };
+	m_spotLights[2].position = { 10, 8, 80 };
+	m_spotLights[3].position = { 40, 8, 108 };
+	m_spotLights[4].position = { 80, 8, 108 };
+	m_spotLights[5].position = { 120, 8, 108 };
+	m_spotLights[6].position = { 200, 8, 108 };
+	m_spotLights[7].position = { 240, 8, 108 };
+	m_spotLights[8].position = { 280, 8, 108 };
+	m_spotLights[9].position = { 320, 8, 108 };
+	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i) {
+		m_spotLights[i].direction = { 0, -1, 0 };
+		m_spotLights[i].ambient = { 1.0f, 1.0f, 1.0f };
+		m_spotLights[i].diffuse = { 1.0f, 1.0f, 0.7f };
+		m_spotLights[i].specular = { 1.0f, 1.0f, 1.0f };
+		m_spotLights[i].constant = 1.0f;
+		m_spotLights[i].linear = 0.09f;
+		m_spotLights[i].quadratic = 0.032f;
+		m_spotLights[i].cutOff = glm::cos(glm::radians(50.0f));
+		m_spotLights[i].outerCutOff = glm::cos(glm::radians(60.0f));
+		m_renderer.Add(&m_spotLights[i]);
+	}
 
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
@@ -118,7 +139,7 @@ void MultiplayerScreen::OnExit(void) {
 }
 
 void MultiplayerScreen::UpdateEnemies(float dt) {
-	//std::cout << dt << std::endl;
+	///TODO: send nick info only one time
 	for (size_t i = 0; i < m_app->enemies.size(); i++) {
 		m_enemies[i].transform.position += (m_app->enemies[i].targetTransform.position - m_enemies[i].transform.position)/4.0f;
 		m_enemies[i].transform.rotation += (m_app->enemies[i].targetTransform.rotation - m_enemies[i].transform.rotation)/4.0f;
@@ -134,7 +155,7 @@ void MultiplayerScreen::UpdateEnemies(float dt) {
 		m_enemyWheels[i][2].transform.rotation = m_enemies[i].transform.rotation;
 		m_enemyWheels[i][3].transform.rotation = m_enemies[i].transform.rotation;
 
-		m_textNickEnemies[i].message = m_app->enemies[i].nick;
+		m_textNickEnemies[i].SetText(m_app->enemies[i].nick, { 100, 0, 100 }, m_app->font);
 		m_textNickEnemies[i].position = m_enemies[i].transform.position + glm::vec3{ 0,3,0 };
 		m_textNickEnemies[i].rotation = m_enemies[i].transform.rotation;
 	}
@@ -213,8 +234,8 @@ void MultiplayerScreen::CheckInput(void) {
 void MultiplayerScreen::Draw(void) {
 	m_mainProgram.bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
-		m_textNick.Draw(m_mainProgram, m_app->font);
-		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_mainProgram, m_app->font);
+		m_textNick.Draw(m_mainProgram);
+		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_mainProgram);
 	m_mainProgram.unbind();
 
 	if (RendererList::DEBUG_DRAW)

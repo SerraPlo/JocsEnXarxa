@@ -44,8 +44,8 @@ struct SpotLight {
     vec3 specular; 
 };
 
-#define MAX_POINT_LIGHTS 1
-#define MAX_SPOT_LIGHTS 1
+#define MAX_POINT_LIGHTS 2
+#define MAX_SPOT_LIGHTS 10
  
  in SHADER_SOCKET {
     vec3 fragPosition; // Position in world space.
