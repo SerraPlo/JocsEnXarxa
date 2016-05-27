@@ -20,6 +20,7 @@ enum SreenType { SCREEN_MENU, SCREEN_LOGIN, SCREEN_MULTIPLAYER, SCREEN_SINGLE_PL
 class AppClient : public IApp {
 	struct Enemy {
 		std::string nick = "";
+		Transform targetTransform;
 		Transform transform;
 	};
 	

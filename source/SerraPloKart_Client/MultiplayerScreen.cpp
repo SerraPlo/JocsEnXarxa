@@ -117,9 +117,11 @@ void MultiplayerScreen::OnExit(void) {
 	m_renderer.Clear();
 }
 
-void MultiplayerScreen::UpdateEnemies() {
+void MultiplayerScreen::UpdateEnemies(float dt) {
+	//std::cout << dt << std::endl;
 	for (size_t i = 0; i < m_app->enemies.size(); i++) {
-		m_enemies[i].transform = m_app->enemies[i].transform;
+		m_enemies[i].transform.position += (m_app->enemies[i].targetTransform.position - m_enemies[i].transform.position)/4.0f;
+		m_enemies[i].transform.rotation += (m_app->enemies[i].targetTransform.rotation - m_enemies[i].transform.rotation)/4.0f;
 		glm::vec3 f = glm::vec3(sin((m_enemies[i].transform.rotation.y*M_PI) / 180), 0.0f, cos((m_enemies[i].transform.rotation.y*M_PI) / 180));
 		glm::vec3 pF = glm::vec3(-f.z, 0.0f, f.x);
 		m_enemyWheels[i][0].transform.position = m_enemies[i].transform.position + f*2.0f + pF*1.25f;
@@ -184,7 +186,7 @@ void MultiplayerScreen::Update(void) {
 	m_textNick.position = m_player.transform.position + glm::vec3{ 0,3,0 };
 	m_textNick.rotation = m_player.transform.rotation;
 
-	UpdateEnemies();
+	UpdateEnemies(gameApp->deltaTime);
 
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
 }

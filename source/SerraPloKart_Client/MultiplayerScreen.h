@@ -25,7 +25,7 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
-	void UpdateEnemies();
+	void UpdateEnemies(float dt);
 private:
 	void CheckInput(void);
 

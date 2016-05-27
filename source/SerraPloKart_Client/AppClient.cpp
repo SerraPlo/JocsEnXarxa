@@ -101,7 +101,7 @@ void AppClient::ProcessMsgs(void) {
 					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
 					for (auto &enemy : enemies) {
 						if (enemy.nick == a.nick) {
-							enemy.transform = a.transform;
+							enemy.targetTransform = a.transform;
 							virgin = false;
 							break;
 						} 
