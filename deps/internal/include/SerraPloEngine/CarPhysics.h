@@ -21,6 +21,8 @@ namespace SerraPlo {
 		CollisionManager collisions;
 		Transform *transform{ nullptr };
 		glm::vec3 front;
+		float collisionForce;
+		glm::vec2 collisionDirection;
 		float accel = 0.0f;
 		float velocity = 0.0f;
 		bool smoothSteer = true;

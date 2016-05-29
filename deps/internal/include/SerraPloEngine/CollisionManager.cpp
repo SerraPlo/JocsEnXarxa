@@ -49,6 +49,9 @@ namespace SerraPlo {
 					boxs[i].v[j].y = float(atof(temp.c_str()));
 					temp = "";
 				}
+				glm::vec2 vectorToCenter = (boxs[i].v[2] - boxs[i].v[0])*0.5f;
+				boxs[i].ahorro.c = boxs[i].v[0] + vectorToCenter;
+				boxs[i].ahorro.r = vectorToCenter.length();
 			}
 			for (int i = 0; i < nCircles; i++) {
 				//center

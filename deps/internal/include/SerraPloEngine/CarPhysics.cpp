@@ -11,6 +11,8 @@ namespace SerraPlo {
 
 	CarPhysics::CarPhysics() {
 		collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));
+		collisionDirection = { 0.0f,0.0f };
+		collisionForce = 0.0f;
 	}
 
 	float CarPhysics::applySmoothSteer(float steerInput, float dt) {
@@ -62,7 +64,10 @@ namespace SerraPlo {
 
 		if (velocity > 0.0f) transform->rotation.y += -(float((steerAngle*180.0f) / M_PI))*1.5f *deltaTime;
 
-		glm::vec2 newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z);
+		if (collisionForce > 0.0f) collisionForce -= 100.0f*deltaTime;
+		else collisionForce = 0.0f;
+
+		glm::vec2 newPos = glm::vec2((transform->position + front*velocity*deltaTime).x, (transform->position + front* velocity *deltaTime).z)+ collisionDirection*collisionForce*deltaTime;
 		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
 		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
 		glm::vec2 positionsCol[4];
@@ -74,6 +79,23 @@ namespace SerraPlo {
 		//std::cout << positionsCol[0].x << "," << positionsCol[0].y<<std::endl;
 		if (collisions.CalculateCollision(positionsCol) == -1) {
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
+		}
+		else {
+			int i = collisions.CalculateCollision(positionsCol);
+			
+			if (i < collisions.nBoxs) {
+				velocity = 0.0f;
+				collisionDirection = glm::normalize(glm::vec2(transform->position.x,transform->position.z)-newPos);
+				collisionForce = 40.0f;
+			}
+			else {
+				velocity /= 2.0f;
+				collisionDirection = glm::normalize(newPos - collisions.circles[i-collisions.nBoxs].c);
+				collisionForce = 40.0f;
+			}
+			newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z) + collisionDirection*collisionForce*deltaTime;
+			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
+
 		}
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}

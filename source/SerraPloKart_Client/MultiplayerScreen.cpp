@@ -141,8 +141,10 @@ void MultiplayerScreen::OnExit(void) {
 void MultiplayerScreen::UpdateEnemies(float dt) {
 	///TODO: send nick info only one time
 	for (size_t i = 0; i < m_app->enemies.size(); i++) {
+		//bad intterpolation 
 		m_enemies[i].transform.position += (m_app->enemies[i].targetTransform.position - m_enemies[i].transform.position)/4.0f;
 		m_enemies[i].transform.rotation += (m_app->enemies[i].targetTransform.rotation - m_enemies[i].transform.rotation)/4.0f;
+		//
 		glm::vec3 f = glm::vec3(sin((m_enemies[i].transform.rotation.y*M_PI) / 180), 0.0f, cos((m_enemies[i].transform.rotation.y*M_PI) / 180));
 		glm::vec3 pF = glm::vec3(-f.z, 0.0f, f.x);
 		m_enemyWheels[i][0].transform.position = m_enemies[i].transform.position + f*2.0f + pF*1.25f;
@@ -162,9 +164,9 @@ void MultiplayerScreen::UpdateEnemies(float dt) {
 }
 
 void MultiplayerScreen::Update(void) {
+	//input
 	static int m_inputCounter = 0;
 	static input10 m_in2send;
-
 	CheckInput();
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
@@ -173,7 +175,9 @@ void MultiplayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
+	//Update
 	m_carPhy.Update(temp, gameApp->deltaTime);
+	//Send to server
 	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
 	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];
 	m_in2send.dt[m_inputCounter] = m_app->deltaTime;
@@ -187,28 +191,28 @@ void MultiplayerScreen::Update(void) {
 		} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 		//std::cout << m_player->transform.position.x <<","<< m_player->transform.position.z<< std::endl;
 	}
+	//Extras position
+		//Whweels
 	glm::vec3 perFront = glm::vec3(-m_carPhy.front.z, 0.0f, m_carPhy.front.x);
 	m_playerwheels[0].transform.position = m_player.transform.position + m_carPhy.front*.5f + perFront*1.5f;
 	m_playerwheels[1].transform.position = m_player.transform.position + m_carPhy.front*.5f - perFront*1.5f;
 	m_playerwheels[2].transform.position = m_player.transform.position - m_carPhy.front*2.0f + perFront*1.5f;
 	m_playerwheels[3].transform.position = m_player.transform.position - m_carPhy.front*2.0f - perFront*1.5f;
-
 	m_playerwheels[0].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
 	m_playerwheels[1].transform.rotation = m_player.transform.rotation - glm::vec3(0.0f, (m_carPhy.steerAngle*180.0f) / M_PI, 0.0f);
 	m_playerwheels[2].transform.rotation = m_player.transform.rotation;
 	m_playerwheels[3].transform.rotation = m_player.transform.rotation;
-
 	//std::cout << m_player->transform.position.x << "," << m_player->transform.position.z << std::endl;
-
+		//camera
 	m_camera.Translate(m_player.transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.transform.position);
-
-	// Update text nick plane
+		//text
 	m_textNick.position = m_player.transform.position + glm::vec3{ 0,3,0 };
 	m_textNick.rotation = m_player.transform.rotation;
-
+		//Enemies
 	UpdateEnemies(gameApp->deltaTime);
-
+	
+	//ESC
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
 }
 
