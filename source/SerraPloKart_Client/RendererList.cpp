@@ -3,29 +3,165 @@
 #include <iostream>
 
 bool RendererList::DEBUG_DRAW = false;
-GLuint RendererList::DEBUG_MODE = GL_TRIANGLES;
+bool RendererList::WIREFRAME_MODE = false;
 
-void RendererList::Add(GameObject *newObject) {
+/*void RendererList::Init(int width, int height) {
+	glGenFramebuffers(1, &gBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+	// - Position color buffer
+	glGenTextures(1, &gPosition);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+	// - Normal color buffer
+	glGenTextures(1, &gNormal);
+	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+	// - Color + Specular color buffer
+	glGenTextures(1, &gAlbedoSpec);
+	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+	// - Create and attach depth buffer (renderbuffer)
+	GLuint rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	// - Finally check if framebuffer is complete
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+}*/
+
+void RendererList::AddObject(GameObject *newObject) {
 	m_objectList.push_back(newObject);
 }
 
-void RendererList::Add(DebugObject *newObject) {
+void RendererList::AddObject(DebugObject *newObject) {
 	m_debugList.push_back(newObject);
 }
 
-void RendererList::Add(DirLight *newLight) {
+void RendererList::AddLight(DirLight *newLight) {
 	m_dirLight = newLight;
 }
 
-void RendererList::Add(PointLight *newLight) {
-	m_pointLightList.push_back(newLight);
+void RendererList::AddLight(PointLight *newLight, bool isStatic) {
+	(isStatic) ? m_staticPointLightList.push_back(newLight) : m_dynamicPointLightList.push_back(newLight);
 }
 
-void RendererList::Add(SpotLight *newLight) {
-	m_spotLightList.push_back(newLight);
+void RendererList::AddLight(SpotLight *newLight, bool isStatic) {
+	(isStatic) ? m_staticSpotLightList.push_back(newLight) : m_dynamicSpotLightList.push_back(newLight);
 }
 
-void RendererList::SendLightAttributes(ShaderProgram &program, GLCamera &camera) {
+/*void RendererList::DrawDeferred(ShaderProgram &gpProgram, ShaderProgram &lpProgram, GLCamera &camera) {
+	static GLboolean wireframe = false;
+
+	glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	gpProgram.Bind();
+	glUniformMatrix4fv(gpProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
+	for (auto gameObject : m_objectList) {
+		Transform &transformTemp = gameObject->transform;
+		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
+		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
+		model = glm::scale(model, transformTemp.scale);
+		glUniformMatrix4fv(gpProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
+			glActiveTexture(GL_TEXTURE0);
+			glUniform1i(gpProgram.getUniformLocation("texture_diffuse1"), 0);
+			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
+			glUniform1f(gpProgram.getUniformLocation("spec"), 1);
+			glBindVertexArray(gameObject->meshRef->meshData[i].vao);
+			glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		}
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//-------------------------------------------------
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	lpProgram.Bind();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+	// Also send light relevant uniforms
+	for (GLuint i = 0; i < m_spotLightList.size(); i++) {
+		glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Position"), 1, glm::value_ptr(m_spotLightList[i]->position));
+		glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Color"), 1, glm::value_ptr(m_spotLightList[i]->diffuse));
+		// Update attenuation parameters and calculate radius
+		const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+		const GLfloat linear = 0.09f;
+		const GLfloat quadratic = 0.032f;
+		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Linear"), linear);
+		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Quadratic"), quadratic);
+		// Then calculate radius of light volume/sphere
+		const GLfloat lightThreshold = 5; // 5 / 256
+		const GLfloat maxBrightness = std::fmaxf(std::fmaxf(m_spotLightList[i]->diffuse.r, m_spotLightList[i]->diffuse.g), m_spotLightList[i]->diffuse.b);
+		GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
+		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Radius"), radius);
+	}
+	glUniform3fv(lpProgram.getUniformLocation("viewPos"), 1, glm::value_ptr(camera.position));
+	glUniform1i(lpProgram.getUniformLocation("draw_mode"), DRAW_MODE);
+
+	static GLuint quadVAO = 0;
+	if (quadVAO == 0)
+	{
+		GLfloat quadVertices[] = {
+			// Positions        // Texture Coords
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		GLuint quadVBO;
+		// Setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
+											   // blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
+											   // the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
+											   // depth buffer in another stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
+	glBlitFramebuffer(0, 0, 600, 450, 0, 0, 600, 450, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}*/
+
+void RendererList::SendStaticLightAttributes(ShaderProgram &program, GLCamera &camera) {
 	// Directional light properties
 	glUniform3fv(program.getUniformLocation("dirLight.direction"), 1, glm::value_ptr(m_dirLight->direction));
 	glUniform3fv(program.getUniformLocation("dirLight.ambient"), 1, glm::value_ptr(m_dirLight->ambient)); //0.05f, 0.05f, 0.05f
@@ -33,34 +169,62 @@ void RendererList::SendLightAttributes(ShaderProgram &program, GLCamera &camera)
 	glUniform3fv(program.getUniformLocation("dirLight.specular"), 1, glm::value_ptr(m_dirLight->specular)); //0.5f, 0.5f, 0.5f
 
 	// Point light properties
-	for (size_t i = 0; i < m_pointLightList.size(); ++i)
-		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_pointLightList[i]->position)),
-		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_pointLightList[i]->ambient)),
-		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(m_pointLightList[i]->diffuse)),
-		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(m_pointLightList[i]->specular)),
-		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].constant"), m_pointLightList[i]->constant),
-		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].linear"), m_pointLightList[i]->linear),
-		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].quadratic"), m_pointLightList[i]->quadratic);
+	for (size_t i = 0; i < m_staticPointLightList.size(); ++i)
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_staticPointLightList[i]->position)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_staticPointLightList[i]->ambient)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(m_staticPointLightList[i]->diffuse)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(m_staticPointLightList[i]->specular)),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].constant"), m_staticPointLightList[i]->constant),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].linear"), m_staticPointLightList[i]->linear),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(i) + "].quadratic"), m_staticPointLightList[i]->quadratic);
 
 	// Spot light properties
-	for (size_t i = 0; i < m_spotLightList.size(); ++i)
-		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_spotLightList[i]->position)),
-		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].direction"), 1, glm::value_ptr(m_spotLightList[i]->direction)),
-		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_spotLightList[i]->ambient)),
-		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(m_spotLightList[i]->diffuse)),
-		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(m_spotLightList[i]->specular)),
-		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].constant"), m_spotLightList[i]->constant),
-		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].linear"), m_spotLightList[i]->linear),
-		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].quadratic"), m_spotLightList[i]->quadratic),
-		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].cutOff"), m_spotLightList[i]->cutOff),
-		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].outerCutOff"), m_spotLightList[i]->outerCutOff);
+	for (size_t i = 0; i < m_staticSpotLightList.size(); ++i)
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_staticSpotLightList[i]->position)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].direction"), 1, glm::value_ptr(m_staticSpotLightList[i]->direction)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_staticSpotLightList[i]->ambient)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].diffuse"), 1, glm::value_ptr(m_staticSpotLightList[i]->diffuse)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(i) + "].specular"), 1, glm::value_ptr(m_staticSpotLightList[i]->specular)),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].constant"), m_staticSpotLightList[i]->constant),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].linear"), m_staticSpotLightList[i]->linear),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].quadratic"), m_staticSpotLightList[i]->quadratic),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].cutOff"), m_staticSpotLightList[i]->cutOff),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(i) + "].outerCutOff"), m_staticSpotLightList[i]->outerCutOff);
+}
+
+void RendererList::SendDynamicLightAttributes(ShaderProgram & program, GLCamera & camera) {
+	// Point light properties
+	for (size_t i = 0; i < m_dynamicPointLightList.size(); ++i)
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].position"), 1, glm::value_ptr(m_dynamicPointLightList[i]->position)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].ambient"), 1, glm::value_ptr(m_dynamicPointLightList[i]->ambient)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].diffuse"), 1, glm::value_ptr(m_dynamicPointLightList[i]->diffuse)),
+		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].specular"), 1, glm::value_ptr(m_dynamicPointLightList[i]->specular)),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].constant"), m_dynamicPointLightList[i]->constant),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].linear"), m_dynamicPointLightList[i]->linear),
+		glUniform1f(program.getUniformLocation("pointLights[" + std::to_string(m_staticPointLightList.size() + i) + "].quadratic"), m_dynamicPointLightList[i]->quadratic);
+
+	// Spot light properties
+	for (size_t i = 0; i < m_dynamicSpotLightList.size(); ++i)
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].position"), 1, glm::value_ptr(m_dynamicSpotLightList[i]->position)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].direction"), 1, glm::value_ptr(m_dynamicSpotLightList[i]->direction)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].ambient"), 1, glm::value_ptr(m_dynamicSpotLightList[i]->ambient)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].diffuse"), 1, glm::value_ptr(m_dynamicSpotLightList[i]->diffuse)),
+		glUniform3fv(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].specular"), 1, glm::value_ptr(m_dynamicSpotLightList[i]->specular)),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].constant"), m_dynamicSpotLightList[i]->constant),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].linear"), m_dynamicSpotLightList[i]->linear),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].quadratic"), m_dynamicSpotLightList[i]->quadratic),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].cutOff"), m_dynamicSpotLightList[i]->cutOff),
+		glUniform1f(program.getUniformLocation("spotLights[" + std::to_string(m_staticSpotLightList.size() + i) + "].outerCutOff"), m_dynamicSpotLightList[i]->outerCutOff);
 }
 
 void RendererList::SendMaterialAttributes(ShaderProgram & program, GLCamera & camera) {
 	// Material map properties
 	glUniform1i(program.getUniformLocation("material.diffuse"), 0);
 	glUniform1i(program.getUniformLocation("material.normal"), 1);
-	//glUniform1i(program.getUniformLocation("material.specular"), 2);
+	glUniform1i(program.getUniformLocation("material.specular"), 2);
+	//glUniform1i(program.getUniformLocation("gPosition"), 0);
+	//glUniform1i(program.getUniformLocation("gNormal"), 1);
+	//glUniform1i(program.getUniformLocation("gAlbedoSpec"), 2);
 }
 
 void RendererList::DrawObjects(ShaderProgram &program, GLCamera &camera) {
@@ -69,8 +233,8 @@ void RendererList::DrawObjects(ShaderProgram &program, GLCamera &camera) {
 	// Set camera position as the viewer
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 
-	glActiveTexture(GL_TEXTURE0);
 	for (auto gameObject : m_objectList) {
+		SendDynamicLightAttributes(program, camera);
 		// Transform properties
 		Transform &transformTemp = gameObject->transform;
 		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
@@ -80,6 +244,7 @@ void RendererList::DrawObjects(ShaderProgram &program, GLCamera &camera) {
 		model = glm::scale(model, transformTemp.scale);
 		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
 		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
 			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
 			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].emissive));
@@ -107,8 +272,9 @@ void RendererList::DrawObjects(ShaderProgram &program, GLCamera &camera) {
 
 void RendererList::DrawDebug(ShaderProgram & program, GLCamera &camera) {
 	static DebugLight debugLight;
-	for (auto gameLight : m_pointLightList) { RENDER_LIGHT_TEMPLATE(); }
-	for (auto gameLight : m_spotLightList) { RENDER_LIGHT_TEMPLATE(); }
+	glPolygonMode(GL_FRONT_AND_BACK, WIREFRAME_MODE ? GL_LINE : GL_FILL);
+	for (auto gameLight : m_staticPointLightList) { RENDER_LIGHT_TEMPLATE(); }
+	for (auto gameLight : m_staticSpotLightList) { RENDER_LIGHT_TEMPLATE(); }
 	for (auto debugObject : m_debugList) {
 		// Transform properties
 		glm::mat4 model = glm::translate(glm::mat4(), debugObject->transform.position);
@@ -122,16 +288,18 @@ void RendererList::DrawDebug(ShaderProgram & program, GLCamera &camera) {
 		// Mesh properties
 		for (int i = 0; i < debugObject->meshRef->numMeshes; ++i) {
 			glBindVertexArray(debugObject->meshRef->meshData[i].vao);
-			glDrawElements(DEBUG_MODE, debugObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
-			glBindVertexArray(0);
-		}
+			glDrawElements(GL_TRIANGLES, debugObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		} glBindVertexArray(0);
 	}
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void RendererList::Clear() {
 	m_objectList.clear();
 	m_debugList.clear();
 	m_dirLight = nullptr;
-	m_pointLightList.clear();
-	m_spotLightList.clear();
+	m_staticPointLightList.clear();
+	m_staticSpotLightList.clear();
+	m_dynamicPointLightList.clear();
+	m_dynamicSpotLightList.clear();
 }

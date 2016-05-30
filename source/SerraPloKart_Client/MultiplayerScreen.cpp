@@ -6,6 +6,13 @@
 
 #define FIXED_ASPECT_RATIO 16 / 9
 
+void SimplePath_AddPoint(SimplePath* path, glm::vec2 point) {
+	if (path->pathOccupation < MAX_POINTS_PATH) {
+		path->pathArray[path->pathOccupation] = point;
+		++path->pathOccupation;
+	} else SP_THROW_ERROR("Path reached max number of points.");
+}
+
 void MultiplayerScreen::Build(void) {
 	m_app = dynamic_cast<AppClient*>(gameApp);
 
@@ -13,10 +20,11 @@ void MultiplayerScreen::Build(void) {
 	int nw = (m_app->screenHeight * FIXED_ASPECT_RATIO);
 	m_camera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
 
-	//Initialize texture shaders
-	m_mainProgram.LoadShaders(GetPathToAsset("shaders/main.vert"), GetPathToAsset("shaders/main.frag"));
-	//Initialize light shaders
-	m_lightProgram.LoadShaders(GetPathToAsset("shaders/light.vert"), GetPathToAsset("shaders/light.frag"));
+	//Initialize main shaders
+	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
+	m_textProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
+	//Initialize debug shaders
+	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 }
 
 void MultiplayerScreen::Destroy(void) {
@@ -27,7 +35,7 @@ void MultiplayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Set player nick to text plane
-	m_textNick.SetText(m_app->nick, {100, 0, 100}, m_app->font);
+	m_textNick.SetText(m_app->nick, {255, 100, 255}, m_app->font);
 	m_textNick.scale = { 2,1,2 };
 
 	// Load player base kart model
@@ -37,13 +45,13 @@ void MultiplayerScreen::OnEntry(void) {
 	m_player.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
 	m_player.materialRef->materialData[0].shininess = 50;
 	m_player.materialRef->materialData[0].specular = {1,1,1};
-	m_renderer.Add(&m_player);
+	m_renderer.AddObject(&m_player);
 
 	// Load player kart wheels
 	for (int i = 0; i < 4; ++i)
 		m_playerwheels[i].meshRef = &m_app->assetManager.FindMesh("mesh_wheel"),
 		m_playerwheels[i].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
-		m_renderer.Add(&m_playerwheels[i]);
+		m_renderer.AddObject(&m_playerwheels[i]);
 
 	// Load the enemies models
 	for (int i = 0; i < MAX_ENEMIES; i++) {
@@ -51,13 +59,13 @@ void MultiplayerScreen::OnEntry(void) {
 		m_enemies[i].transform.rotation = { 0, -90, 0 };
 		m_enemies[i].meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 		m_enemies[i].materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
-		m_renderer.Add(&m_enemies[i]);
+		m_renderer.AddObject(&m_enemies[i]);
 		m_textNickEnemies[i].position = m_enemies[i].transform.position-glm::vec3{0,10,0}; ///TODO: temp
 		m_textNickEnemies[i].scale = { 2,1,2 };
 		for (int j = 0; j < 4; ++j)
 			m_enemyWheels[i][j].meshRef = &m_app->assetManager.FindMesh("mesh_wheel"),
 			m_enemyWheels[i][j].materialRef = &m_app->assetManager.FindMaterial("material_blue"),
-			m_renderer.Add(&m_playerwheels[j]);
+			m_renderer.AddObject(&m_playerwheels[j]);
 	}
 
 	/// TODO: set emissive color !! material parameters!
@@ -65,15 +73,16 @@ void MultiplayerScreen::OnEntry(void) {
 	skybox.transform.scale = { 3, 3, 3 };
 	skybox.meshRef = &m_app->assetManager.FindMesh("mesh_skybox");
 	skybox.materialRef = &m_app->assetManager.FindMaterial("material_skybox");
-	m_renderer.Add(&skybox);
+	m_renderer.AddObject(&skybox);
 
 	circuit.transform.scale = { 1, 1, 0.2 };
 	circuit.meshRef = &m_app->assetManager.FindMesh("mesh_circuit");
 	circuit.materialRef = &m_app->assetManager.FindMaterial("material_circuit");
-	m_renderer.Add(&circuit);
+	m_renderer.AddObject(&circuit);
 	
+	debugCollisions.color = { 0,0.5, 0 };
 	debugCollisions.meshRef = &m_app->assetManager.FindMesh("mesh_debug_collisions");
-	m_renderer.Add(&debugCollisions);
+	m_renderer.AddObject(&debugCollisions);
 
 	// Init player kart physics
 	m_carPhy.AddTransform(&m_player.transform);
@@ -84,7 +93,7 @@ void MultiplayerScreen::OnEntry(void) {
 	m_dirLight.ambient = { 0.05f, 0.05f, 0.15f };
 	m_dirLight.diffuse = { 0.1f, 0.1f, 0.2f };
 	m_dirLight.specular = { 0.1f, 0.1f, 0.1f };
-	m_renderer.Add(&m_dirLight);
+	m_renderer.AddLight(&m_dirLight);
 
 	// Init point lights
 	m_pointLights[0].position = { 150, 0, 100 };
@@ -96,20 +105,22 @@ void MultiplayerScreen::OnEntry(void) {
 		m_pointLights[i].constant = 1.0f;
 		m_pointLights[i].linear = 0.09f;
 		m_pointLights[i].quadratic = 0.032f;
-		m_renderer.Add(&m_pointLights[i]);
+		m_renderer.AddLight(&m_pointLights[i]);
 	}
 
 	// Init spot lights
-	m_spotLights[0].position = { -8, 8, 0 };
-	m_spotLights[1].position = { 5, 8, 40 };
-	m_spotLights[2].position = { 10, 8, 80 };
-	m_spotLights[3].position = { 40, 8, 108 };
-	m_spotLights[4].position = { 80, 8, 108 };
-	m_spotLights[5].position = { 120, 8, 108 };
-	m_spotLights[6].position = { 200, 8, 108 };
-	m_spotLights[7].position = { 240, 8, 108 };
-	m_spotLights[8].position = { 280, 8, 108 };
-	m_spotLights[9].position = { 320, 8, 108 };
+	m_spotLights[0].position = { 40, 8, 108 };
+	m_spotLights[1].position = { 10, 8, 80 };
+	m_spotLights[2].position = { -3, 8, 7 };
+	m_spotLights[3].position = { -40, 8, -43 };
+	m_spotLights[4].position = { -35, 8, -70 };
+	m_spotLights[5].position = { 10, 8, -108 };
+	m_spotLights[6].position = { 40, 8, -100 };
+	m_spotLights[7].position = { 165, 8, 10 };
+	m_spotLights[8].position = { 290, 8, 20 };
+	m_spotLights[9].position = { 315, 8, 50 };
+	m_spotLights[10].position = { 308, 8, 90 };
+	m_spotLights[12].position = { 280, 8, 108 };
 	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i) {
 		m_spotLights[i].direction = { 0, -1, 0 };
 		m_spotLights[i].ambient = { 1.0f, 1.0f, 1.0f };
@@ -120,18 +131,50 @@ void MultiplayerScreen::OnEntry(void) {
 		m_spotLights[i].quadratic = 0.032f;
 		m_spotLights[i].cutOff = glm::cos(glm::radians(50.0f));
 		m_spotLights[i].outerCutOff = glm::cos(glm::radians(60.0f));
-		m_renderer.Add(&m_spotLights[i]);
+		m_renderer.AddLight(&m_spotLights[i]);
 	}
+
+	m_carLights.position = m_player.transform.position;
+	m_carLights.direction = { -1, 0, 0 };
+	m_carLights.ambient = { 1.0f, 1.0f, 1.0f };
+	m_carLights.diffuse = { 1.0f, 1.0f, 0.5f };
+	m_carLights.specular = { 1.0f, 1.0f, 1.0f };
+	m_carLights.constant = 1.0f;
+	m_carLights.linear = 0.027f;
+	m_carLights.quadratic = 0.0028f;
+	m_carLights.cutOff = glm::cos(glm::radians(30.0f));
+	m_carLights.outerCutOff = glm::cos(glm::radians(40.0f));
+	m_renderer.AddLight(&m_carLights, false);
 
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
 
 	// Send light and material attributes to fragment shader
-	m_mainProgram.bind();
-	m_renderer.SendLightAttributes(m_mainProgram, m_camera);
+	m_mainProgram.Bind();
+	m_renderer.SendStaticLightAttributes(m_mainProgram, m_camera);
 	m_renderer.SendMaterialAttributes(m_mainProgram, m_camera);
-	m_mainProgram.unbind();
+	m_mainProgram.Unbind();
 
+	//IA
+	debugIA.transform.position = { 180, 0, 115 };
+	debugIA.transform.rotation = { 0, -90, 0 };
+	debugIA.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
+	debugIA.materialRef = &m_app->assetManager.FindMaterial("material_red");
+	debugIA.materialRef->materialData[0].shininess = 50;
+	debugIA.materialRef->materialData[0].specular = { 1,1,1 };
+	m_renderer.AddObject(&debugIA);
+	SimplePath_AddPoint(&simplePath, { 40, 108 });
+	SimplePath_AddPoint(&simplePath, { 10, 80 });
+	SimplePath_AddPoint(&simplePath, { -3, 7 });
+	SimplePath_AddPoint(&simplePath, { -40, -43 });
+	SimplePath_AddPoint(&simplePath, { -35, -70 });
+	SimplePath_AddPoint(&simplePath, { 10, -108 });
+	SimplePath_AddPoint(&simplePath, { 40, -100 });
+	SimplePath_AddPoint(&simplePath, { 165, 10 });
+	SimplePath_AddPoint(&simplePath, { 290, 20 });
+	SimplePath_AddPoint(&simplePath, { 315, 50 });
+	SimplePath_AddPoint(&simplePath, { 308, 90 });
+	SimplePath_AddPoint(&simplePath, { 280, 108 });
 }
 
 void MultiplayerScreen::OnExit(void) {
@@ -158,9 +201,36 @@ void MultiplayerScreen::UpdateEnemies(float dt) {
 		m_enemyWheels[i][3].transform.rotation = m_enemies[i].transform.rotation;
 
 		m_textNickEnemies[i].SetText(m_app->enemies[i].nick, { 100, 0, 100 }, m_app->font);
-		m_textNickEnemies[i].position = m_enemies[i].transform.position + glm::vec3{ 0,3,0 };
+		m_textNickEnemies[i].position = m_enemies[i].transform.position + glm::vec3{ 0,4,0 };;
 		m_textNickEnemies[i].rotation = m_enemies[i].transform.rotation;
 	}
+}
+
+inline glm::vec2 DoKinematicSeek(glm::vec2 targetPosition, glm::vec2 agentPosition, float agentMaxSpeed) {
+	// Calculate desired velocity
+	glm::vec2 desiredVelocity = targetPosition - agentPosition;
+	// Normalize
+	glm::normalize(desiredVelocity);
+	// Scale by agentMaxSpeed
+	desiredVelocity *= agentMaxSpeed;
+
+	return desiredVelocity;
+}
+
+inline glm::vec2 DoSteeringSeek(glm::vec2 targetPosition, glm::vec2 agentPosition, glm::vec2 agentSpeed,
+							   float agentMaxSpeed, float agentMaxForce) {
+	// Calculate desired velocity
+	glm::vec2 desiredVelocity = DoKinematicSeek(targetPosition, agentPosition, agentMaxSpeed);
+
+	// Calculate Steering Force
+	glm::vec2 steeringForce = desiredVelocity - agentSpeed;
+
+	// Divide by agentMaxSpeed to get the speed factor
+	steeringForce /= agentMaxSpeed;
+	// Scale this factor by agentMaxForce
+	steeringForce *= agentMaxForce;
+
+	return steeringForce;
 }
 
 void MultiplayerScreen::Update(void) {
@@ -207,13 +277,52 @@ void MultiplayerScreen::Update(void) {
 	m_camera.Translate(m_player.transform.position - (m_carPhy.front*35.0f) + glm::vec3(0.0f,15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.transform.position);
 		//text
-	m_textNick.position = m_player.transform.position + glm::vec3{ 0,3,0 };
+	m_textNick.position = m_player.transform.position + glm::vec3{ 0,4,0 };
 	m_textNick.rotation = m_player.transform.rotation;
 		//Enemies
 	UpdateEnemies(gameApp->deltaTime);
 	
 	//ESC
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
+
+	//Update car light position & direction
+	m_carLights.position = m_player.transform.position + m_carPhy.front*2.0f + glm::vec3{ 0,1,0 };
+	m_carLights.direction = m_carPhy.front - glm::vec3{ 0,0.3f,0 };
+
+	//IA
+	glm::vec2 positionIA ={ debugIA.transform.position.x,debugIA.transform.position.z};
+	// Find Current segment to target
+	glm::vec2 targetSegment = simplePath.pathArray[currentSegment];
+	// Are we near enough targetSegment
+	if (glm::distance(glm::vec2(debugIA.transform.position.x, debugIA.transform.position.z), targetSegment) < K_SIMPLE_PATH_ARRIVAL_DISTANCE) {
+		// Update targetSegment next time
+		currentSegment += pathDirection;
+		if (currentSegment >= simplePath.pathOccupation || currentSegment < 0) {
+			// Loop
+			pathDirection *= -1;
+			currentSegment += pathDirection;
+		}
+	}
+	// Seek target segment
+	steeringForce = DoSteeringSeek(targetSegment, positionIA, speedIA, K_MAX_SPEED, K_MAX_STEER_FORCE);
+	//steeringForce = DoSimplePathFollowing(position, speed, K_MAX_SPEED, K_MAX_STEER_FORCE, simplePath, currentSegment, pathDirection, K_SIMPLE_PATH_ARRIVAL_DISTANCE);
+	acceleration = steeringForce / mass;
+	speedIA += acceleration * m_app->deltaTime*0.05f;
+	// Add speed to speed counter and get number of pixels to move this frame (integer)
+	speedCounterIA += (speedIA * m_app->deltaTime*0.05f);
+	realSpeedIA.x = speedCounterIA.x > 0.0f ? floor(speedCounterIA.x) : ceil(speedCounterIA.x);
+	realSpeedIA.y = speedCounterIA.y > 0.0f ? floor(speedCounterIA.y) : ceil(speedCounterIA.y);
+	// Remainder for next frame
+	speedCounterIA -= realSpeedIA;
+	// Move position
+	positionIA += realSpeedIA;
+	// Update Orientation if speed is higher than a safety threshold
+	/*if (speedIA.Length() > 20.0f) {
+		angle = FloatUtils::CalculateOrientation(speed);
+	}*/
+
+	debugIA.transform.position = glm::vec3(positionIA.x, debugIA.transform.position.y, positionIA.y);
+	std::cout << debugIA.transform.position.x << ", " << debugIA.transform.position.z << std::endl;
 }
 
 void MultiplayerScreen::CheckInput(void) {
@@ -232,20 +341,26 @@ void MultiplayerScreen::CheckInput(void) {
 		}
 	}
 	if (m_app->inputManager.isKeyPressed(SDLK_e)) RendererList::DEBUG_DRAW = !RendererList::DEBUG_DRAW;
-	if (m_app->inputManager.isKeyPressed(SDLK_q)) RendererList::DEBUG_MODE = (RendererList::DEBUG_MODE == GL_TRIANGLES) ? GL_LINES : GL_TRIANGLES;
+	if (m_app->inputManager.isKeyPressed(SDLK_q)) RendererList::WIREFRAME_MODE = !RendererList::WIREFRAME_MODE;
 }
 
 void MultiplayerScreen::Draw(void) {
-	m_mainProgram.bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_mainProgram.Bind();
 		m_renderer.DrawObjects(m_mainProgram, m_camera);
-		m_textNick.Draw(m_mainProgram);
-		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_mainProgram);
-	m_mainProgram.unbind();
+	m_mainProgram.Unbind();
+
+	m_textProgram.Bind();
+		m_textNick.Draw(m_textProgram, m_camera);
+		for (int i = 0; i < MAX_ENEMIES; ++i) m_textNickEnemies[i].Draw(m_textProgram, m_camera);
+	m_textProgram.Unbind();
 
 	if (RendererList::DEBUG_DRAW)
-		m_lightProgram.bind(),
-			m_renderer.DrawDebug(m_lightProgram, m_camera),
-		m_lightProgram.unbind();
+		m_debugProgram.Bind(),
+			m_renderer.DrawDebug(m_debugProgram, m_camera),
+		m_debugProgram.Unbind();
 
 	m_app->window.swapBuffer(); // Swap OpenGL buffers if double-buffering is supported
 }

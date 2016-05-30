@@ -57,7 +57,7 @@ namespace SerraPlo {
 		glEnable(GL_DEPTH_TEST);	// Activate the Z-buffer
 		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Enable alpha blending
 		glCullFace(GL_BACK); glEnable(GL_CULL_FACE); //glFrontFace(GL_CW);
-		glLineWidth(5.0f);
+		glLineWidth(2.0f);
 		if (enableGLHint) EnableGLHint();
 		SDL_GL_SetSwapInterval(0); // Set V-Sync
 		printf("***  OpenGL Version: %s  ***\n", reinterpret_cast<char const*>(glGetString(GL_VERSION)));

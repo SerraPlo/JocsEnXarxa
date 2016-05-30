@@ -23,8 +23,8 @@ namespace SerraPlo {
 		GLint getUniformLocation(const std::string &uniformName) const;
 		GLint getAttribLocation(const std::string &attribName) const;
 
-		inline void bind() const	{ glUseProgram(m_programID); };
-		inline void unbind() const	{ glUseProgram(0); };
+		inline void Bind() const	{ glUseProgram(m_programID); };
+		inline void Unbind() const	{ glUseProgram(0); };
 	};
 
 }

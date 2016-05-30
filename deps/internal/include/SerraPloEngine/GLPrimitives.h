@@ -15,19 +15,6 @@ namespace SerraPlo {
 		void Draw(ShaderProgram &program) const;
 	};
 
-	class GLText {
-	public:
-		GLuint textureid;
-		GLuint vao, vbo;
-		glm::vec3 position{ 0,0,0 };
-		glm::vec3 rotation{ 0,0,0 };
-		glm::vec3 scale{ 0,0,0 };
-		GLText();
-		~GLText() = default;
-		void SetText(const std::string &str, const SDL_Color &color, TTF_Font *font) const;
-		void Draw(ShaderProgram &program) const;
-	};
-
 }
 
 

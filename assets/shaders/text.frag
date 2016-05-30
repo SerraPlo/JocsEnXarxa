@@ -1,13 +1,13 @@
 //The fragment shader operates on each pixel in a given polygon
 #version 330 core
-in vec2 texCoords;
-out vec4 color;
 
-uniform sampler2D text;
-uniform vec3 textColor;
+in vec2 fragColor;
+in vec2 fragUV;
 
-void main()
-{    
-    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, texCoords).r);
-    color = vec4(textColor, 1.0) * sampled;
-}  
+uniform sampler2D texture_sampler;
+ 
+layout (location=0) out vec4 finalColor;
+
+void main() {
+	finalColor = texture(texture_sampler, fragUV);
+}

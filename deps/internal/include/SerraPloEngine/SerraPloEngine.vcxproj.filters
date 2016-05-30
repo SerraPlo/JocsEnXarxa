@@ -93,6 +93,9 @@
     <ClInclude Include="GLPrimitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GLPrimitives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

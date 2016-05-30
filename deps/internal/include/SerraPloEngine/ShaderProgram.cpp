@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 #include "IOManager.h"
 #include "ErrorManager.h"
+#include "PathLoader.h"
 
 namespace SerraPlo {
 
@@ -30,8 +31,8 @@ namespace SerraPlo {
 	void ShaderProgram::LoadShaders(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath) {
 		std::string vertSource, fragSource;
 
-		LoadFileToBuffer(vertexShaderFilePath, vertSource);
-		LoadFileToBuffer(fragmentShaderFilePath, fragSource);
+		LoadFileToBuffer(GetPathToAsset(vertexShaderFilePath), vertSource);
+		LoadFileToBuffer(GetPathToAsset(fragmentShaderFilePath), fragSource);
 
 		m_programID = glCreateProgram();
 		m_vertexShaderID = glCreateShader(GL_VERTEX_SHADER);

@@ -4,28 +4,38 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/GLCamera.h>
 #include <vector>
+#include <iostream>
 using namespace SerraPlo;
 
 class RendererList {
 	std::vector<GameObject*> m_objectList;
 	std::vector<DebugObject*> m_debugList;
 	DirLight *m_dirLight;
-	std::vector<PointLight*> m_pointLightList;
-	std::vector<SpotLight*> m_spotLightList;
+	std::vector<PointLight*> m_staticPointLightList;
+	std::vector<SpotLight*> m_staticSpotLightList;
+	std::vector<PointLight*> m_dynamicPointLightList;
+	std::vector<SpotLight*> m_dynamicSpotLightList;
 public:
+	//GLuint gBuffer;
+	//GLuint gPosition, gNormal, gAlbedoSpec;
 	static bool DEBUG_DRAW;
-	static GLuint DEBUG_MODE;
+	static bool WIREFRAME_MODE;
 
 	explicit RendererList() = default;
 	~RendererList() = default;
 
-	void Add(GameObject *newObject);
-	void Add(DebugObject *newObject);
-	void Add(DirLight *newLight);
-	void Add(PointLight *newLight);
-	void Add(SpotLight *newLight);
+	//void Init(int width, int height);
 
-	void SendLightAttributes(ShaderProgram &program, GLCamera &camera);
+	void AddObject(GameObject *newObject);
+	void AddObject(DebugObject *newObject);
+	void AddLight(DirLight *newLight);
+	void AddLight(PointLight *newLight, bool isStatic = true);
+	void AddLight(SpotLight *newLight, bool isStatic = true);
+
+	//void DrawDeferred(ShaderProgram &gpProgram, ShaderProgram &lpProgram, GLCamera &camera);
+
+	void SendStaticLightAttributes(ShaderProgram &program, GLCamera &camera);
+	void SendDynamicLightAttributes(ShaderProgram &program, GLCamera &camera);
 	static void SendMaterialAttributes(ShaderProgram &program, GLCamera &camera);
 
 	void DrawObjects(ShaderProgram &program, GLCamera &camera);

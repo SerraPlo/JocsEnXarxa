@@ -45,7 +45,7 @@ struct SpotLight {
 };
 
 #define MAX_POINT_LIGHTS 2
-#define MAX_SPOT_LIGHTS 10
+#define MAX_SPOT_LIGHTS 13
  
  in SHADER_SOCKET {
     vec3 fragPosition; // Position in world space.
@@ -153,45 +153,3 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     specular *= attenuation * intensity;
     return (ambient + diffuse + specular);
 }
-
-
-
-
-
-/*
-
-	// Emissive component
-	//vec3 emissive = material.emissive;
-
-		// Ambient component
-	vec3 ambient = light.ambient * vec3(texture(material.diffuse, fragUV));
-
-		// Diffuse component
-	vec3 norm = normalize(fragNormal.xyz);
-	vec3 lightDir = normalize(light.position - fragPosition.xyz);  
-	float diff = max(dot(norm, lightDir), 0.0f);
-	vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, fragUV));
-
-		// Specular component
-	vec3 viewDir = normalize(viewerPosition - fragPosition.xyz);
-	vec3 reflectDir = reflect(-lightDir, norm);  
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-	vec3 specular = light.specular * spec * vec3(texture(material.specular, fragUV));
-
-		// Spotlight (soft edges)
-    float theta = dot(lightDir, normalize(-light.direction)); 
-    float epsilon = (light.cutOff - light.outerCutOff);
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-    diffuse  *= intensity;
-    specular *= intensity;
-
-		// Attenuation
-    float distance    = length(light.position - fragPosition.xyz);
-    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
-    ambient  *= attenuation; 
-    diffuse  *= attenuation;
-    specular *= attenuation;
-
-	finalColor = vec4((ambient + diffuse + specular), 1.0f);
-
-*/

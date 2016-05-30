@@ -54,8 +54,13 @@
   <ItemGroup>
     <None Include="..\..\assets\shaders\main.frag" />
     <None Include="..\..\assets\shaders\main.vert" />
-    <None Include="..\..\assets\shaders\light.frag" />
-    <None Include="..\..\assets\shaders\light.vert" />
-    <None Include="..\..\assets\gameObjects.json" />
+    <None Include="..\..\assets\shaders\g_buffer.frag" />
+    <None Include="..\..\assets\shaders\g_buffer.vert" />
+    <None Include="..\..\assets\shaders\deferred_shading.frag" />
+    <None Include="..\..\assets\shaders\deferred_shading.vert" />
+    <None Include="..\..\assets\shaders\debug.vert" />
+    <None Include="..\..\assets\shaders\debug.frag" />
+    <None Include="..\..\assets\shaders\text.frag" />
+    <None Include="..\..\assets\shaders\text.vert" />
   </ItemGroup>
 </Project>
