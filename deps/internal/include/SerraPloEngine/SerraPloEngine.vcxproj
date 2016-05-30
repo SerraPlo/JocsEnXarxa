@@ -167,6 +167,7 @@
     <ClInclude Include="GLMesh.h" />
     <ClInclude Include="GLLight.h" />
     <ClInclude Include="GLText.h" />
+    <ClInclude Include="IAPhysics.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="GLTexture.h" />
     <ClInclude Include="IScreen.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="GLPrimitives.cpp" />
     <ClCompile Include="GLText.cpp" />
+    <ClCompile Include="IAPhysics.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ScreenList.cpp" />

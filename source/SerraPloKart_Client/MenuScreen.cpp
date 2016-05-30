@@ -25,6 +25,7 @@ void MenuScreen::Destroy(void) {
 }
 
 void MenuScreen::OnEntry(void) {
+	m_app->multiplayerMode = false;
 	SDL_SetRenderDrawColor(m_app->renderer, 255, 255, 255, 255);
 	m_singlePlayer.Reset();
 	m_multiplayer.Reset();
@@ -39,8 +40,9 @@ void MenuScreen::Update(void) {
 	if (SDL_PollEvent(&evnt)) m_app->OnSDLEvent(evnt);
 	m_singlePlayer.Update(m_app->inputManager);
 	m_multiplayer.Update(m_app->inputManager);
-	if (m_multiplayer.pressed) m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOGIN : SCREEN_MULTIPLAYER);
-	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->m_currentScreen->currentState = ScreenState::EXIT;
+	if (m_singlePlayer.pressed) m_app->multiplayerMode = false, m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOADING : SCREEN_SINGLE_PLAYER);
+	if (m_multiplayer.pressed) m_app->multiplayerMode = true, m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOADING : SCREEN_MULTIPLAYER);
+	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->currentScreen->currentState = ScreenState::EXIT;
 }
 
 void MenuScreen::Draw(void) {

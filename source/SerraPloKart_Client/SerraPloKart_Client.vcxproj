@@ -141,18 +141,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AppClient.cpp" />
-    <ClCompile Include="LoginScreen.cpp" />
+    <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="MultiplayerScreen.cpp" />
     <ClCompile Include="RendererList.cpp" />
+    <ClCompile Include="SinglePlayerScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppClient.h" />
-    <ClInclude Include="LoginScreen.h" />
+    <ClInclude Include="LoadingScreen.h" />
     <ClInclude Include="MenuScreen.h" />
     <ClInclude Include="MultiplayerScreen.h" />
     <ClInclude Include="RendererList.h" />
+    <ClInclude Include="SinglePlayerScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\shaders\deferred_shading.frag" />

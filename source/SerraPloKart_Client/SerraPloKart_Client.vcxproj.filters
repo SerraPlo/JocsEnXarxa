@@ -27,10 +27,13 @@
     <ClCompile Include="MenuScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LoginScreen.cpp">
+    <ClCompile Include="MultiplayerScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplayerScreen.cpp">
+    <ClCompile Include="SinglePlayerScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +47,13 @@
     <ClInclude Include="MenuScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoginScreen.h">
+    <ClInclude Include="MultiplayerScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MultiplayerScreen.h">
+    <ClInclude Include="SinglePlayerScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

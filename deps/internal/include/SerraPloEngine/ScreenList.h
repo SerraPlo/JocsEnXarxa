@@ -11,11 +11,12 @@ namespace SerraPlo {
 	protected:
 		std::vector<IScreen*> m_screens;	// Array of screens
 		IApp* m_gameApp;					// Reference pointer to current game app	
-		int m_currentScreenIndex;			// Index of the current running screen
 
 		// Get the current screen object
 		IScreen* GetCurScreen() const;
 	public:
+		int curScreenIndex;			// Index of the current running screen
+		int prevScreenIndex;
 		explicit ScreenList(IApp* game);
 		~ScreenList();
 

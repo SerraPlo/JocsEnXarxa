@@ -19,11 +19,13 @@ void AppClient::Init(void) {
 	// Add the screens of the derived app into the list
 	m_menuScreen = std::make_unique<MenuScreen>();
 	m_screenList->AddScreen(m_menuScreen.get(), SCREEN_MENU);
-	m_loginScreen = std::make_unique<LoginScreen>();
-	m_screenList->AddScreen(m_loginScreen.get(), SCREEN_LOGIN);
-	m_gameplayScreen = std::make_unique<MultiplayerScreen>();
-	m_screenList->AddScreen(m_gameplayScreen.get(), SCREEN_MULTIPLAYER);
-	m_currentScreen = m_screenList->SetScreen(SCREEN_MENU);
+	m_loadingScreen = std::make_unique<LoadingScreen>();
+	m_screenList->AddScreen(m_loadingScreen.get(), SCREEN_LOADING);
+	m_singlePlayerScreen = std::make_unique<SinglePlayerScreen>();
+	m_screenList->AddScreen(m_singlePlayerScreen.get(), SCREEN_SINGLE_PLAYER);
+	m_multiplayerScreen = std::make_unique<MultiplayerScreen>();
+	m_screenList->AddScreen(m_multiplayerScreen.get(), SCREEN_MULTIPLAYER);
+	currentScreen = m_screenList->SetScreen(SCREEN_MENU);
 
 	m_aliveCounter = float(clock());
 }
@@ -62,13 +64,13 @@ void AppClient::LoadAssets(void) {
 }
 
 void AppClient::ChangeScreen(int index) {
-	m_currentScreen = m_screenList->SetScreen(index);
+	currentScreen = m_screenList->SetScreen(index);
 }
 
 void AppClient::OnSDLEvent(SDL_Event & evnt) {
 	switch (evnt.type) { // Check for SDL event type
 		case SDL_QUIT:
-		m_currentScreen->currentState = ScreenState::EXIT; // Set screen state to exit application
+		currentScreen->currentState = ScreenState::EXIT; // Set screen state to exit application
 		break; case SDL_MOUSEMOTION:
 		inputManager.mouseCoords = { static_cast<float>(evnt.motion.x), static_cast<float>(evnt.motion.y) }; // Store the mouse coordinates each time mouse moves through the screen
 		break; case SDL_KEYDOWN:
@@ -129,10 +131,10 @@ void AppClient::ProcessMsgs(void) {
 void AppClient::Update(void) {
 	ProcessMsgs();
 	//if (m_currentScreen) { // If current screen exists
-	switch (m_currentScreen->currentState) { // Check for the state of the screen
+	switch (currentScreen->currentState) { // Check for the state of the screen
 		case ScreenState::RUNNING:
 		inputManager.update();	// Update the input manager instance
-		m_currentScreen->Update(); // Update the current screen if running
+		currentScreen->Update(); // Update the current screen if running
 		break;
 		case ScreenState::EXIT:
 		Exit(); // Call exit function to end the execution
@@ -143,10 +145,8 @@ void AppClient::Update(void) {
 }
 
 void AppClient::Draw(void) const {
-	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the color and depth buffer
-	if (m_currentScreen && m_currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
-		m_currentScreen->Draw(); // Then call the draw method of the screen
+	if (currentScreen && currentScreen->currentState == ScreenState::RUNNING) { // If screen object exists and its state is running
+		currentScreen->Draw(); // Then call the draw method of the screen
 	}
 }
 
@@ -162,29 +162,29 @@ void AppClient::Run(void) {
 	clock_t bench;
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();					// Init FPS counter
-		bench = clock();
+		//bench = clock();
 		Update();							// Main update function
-		benchUpdate += clock() - bench;
+		//benchUpdate += clock() - bench;
 		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
-		bench = clock();
+		//bench = clock();
 		Draw();								// Main draw function
-		benchDraw += clock() - bench;
+		//benchDraw += clock() - bench;
 		fpsLimiter.end();					// Calculate and restore FPS
 		fps = fpsLimiter.fps;				// Get the current fps of the class instance
 		deltaTime = fpsLimiter.deltaTime;	// Get the current fps of the class instance
-		++benchCounter;
+		/*++benchCounter;
 		if (benchCounter > BENCH_DELAY)
 			std::cout << "------------------------------------------" << std::endl,
 			std::cout << "Update call:\t" << float(benchUpdate / BENCH_DELAY) << " ms" << std::endl,
 			std::cout << "Draw call:\t" << float(benchDraw / BENCH_DELAY) << " ms" << std::endl,
 			std::cout << "------------------------------------------" << std::endl,
-			benchCounter = benchUpdate = benchDraw = 0;
+			benchCounter = benchUpdate = benchDraw = 0;*/
 	}
 }
 
 void AppClient::Exit(void) {
 	mainSocket << UDPStream::packet << MSG_EXIT << serverAddress;
-	m_currentScreen->OnExit(); // Call the leaving method of the current screen
+	currentScreen->OnExit(); // Call the leaving method of the current screen
 	if (m_screenList) {
 		m_screenList->Destroy();
 		m_screenList.reset();

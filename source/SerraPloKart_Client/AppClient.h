@@ -7,15 +7,16 @@
 #include <UDPStream/UDPStream.hh>
 #include <memory>
 #include "MenuScreen.h"
-#include "LoginScreen.h"
+#include "LoadingScreen.h"
 #include "MultiplayerScreen.h"
+#include "SinglePlayerScreen.h"
 
 #define INIT_SCREEN_WIDTH 600
 #define INIT_SCREEN_HEIGHT 450
 #define IP_PORT "127.0.0.1:5000"
 #define FONT_SIZE 70
 
-enum SreenType { SCREEN_MENU, SCREEN_LOGIN, SCREEN_MULTIPLAYER, SCREEN_SINGLE_PLAYER };
+enum SreenType { SCREEN_MENU, SCREEN_LOADING, SCREEN_SINGLE_PLAYER, SCREEN_MULTIPLAYER }; ///TODO: bug order!
 
 class AppClient : public IApp {
 	struct Enemy {
@@ -23,12 +24,11 @@ class AppClient : public IApp {
 		Transform targetTransform;
 		Transform transform;
 	};
-	
-	std::unique_ptr<ScreenList> m_screenList{ std::make_unique<ScreenList>(dynamic_cast<IApp*>(this)) }; // Unique pointer instance to the list of screens of the game
 	///TODO: optimize to local
 	std::unique_ptr<MenuScreen> m_menuScreen;
-	std::unique_ptr<LoginScreen> m_loginScreen;
-	std::unique_ptr<MultiplayerScreen> m_gameplayScreen;
+	std::unique_ptr<LoadingScreen> m_loadingScreen;
+	std::unique_ptr<SinglePlayerScreen> m_singlePlayerScreen;
+	std::unique_ptr<MultiplayerScreen> m_multiplayerScreen;
 
 	explicit AppClient() : serverAddress(IP_PORT) {};
 	AppClient(AppClient const&) = delete;
@@ -44,13 +44,15 @@ class AppClient : public IApp {
 	// Main draw function of the game
 	void Draw(void) const;
 public:
+	std::unique_ptr<ScreenList> m_screenList{ std::make_unique<ScreenList>(dynamic_cast<IApp*>(this)) }; // Unique pointer instance to the list of screens of the game
 	int screenWidth{ INIT_SCREEN_WIDTH }, screenHeight{ INIT_SCREEN_HEIGHT };
-	IScreen *m_currentScreen{ nullptr }; // Reference pointer to the screen running at the moment
+	IScreen *currentScreen{ nullptr }; // Reference pointer to the screen running at the moment
 	UDPStream mainSocket;
 	sockaddr serverAddress;
 	GLWindow window;			// Main instance of the OpenGL window
 	InputManager inputManager;	// Main instance of the input manager class
 	AssetManager assetManager;
+	bool multiplayerMode = false; ///TODO: cutre
 
 	std::vector<Enemy> enemies;
 	std::string nick{ "" };
