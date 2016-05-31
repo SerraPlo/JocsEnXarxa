@@ -6,44 +6,44 @@ bool RendererList::DEBUG_DRAW = false;
 bool RendererList::WIREFRAME_MODE = false;
 
 /*void RendererList::Init(int width, int height) {
-	glGenFramebuffers(1, &gBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	// - Position color buffer
-	glGenTextures(1, &gPosition);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
-	// - Normal color buffer
-	glGenTextures(1, &gNormal);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-	// - Color + Specular color buffer
-	glGenTextures(1, &gAlbedoSpec);
-	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
-	// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-	glDrawBuffers(3, attachments);
-	// - Create and attach depth buffer (renderbuffer)
-	GLuint rboDepth;
-	glGenRenderbuffers(1, &rboDepth);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-	// - Finally check if framebuffer is complete
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+glGenFramebuffers(1, &gBuffer);
+glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+// - Position color buffer
+glGenTextures(1, &gPosition);
+glBindTexture(GL_TEXTURE_2D, gPosition);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+// - Normal color buffer
+glGenTextures(1, &gNormal);
+glBindTexture(GL_TEXTURE_2D, gNormal);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+// - Color + Specular color buffer
+glGenTextures(1, &gAlbedoSpec);
+glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+// - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+glDrawBuffers(3, attachments);
+// - Create and attach depth buffer (renderbuffer)
+GLuint rboDepth;
+glGenRenderbuffers(1, &rboDepth);
+glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+// - Finally check if framebuffer is complete
+if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+std::cout << "Framebuffer not complete!" << std::endl;
+glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }*/
 
 // Generates a texture that is suited for attachments to a framebuffer
@@ -72,7 +72,8 @@ GLuint generateAttachmentTexture(GLboolean depth, GLboolean stencil, int screenW
 	return textureID;
 }
 
-void RendererList::InitFrameBuffer(int screenWidth, int screenHeight) {
+void RendererList::InitFramebuffer(int width, int height) {
+	screenWidth = width, screenHeight = height;
 	glGenFramebuffers(1, &framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	// Create a color attachment texture
@@ -85,7 +86,7 @@ void RendererList::InitFrameBuffer(int screenWidth, int screenHeight) {
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight); // Use a single renderbuffer object for both a depth AND stencil buffer.
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // Now actually attach it
-	// Now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+																								  // Now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -112,97 +113,97 @@ void RendererList::AddLight(SpotLight *newLight, bool isStatic) {
 }
 
 /*void RendererList::DrawDeferred(ShaderProgram &gpProgram, ShaderProgram &lpProgram, GLCamera &camera) {
-	static GLboolean wireframe = false;
+static GLboolean wireframe = false;
 
-	glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	gpProgram.Bind();
-	glUniformMatrix4fv(gpProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
-	for (auto gameObject : m_objectList) {
-		Transform &transformTemp = gameObject->transform;
-		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
-		model = glm::scale(model, transformTemp.scale);
-		glUniformMatrix4fv(gpProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
-			glActiveTexture(GL_TEXTURE0);
-			glUniform1i(gpProgram.getUniformLocation("texture_diffuse1"), 0);
-			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
-			glUniform1f(gpProgram.getUniformLocation("spec"), 1);
-			glBindVertexArray(gameObject->meshRef->meshData[i].vao);
-			glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
-		}
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+gpProgram.Bind();
+glUniformMatrix4fv(gpProgram.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
+for (auto gameObject : m_objectList) {
+Transform &transformTemp = gameObject->transform;
+glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
+model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
+model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
+model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
+model = glm::scale(model, transformTemp.scale);
+glUniformMatrix4fv(gpProgram.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
+glActiveTexture(GL_TEXTURE0);
+glUniform1i(gpProgram.getUniformLocation("texture_diffuse1"), 0);
+glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
+glUniform1f(gpProgram.getUniformLocation("spec"), 1);
+glBindVertexArray(gameObject->meshRef->meshData[i].vao);
+glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+}
+glBindTexture(GL_TEXTURE_2D, 0);
+glBindVertexArray(0);
+}
+glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//-------------------------------------------------
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	lpProgram.Bind();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, gPosition);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gNormal);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-	// Also send light relevant uniforms
-	for (GLuint i = 0; i < m_spotLightList.size(); i++) {
-		glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Position"), 1, glm::value_ptr(m_spotLightList[i]->position));
-		glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Color"), 1, glm::value_ptr(m_spotLightList[i]->diffuse));
-		// Update attenuation parameters and calculate radius
-		const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-		const GLfloat linear = 0.09f;
-		const GLfloat quadratic = 0.032f;
-		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Linear"), linear);
-		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Quadratic"), quadratic);
-		// Then calculate radius of light volume/sphere
-		const GLfloat lightThreshold = 5; // 5 / 256
-		const GLfloat maxBrightness = std::fmaxf(std::fmaxf(m_spotLightList[i]->diffuse.r, m_spotLightList[i]->diffuse.g), m_spotLightList[i]->diffuse.b);
-		GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
-		glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Radius"), radius);
-	}
-	glUniform3fv(lpProgram.getUniformLocation("viewPos"), 1, glm::value_ptr(camera.position));
-	glUniform1i(lpProgram.getUniformLocation("draw_mode"), DRAW_MODE);
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//-------------------------------------------------
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+lpProgram.Bind();
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, gPosition);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, gNormal);
+glActiveTexture(GL_TEXTURE2);
+glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+// Also send light relevant uniforms
+for (GLuint i = 0; i < m_spotLightList.size(); i++) {
+glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Position"), 1, glm::value_ptr(m_spotLightList[i]->position));
+glUniform3fv(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Color"), 1, glm::value_ptr(m_spotLightList[i]->diffuse));
+// Update attenuation parameters and calculate radius
+const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+const GLfloat linear = 0.09f;
+const GLfloat quadratic = 0.032f;
+glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Linear"), linear);
+glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Quadratic"), quadratic);
+// Then calculate radius of light volume/sphere
+const GLfloat lightThreshold = 5; // 5 / 256
+const GLfloat maxBrightness = std::fmaxf(std::fmaxf(m_spotLightList[i]->diffuse.r, m_spotLightList[i]->diffuse.g), m_spotLightList[i]->diffuse.b);
+GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
+glUniform1f(lpProgram.getUniformLocation("lights[" + std::to_string(i) + "].Radius"), radius);
+}
+glUniform3fv(lpProgram.getUniformLocation("viewPos"), 1, glm::value_ptr(camera.position));
+glUniform1i(lpProgram.getUniformLocation("draw_mode"), DRAW_MODE);
 
-	static GLuint quadVAO = 0;
-	if (quadVAO == 0)
-	{
-		GLfloat quadVertices[] = {
-			// Positions        // Texture Coords
-			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		};
-		GLuint quadVBO;
-		// Setup plane VAO
-		glGenVertexArrays(1, &quadVAO);
-		glGenBuffers(1, &quadVBO);
-		glBindVertexArray(quadVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	}
-	glBindVertexArray(quadVAO);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindVertexArray(0);
+static GLuint quadVAO = 0;
+if (quadVAO == 0)
+{
+GLfloat quadVertices[] = {
+// Positions        // Texture Coords
+-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+};
+GLuint quadVBO;
+// Setup plane VAO
+glGenVertexArrays(1, &quadVAO);
+glGenBuffers(1, &quadVBO);
+glBindVertexArray(quadVAO);
+glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+glEnableVertexAttribArray(0);
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+glEnableVertexAttribArray(1);
+glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+}
+glBindVertexArray(quadVAO);
+glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+glBindVertexArray(0);
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
-											   // blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
-											   // the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
-											   // depth buffer in another stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
-	glBlitFramebuffer(0, 0, 600, 450, 0, 0, 600, 450, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
+// blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
+// the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the
+// depth buffer in another stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
+glBlitFramebuffer(0, 0, 600, 450, 0, 0, 600, 450, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }*/
 
@@ -213,7 +214,7 @@ void RendererList::SendStaticLightAttributes(ShaderProgram &program, GLCamera &c
 	glUniform3fv(program.getUniformLocation("dirLight.diffuse"), 1, glm::value_ptr(m_dirLight->diffuse)); //0.4f, 0.4f, 0.4f
 	glUniform3fv(program.getUniformLocation("dirLight.specular"), 1, glm::value_ptr(m_dirLight->specular)); //0.5f, 0.5f, 0.5f
 
-	// Point light properties
+																											// Point light properties
 	for (size_t i = 0; i < m_staticPointLightList.size(); ++i)
 		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].position"), 1, glm::value_ptr(m_staticPointLightList[i]->position)),
 		glUniform3fv(program.getUniformLocation("pointLights[" + std::to_string(i) + "].ambient"), 1, glm::value_ptr(m_staticPointLightList[i]->ambient)),
@@ -271,6 +272,7 @@ void RendererList::SendMaterialAttributes(ShaderProgram & program, GLCamera & ca
 	//glUniform1i(program.getUniformLocation("gNormal"), 1);
 	//glUniform1i(program.getUniformLocation("gAlbedoSpec"), 2);
 }
+
 void RendererList::DrawObjects(ShaderProgram & program, GLCamera & camera) {
 	program.Bind();
 	// Send camera matrix to shader (projection + view)
@@ -301,11 +303,13 @@ void RendererList::DrawObjects(ShaderProgram & program, GLCamera & camera) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(0);
 }
-void RendererList::DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera) {
+
+void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera) {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	glViewport(0, 0, screenWidth, screenHeight);
 	program.Bind();
 	// Send camera matrix to shader (projection + view)
 	glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
@@ -334,11 +338,11 @@ void RendererList::DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram,
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(0);
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
-	glClear(GL_COLOR_BUFFER_BIT);
+
+
 	glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
+	glViewport(screenWidth*0.6f, screenHeight*0.05f, screenWidth*0.35f, screenHeight*0.3f);
 
 	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 								 // Positions   // TexCoords
@@ -365,9 +369,12 @@ void RendererList::DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram,
 	}
 	fbProgram.Bind();
 	glBindVertexArray(quadVAO);
-	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// Use the color attachment texture as the texture of the quad plane
+	glBindTexture(GL_TEXTURE_2D, textureColorbuffer); // Use the color attachment texture as the texture of the quad plane
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
+
+	glViewport(0, 0, screenWidth, screenHeight);
+	glEnable(GL_DEPTH_TEST);
 
 	///glDrawElementsInstanced(GL_TRIANGLES, meshData[i].numElements, GL_UNSIGNED_INT, nullptr, 1); //TODO
 	//glDrawArrays(GL_LINES, /*primer*/, /*num*/);

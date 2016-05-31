@@ -18,14 +18,15 @@ class RendererList {
 public:
 	GLuint framebuffer;
 	GLuint textureColorbuffer;
-	GLuint quadVAO = 0, quadVBO = 0;
+	GLuint quadVAO = 0, quadVBO = 0; ///TODO: temp
+	int screenWidth, screenHeight;
 	static bool DEBUG_DRAW;
 	static bool WIREFRAME_MODE;
 
 	explicit RendererList() = default;
 	~RendererList() = default;
 
-	void InitFrameBuffer(int width, int height);
+	void InitFramebuffer(int width, int height);
 	//void Init(int width, int height);
 
 	void AddObject(GameObject *newObject);
@@ -40,10 +41,9 @@ public:
 	void SendDynamicLightAttributes(ShaderProgram &program, GLCamera &camera);
 	static void SendMaterialAttributes(ShaderProgram &program, GLCamera &camera);
 
-	void DrawObjects(ShaderProgram & program, GLCamera & camera);
-	void DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera);
+	void DrawObjects(ShaderProgram &program, GLCamera &camera);
+	void DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera);
 	void DrawDebug(ShaderProgram &program, GLCamera &camera);
 
 	void Clear();
 };
-

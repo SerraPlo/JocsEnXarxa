@@ -32,11 +32,12 @@ private:
 
 	// Shader programs
 	ShaderProgram m_mainProgram;
-	ShaderProgram m_textProgram;
+	ShaderProgram m_screenProgram;
 	ShaderProgram m_debugProgram;
 
 	// Camera
 	GLCamera m_camera;
+	GLCamera m_minimapCamera;
 
 	// Game objects
 	RendererList m_renderer;

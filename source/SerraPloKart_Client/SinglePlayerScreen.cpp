@@ -12,10 +12,11 @@ void SinglePlayerScreen::Build(void) {
 	// Initialize camera with viewport dimensions
 	int nw = (m_app->screenHeight * FIXED_ASPECT_RATIO);
 	m_camera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
+	m_minimapCamera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
 
 	//Initialize main shaders
 	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
-	m_textProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
+	m_screenProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 
@@ -42,7 +43,7 @@ void SinglePlayerScreen::Build(void) {
 	m_aiPhysics.AddAICar(&m_aiEnemies[2].transform, 0.7f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_aiEnemies[3].transform, 0.8f, 200.0f * 60.0f);
 	
-	m_renderer.InitFrameBuffer(m_app->screenWidth, m_app->screenHeight);
+	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
 
 void SinglePlayerScreen::Destroy(void) {
@@ -208,6 +209,9 @@ void SinglePlayerScreen::Update(void) {
 	glm::vec2 direction = glm::normalize(m_aiPhysics.aiCarArray[0].speed);
 	m_camera.Translate(m_aiEnemies[0].transform.position - (glm::vec3{ direction.x, 0, direction.y}*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].transform.position);
+
+	m_minimapCamera.Translate({ m_aiEnemies[0].transform.position.x, 100, m_aiEnemies[0].transform.position.y });
+	m_minimapCamera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].transform.position);
 }
 
 void SinglePlayerScreen::CheckInput(void) {
@@ -233,7 +237,8 @@ void SinglePlayerScreen::Draw(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	m_renderer.DrawObjects(m_mainProgram, m_textProgram, m_camera);
+	m_renderer.DrawObjects(m_mainProgram, m_camera);
+	m_renderer.DrawFramebuffer(m_mainProgram, m_screenProgram, m_minimapCamera);
 
 	if (RendererList::DEBUG_DRAW)
 		m_debugProgram.Bind(),
