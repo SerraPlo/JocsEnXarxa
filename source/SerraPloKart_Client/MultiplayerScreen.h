@@ -5,6 +5,7 @@
 #include <SerraPloEngine/CarPhysics.h>
 #include <SerraPloEngine/GLText.h>
 #include "RendererList.h"
+#include <vector>
 #include <SerraPloEngine/IAPhysics.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;

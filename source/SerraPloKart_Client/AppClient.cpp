@@ -107,7 +107,12 @@ void AppClient::ProcessMsgs(void) {
 				Enemy a;
 				mainSocket >> a.nick >> a.transform.position.x >> a.transform.position.z >> a.transform.rotation.y;
 				std::cout << a.nick << std::endl;
-				if (a.nick == nick); ///mirar trampes TODO
+				if (a.nick == nick) {
+					std::cout << "myServTrans updated" << std::endl;
+					myServTrans.position.x = a.transform.position.x;
+					myServTrans.position.z = a.transform.position.z;
+					myServTrans.rotation.y = a.transform.rotation.y;
+				}
 				else {
 					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
 					for (auto &enemy : enemies) {

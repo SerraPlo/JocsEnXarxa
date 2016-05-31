@@ -192,6 +192,7 @@ void MultiplayerScreen::OnExit(void) {
 
 void MultiplayerScreen::UpdateEnemies(float dt) {
 	///TODO: send nick info only one time
+	std::cout << m_app->enemies.size() << std::endl;
 	for (size_t i = 0; i < m_app->enemies.size(); i++) {
 		//bad intterpolation 
 		m_enemies[i].transform.position += (m_app->enemies[i].targetTransform.position - m_enemies[i].transform.position)/4.0f;
@@ -218,6 +219,8 @@ void MultiplayerScreen::UpdateEnemies(float dt) {
 void MultiplayerScreen::Update(void) {
 	//input
 	static int m_inputCounter = 0;
+	static float ccX[10];
+	static float ccY[10];
 	static input10 m_in2send;
 	CheckInput();
 	static bool temp[5];
@@ -227,17 +230,31 @@ void MultiplayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
+
 	//Update
-	m_carPhysics.Update(temp, gameApp->deltaTime);
+	std::vector<glm::vec3> enemiesPos;
+	for (size_t i = 0; i < m_app->enemies.size(); i++) {
+		enemiesPos.push_back(m_enemies[i].transform.position);
+	}
+	std::cout << m_app->myServTrans.position.x << std::endl;
+	glm::vec2 vecColCar = m_carPhysics.ColideCars(enemiesPos);
+	if (glm::length(m_player.transform.position - m_app->myServTrans.position) >= 15.0f) {
+		m_player.transform.position = m_app->myServTrans.position;
+		std::cout << "///////////////////////////PositionCorrected" << std::endl;
+	}
+	m_carPhysics.Update(temp, gameApp->deltaTime, vecColCar);
+	
+
 	//Send to server
 	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
 	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];
 	m_in2send.dt[m_inputCounter] = m_app->deltaTime;
+	ccX[m_inputCounter] = vecColCar.x; ccY[m_inputCounter] = vecColCar.y;
 	m_inputCounter++;
 	if (m_inputCounter >= 10) {//send cada 10 updates
 		m_inputCounter = 0;
 		try {
-			m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << m_app->serverAddress;
+			m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << ccX << ccY << m_app->serverAddress;
 		} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 			std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 		} catch (UDPStream::empty) {} //if the package is empty or have not received anything
@@ -299,7 +316,7 @@ void MultiplayerScreen::Draw(void) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_mainProgram.Bind();
-		//m_renderer.DrawObjects(m_mainProgram, m_camera);
+	m_renderer.DrawObjects(m_mainProgram, m_camera);
 	m_mainProgram.Unbind();
 
 	m_textProgram.Bind();

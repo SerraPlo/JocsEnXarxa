@@ -40,6 +40,7 @@ public:
 	void SendDynamicLightAttributes(ShaderProgram &program, GLCamera &camera);
 	static void SendMaterialAttributes(ShaderProgram &program, GLCamera &camera);
 
+	void DrawObjects(ShaderProgram & program, GLCamera & camera);
 	void DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera);
 	void DrawDebug(ShaderProgram &program, GLCamera &camera);
 

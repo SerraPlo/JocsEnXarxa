@@ -13,6 +13,9 @@ public:
 	int screenIndex{ SCREEN_INDEX_NO_SCREEN };
 	Transform transform;
 	CarPhysics carPhy;
-	ClientProxy(sockaddr addr, const std::string &str) : address(addr), nick(str) {};
+	ClientProxy(sockaddr addr, const std::string &str) : address(addr), nick(str) {
+		transform.position = { 180 , 0, 115 };
+		transform.rotation = { 0, -90, 0 };
+	};
 	~ClientProxy() = default;
 };

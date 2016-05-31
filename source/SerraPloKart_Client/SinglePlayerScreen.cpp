@@ -177,7 +177,7 @@ void SinglePlayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 	//Update
-	m_carPhysics.Update(temp, gameApp->deltaTime);
+	m_carPhysics.Update(temp, gameApp->deltaTime, { 0.0f,0.0f });
 	//Send to server
 	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
 	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "Transform.h"
 #include "CollisionManager.h"
 
@@ -23,6 +24,8 @@ namespace SerraPlo {
 		glm::vec3 front;
 		float collisionForce;
 		glm::vec2 collisionDirection;
+		float collisionCarForce;
+		glm::vec2 collisionCarDirection;
 		float accel = 0.0f;
 		float velocity = 0.0f;
 		bool smoothSteer = true;
@@ -33,17 +36,19 @@ namespace SerraPlo {
 		int ebrake = 0;
 		float steer = 0.0;
 		float steerAngle = 0.0;
+		glm::vec2 positionsCol[4];
 
 		CarPhysics();
 		~CarPhysics() = default;
 
 		void AddTransform(Transform* _transform) { transform = _transform; }
-		void Update(bool arrayK[5], float deltaTime);
+		void Update(bool arrayK[5], float deltaTime, glm::vec2 colCarVector);
+		glm::vec2 ColideCars(std::vector<glm::vec3> a);
 	private:
 		float applySmoothSteer(float steerInput, float dt);
 		float applySafeSteer(float steerInput) const;
 		void processInput(bool arrayK[5], float dt);
-		void doPhysics(float deltaTime);
+		void doPhysics(float deltaTime, glm::vec2 colCarVector);
 	};
 
 }

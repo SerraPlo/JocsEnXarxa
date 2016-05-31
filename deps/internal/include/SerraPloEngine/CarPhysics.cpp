@@ -12,7 +12,9 @@ namespace SerraPlo {
 	CarPhysics::CarPhysics() {
 		collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));
 		collisionDirection = { 0.0f,0.0f };
-		collisionForce = 0.0f;
+		collisionForce = 0.0f; 
+		collisionCarDirection = { 0.0f,0.0f };
+		collisionCarForce = 0.0f;
 	}
 
 	float CarPhysics::applySmoothSteer(float steerInput, float dt) {
@@ -46,7 +48,7 @@ namespace SerraPlo {
 		//std::cout << "steer: " << steer << "/ steerAngle: " << (steerAngle*180.0f) / M_PI << std::endl;
 	}
 
-	void CarPhysics::doPhysics(float deltaTime) {
+	void CarPhysics::doPhysics(float deltaTime, glm::vec2 colCarVector) {
 		front = glm::vec3(sin((transform->rotation.y*M_PI) / 180), 0.0f, cos((transform->rotation.y*M_PI) / 180));
 
 		float _brake = min(brake * BRAKE_FORCE + ebrake * cfg.eBrakeForce, BRAKE_FORCE);
@@ -67,42 +69,60 @@ namespace SerraPlo {
 		if (collisionForce > 0.0f) collisionForce -= 100.0f*deltaTime;
 		else collisionForce = 0.0f;
 
-		glm::vec2 newPos = glm::vec2((transform->position + front*velocity*deltaTime).x, (transform->position + front* velocity *deltaTime).z)+ collisionDirection*collisionForce*deltaTime;
+		if (colCarVector.x == 0.0f && colCarVector.y == 0.0f) {
+			if (collisionCarForce > 0.0f) collisionCarForce -= 100.0f*deltaTime;
+			else collisionCarForce = 0.0f;
+		}else {
+			collisionCarDirection = colCarVector;
+			collisionCarForce = 40.0f;
+		}
+		
+
+		glm::vec2 newPos = glm::vec2((transform->position + front*velocity*deltaTime).x, (transform->position + front* velocity *deltaTime).z)+(collisionDirection*collisionForce+collisionCarDirection*collisionCarForce)*deltaTime;
 		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
 		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
-		glm::vec2 positionsCol[4];
 		positionsCol[0] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[1] = newPos + front2*2.0f - pFront2*1.25f;
 		positionsCol[2] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos + front2*2.0f - pFront2*1.25f;
 		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
 
 		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
 		//std::cout << positionsCol[0].x << "," << positionsCol[0].y<<std::endl;
+
 		if (collisions.CalculateCollision(positionsCol) == -1) {
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
-		}
-		else {
+		}else {
 			int i = collisions.CalculateCollision(positionsCol);
-			
 			if (i < collisions.nBoxs) {
 				velocity = 0.0f;
 				collisionDirection = glm::normalize(glm::vec2(transform->position.x,transform->position.z)-newPos);
 				collisionForce = 40.0f;
-			}
-			else {
+			}else {
 				velocity /= 2.0f;
 				collisionDirection = glm::normalize(newPos - collisions.circles[i-collisions.nBoxs].c);
 				collisionForce = 40.0f;
 			}
 			newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z) + collisionDirection*collisionForce*deltaTime;
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
-
 		}
 		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 
-	void CarPhysics::Update(bool arrayK[5], float deltaTime) {
+	glm::vec2 CarPhysics::ColideCars(std::vector<glm::vec3> a){
+		glm::vec2 directionVec = {0.0f,0.0f};
+		float rad = 5.0f;
+		for (size_t i = 0; i < a.size(); i++) {
+			if (glm::length(a[i] - transform->position) <= rad) {
+				directionVec = glm::normalize(glm::vec2((transform->position- a[i]).x,(transform->position- a[i]).z));
+				std::cout << "coliding with : " << i << std::endl;
+				break;
+			}
+		}
+		return directionVec;
+	}
+
+	void CarPhysics::Update(bool arrayK[5], float deltaTime, glm::vec2 colCarVector) {
 		processInput(arrayK, deltaTime);
-		doPhysics(deltaTime);
+		doPhysics(deltaTime, colCarVector);
 		//std::cout << "position:[" << transform->position.x << "," << transform->position.y << "," << transform->position.z << "] -> speed:"<< absVel << std::endl;
 		//std::cout << "throttle: " << throttle << ", brake: " << brake << ", steerAngle: " << steerAngle << ", velocity_c.x: " << velocity_c.x << ", velocity_c.z: " << velocity_c.z << std::endl;
 	}

@@ -39,7 +39,7 @@ namespace SerraPlo {
 			aiCar.speed += acceleration * deltaTime*0.1f;
 			aiCar.transformRef->position.x += aiCar.speed.x;
 			aiCar.transformRef->position.z += aiCar.speed.y;
-			std::cout << aiCar.speed.x << ", " << aiCar.speed.y << std::endl;
+			//std::cout << aiCar.speed.x << ", " << aiCar.speed.y << std::endl;
 			glm::vec2 direction = glm::normalize(aiCar.speed);
 			angle = float(atan2f(direction.y, -direction.x) * RAD2DEG) - 90.0f;
 			if (glm::length(angle) > 1.0f) aiCar.transformRef->rotation.y = angle;

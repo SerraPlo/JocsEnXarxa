@@ -33,7 +33,7 @@ void AppServer::Update(void) {
 					clientList[sender.hash] = new ClientProxy(sender,nick);
 					clientList[sender.hash]->carPhy.AddTransform(&clientList[sender.hash]->transform);
 					std::cout << nick << " has logged in. Added to client database." << std::endl;
-					dispatcher << UDPStream::packet << MSG_BEGIN <<  sender;
+					dispatcher << UDPStream::packet << MSG_BEGIN << sender;
 				}
 			} break;
 			case MSG_EXIT: {
@@ -43,14 +43,15 @@ void AppServer::Update(void) {
 			} break;
 			case MSG_UPDATE: {
 				input10 input;
-				dispatcher >> input.w >> input.a >> input.s >> input.d >> input.dt;
+				float ccX[10]; float ccY[10];
+				dispatcher >> input.w >> input.a >> input.s >> input.d >>ccX>>ccY>> input.dt ;
 				bool temp[5];
 				for (int i = 0; i < 10; i++) {
 					//memset(temp, false, 5);
 					temp[0] = input.w[i]; temp[1] = input.a[i];
 					temp[2] = input.s[i]; temp[3] = input.d[i];
 					temp[4] = false;
-					clientList[sender.hash]->carPhy.Update(temp, input.dt[i]);
+					clientList[sender.hash]->carPhy.Update(temp, input.dt[i], glm::vec2(ccX[i],ccY[i]));
 				}
 				//std::cout << clientList[sender.hash].transform.position.x << "," << clientList[sender.hash].transform.position.z << std::endl;
 				//std::cout << clientList[sender.hash].transform.rotation.y << std::endl;

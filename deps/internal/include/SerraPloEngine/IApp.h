@@ -16,6 +16,7 @@ namespace SerraPlo {
 		bool s[10];
 		bool d[10];
 		float dt[10];
+		float colCar[20];
 	};
 
 	// Game app interface to the store the main runing game engine as a template

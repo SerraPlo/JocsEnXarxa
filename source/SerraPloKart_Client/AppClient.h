@@ -56,7 +56,8 @@ public:
 
 	std::vector<Enemy> enemies;
 	std::string nick{ "" };
-	
+	Transform myServTrans;
+
 	SDL_Renderer *renderer{ nullptr };
 	TTF_Font *font{ nullptr };
 
