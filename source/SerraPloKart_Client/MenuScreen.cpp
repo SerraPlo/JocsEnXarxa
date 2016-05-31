@@ -41,7 +41,7 @@ void MenuScreen::Update(void) {
 	m_singlePlayer.Update(m_app->inputManager);
 	m_multiplayer.Update(m_app->inputManager);
 	if (m_singlePlayer.pressed) m_app->multiplayerMode = false, m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOADING : SCREEN_SINGLE_PLAYER);
-	if (m_multiplayer.pressed) m_app->multiplayerMode = true, m_app->ChangeScreen((m_app->assetManager.Empty()) ? SCREEN_LOADING : SCREEN_MULTIPLAYER);
+	if (m_multiplayer.pressed) m_app->multiplayerMode = true, m_app->ChangeScreen((m_app->nick.empty()) ? SCREEN_LOADING : SCREEN_MULTIPLAYER);
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->currentScreen->currentState = ScreenState::EXIT;
 }
 

@@ -16,14 +16,16 @@ class RendererList {
 	std::vector<PointLight*> m_dynamicPointLightList;
 	std::vector<SpotLight*> m_dynamicSpotLightList;
 public:
-	//GLuint gBuffer;
-	//GLuint gPosition, gNormal, gAlbedoSpec;
+	GLuint framebuffer;
+	GLuint textureColorbuffer;
+	GLuint quadVAO = 0, quadVBO = 0;
 	static bool DEBUG_DRAW;
 	static bool WIREFRAME_MODE;
 
 	explicit RendererList() = default;
 	~RendererList() = default;
 
+	void InitFrameBuffer(int width, int height);
 	//void Init(int width, int height);
 
 	void AddObject(GameObject *newObject);
@@ -38,7 +40,7 @@ public:
 	void SendDynamicLightAttributes(ShaderProgram &program, GLCamera &camera);
 	static void SendMaterialAttributes(ShaderProgram &program, GLCamera &camera);
 
-	void DrawObjects(ShaderProgram &program, GLCamera &camera);
+	void DrawObjects(ShaderProgram &program, ShaderProgram &fbProgram, GLCamera &camera);
 	void DrawDebug(ShaderProgram &program, GLCamera &camera);
 
 	void Clear();

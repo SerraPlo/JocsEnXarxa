@@ -159,6 +159,8 @@
   <ItemGroup>
     <None Include="..\..\assets\shaders\deferred_shading.frag" />
     <None Include="..\..\assets\shaders\deferred_shading.vert" />
+    <None Include="..\..\assets\shaders\screen.frag" />
+    <None Include="..\..\assets\shaders\screen.vert" />
     <None Include="..\..\assets\shaders\g_buffer.frag" />
     <None Include="..\..\assets\shaders\g_buffer.vert" />
     <None Include="..\..\assets\shaders\debug.frag" />

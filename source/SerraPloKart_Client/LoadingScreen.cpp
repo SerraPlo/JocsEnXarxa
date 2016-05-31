@@ -37,7 +37,7 @@ void LoadingScreen::Update(void) {
 			if (SDL_PollEvent(&evnt)) {
 				switch (evnt.type) {
 					case SDL_TEXTINPUT: if (m_nickText.size() < TEXT_MAX_SIZE) m_nickText += evnt.text.text; break;
-						//case SDL_TEXTEDITING: break;
+					//case SDL_TEXTEDITING: break;
 				}
 			}
 			if (m_app->inputManager.isKeyPressed(SDLK_RETURN) && !m_nickText.empty()) m_app->nick = m_nickText;

@@ -32,6 +32,12 @@ namespace SerraPlo {
 		while GL_NICEST indicates that texture images should be compressed with as little image quality loss as possible. 
 		GL_NICEST should be selected if the texture is to be retrieved by glGetCompressedTexImage for reuse.*/ \
 		glHint(GL_TEXTURE_COMPRESSION_HINT, GL_NICEST); \
+
+#define EnableStencilTest() glEnable(GL_DEPTH_TEST); \
+							glDepthFunc(GL_LESS); \
+							glEnable(GL_STENCIL_TEST); \
+							glStencilFunc(GL_NOTEQUAL, 1, 0xFF); \
+							glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); \
 	
 	// Initialize SDL systems
 	void InitSDL(void) {
@@ -50,15 +56,17 @@ namespace SerraPlo {
 	}
 
 	// Initialize SDL attributes
-	void InitOpenGL(bool enableGLHint = true) {
+	void InitOpenGL(void) {
 		glewExperimental = true;
 		if (glewInit() != GLEW_OK) SP_THROW_ERROR("GLEW could not be initialized.");
-		glClearDepth(1.0);			// Set the base depth when depth buffer
-		glEnable(GL_DEPTH_TEST);	// Activate the Z-buffer
+		glClearDepth(1.0); // Set the base depth when depth buffer
+		glEnable(GL_DEPTH_TEST); // Activate the Z-buffer
 		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Enable alpha blending
-		glCullFace(GL_BACK); glEnable(GL_CULL_FACE); //glFrontFace(GL_CW);
+		glEnable(GL_CULL_FACE); glCullFace(GL_BACK); //glFrontFace(GL_CW);
 		glLineWidth(2.0f);
-		if (enableGLHint) EnableGLHint();
+		EnableGLHint();
+		///EnableStencilTest(); TODO
+		glDepthFunc(GL_LESS);
 		SDL_GL_SetSwapInterval(0); // Set V-Sync
 		printf("***  OpenGL Version: %s  ***\n", reinterpret_cast<char const*>(glGetString(GL_VERSION)));
 	}

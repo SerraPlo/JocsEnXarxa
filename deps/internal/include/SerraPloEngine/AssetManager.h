@@ -10,7 +10,7 @@ namespace SerraPlo {
 	class AssetManager {
 	public:
 		std::map<std::string, GlobalMesh> meshList;
-		std::map<std::string, GlobalMaterial> materialList;
+		std::map<std::string, GlobalMaterial> materialList; ///TODO: only textures
 		explicit AssetManager() = default;
 		~AssetManager() {
 			for (auto& entity : meshList)

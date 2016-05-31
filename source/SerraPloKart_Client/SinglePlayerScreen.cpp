@@ -15,7 +15,7 @@ void SinglePlayerScreen::Build(void) {
 
 	//Initialize main shaders
 	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
-	m_textProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
+	m_textProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 
@@ -41,6 +41,8 @@ void SinglePlayerScreen::Build(void) {
 	m_aiPhysics.AddAICar(&m_aiEnemies[1].transform, 0.6f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_aiEnemies[2].transform, 0.7f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_aiEnemies[3].transform, 0.8f, 200.0f * 60.0f);
+	
+	m_renderer.InitFrameBuffer(m_app->screenWidth, m_app->screenHeight);
 }
 
 void SinglePlayerScreen::Destroy(void) {
@@ -231,9 +233,7 @@ void SinglePlayerScreen::Draw(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	m_mainProgram.Bind();
-	m_renderer.DrawObjects(m_mainProgram, m_camera);
-	m_mainProgram.Unbind();
+	m_renderer.DrawObjects(m_mainProgram, m_textProgram, m_camera);
 
 	if (RendererList::DEBUG_DRAW)
 		m_debugProgram.Bind(),

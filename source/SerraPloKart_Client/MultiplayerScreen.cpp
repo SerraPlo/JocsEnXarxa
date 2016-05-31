@@ -34,6 +34,7 @@ void MultiplayerScreen::Build(void) {
 		{ 308, 90 },
 		{ 280, 108 }
 	};
+
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.transform);
 	m_aiPhysics.AddAICar(&debugIA1.transform, 0.8f, 200.0f * 60.0f);
@@ -298,7 +299,7 @@ void MultiplayerScreen::Draw(void) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_mainProgram.Bind();
-		m_renderer.DrawObjects(m_mainProgram, m_camera);
+		//m_renderer.DrawObjects(m_mainProgram, m_camera);
 	m_mainProgram.Unbind();
 
 	m_textProgram.Bind();

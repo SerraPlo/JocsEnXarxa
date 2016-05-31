@@ -68,5 +68,7 @@
     <None Include="..\..\assets\shaders\debug.frag" />
     <None Include="..\..\assets\shaders\text.frag" />
     <None Include="..\..\assets\shaders\text.vert" />
+    <None Include="..\..\assets\shaders\screen.frag" />
+    <None Include="..\..\assets\shaders\screen.vert" />
   </ItemGroup>
 </Project>
