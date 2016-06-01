@@ -26,8 +26,6 @@ void AppClient::Init(void) {
 	m_multiplayerScreen = std::make_unique<MultiplayerScreen>();
 	m_screenList->AddScreen(m_multiplayerScreen.get(), SCREEN_MULTIPLAYER);
 	currentScreen = m_screenList->SetScreen(SCREEN_MENU);
-
-	m_aliveCounter = float(clock());
 }
 
 void AppClient::LoadAssets(void) {
@@ -86,67 +84,19 @@ void AppClient::OnSDLEvent(SDL_Event & evnt) {
 	}
 }
 
-void AppClient::ProcessMsgs(void) {
-	try {
-		int header;
-		mainSocket >> UDPStream::packet >> header;
-		switch (header) {
-			case MSG_BEGIN: {
-				std::cout << "Server accepted entry. Game begins." << std::endl; 
-				//ChangeScreen(SCREEN_MULTIPLAYER);
-			} break;
-			case MSG_EXIT: {
-				std::cout << "Server closed. Disconecting..." << std::endl;
-				Exit();
-			} break;
-			case MSG_ALIVE: {
-				std::cout << "Server is alive" << std::endl;
-				m_aliveCounter = float(clock());
-			} break;
-			case MSG_UPDATE: {
-				Enemy a;
-				mainSocket >> a.nick >> a.transform.position.x >> a.transform.position.z >> a.transform.rotation.y;
-				std::cout << a.nick << std::endl;
-				if (a.nick == nick) {
-					std::cout << "myServTrans updated" << std::endl;
-					myServTrans.position.x = a.transform.position.x;
-					myServTrans.position.z = a.transform.position.z;
-					myServTrans.rotation.y = a.transform.rotation.y;
-				}
-				else {
-					bool virgin = true; ///TODOOOOOOOOOOOOOOOOOO
-					for (auto &enemy : enemies) {
-						if (enemy.nick == a.nick) {
-							enemy.targetTransform = a.transform;
-							virgin = false;
-							break;
-						} 
-					}
-					if(virgin) enemies.push_back(a);
-				}
-			} break;
-			default: break;
-		}
-	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
-		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
-	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
-	//if (clock() > m_aliveCounter + MS_ALIVE_DELAY+1000) std::cout << "Server closed. Disconecting..." << std::endl, Exit();
-}
-
 void AppClient::Update(void) {
-	ProcessMsgs();
-	//if (m_currentScreen) { // If current screen exists
-	switch (currentScreen->currentState) { // Check for the state of the screen
-		case ScreenState::RUNNING:
-		inputManager.update();	// Update the input manager instance
-		currentScreen->Update(); // Update the current screen if running
-		break;
-		case ScreenState::EXIT:
-		Exit(); // Call exit function to end the execution
-		break;
-		case ScreenState::SLEEP: default: break;
-	}
-	//} else Exit(); // Call exit function if screen doesn't exist
+	if (currentScreen) { // If current screen exists
+		switch (currentScreen->currentState) { // Check for the state of the screen
+			case ScreenState::RUNNING:
+			inputManager.update();	// Update the input manager instance
+			currentScreen->Update(); // Update the current screen if running
+			break;
+			case ScreenState::EXIT:
+			Exit(); // Call exit function to end the execution
+			break;
+			case ScreenState::SLEEP: default: break;
+		}
+	} else Exit(); // Call exit function if screen doesn't exist
 }
 
 void AppClient::Draw(void) const {
@@ -160,40 +110,21 @@ void AppClient::Run(void) {
 	FPSLimiter fpsLimiter; // Spawn the main instance of the timing limiter
 	fpsLimiter.setTargetFPS(TARGET_FPS); // Set the frames per second we whish to have, ideally 60-120
 
-	const int BENCH_DELAY = 200;
-	int benchCounter = 0;
-	clock_t benchUpdate = 0;
-	clock_t benchDraw = 0;
-	clock_t bench;
 	while (m_isRunning) { // While game is running
 		fpsLimiter.begin();					// Init FPS counter
-		//bench = clock();
 		Update();							// Main update function
-		//benchUpdate += clock() - bench;
 		if (!m_isRunning) break;			// Break main game loop if running attribute set to false
-		//bench = clock();
 		Draw();								// Main draw function
-		//benchDraw += clock() - bench;
 		fpsLimiter.end();					// Calculate and restore FPS
 		fps = fpsLimiter.fps;				// Get the current fps of the class instance
 		deltaTime = fpsLimiter.deltaTime;	// Get the current fps of the class instance
-		/*++benchCounter;
-		if (benchCounter > BENCH_DELAY)
-			std::cout << "------------------------------------------" << std::endl,
-			std::cout << "Update call:\t" << float(benchUpdate / BENCH_DELAY) << " ms" << std::endl,
-			std::cout << "Draw call:\t" << float(benchDraw / BENCH_DELAY) << " ms" << std::endl,
-			std::cout << "------------------------------------------" << std::endl,
-			benchCounter = benchUpdate = benchDraw = 0;*/
 	}
 }
 
 void AppClient::Exit(void) {
 	mainSocket << UDPStream::packet << MSG_EXIT << serverAddress;
 	currentScreen->OnExit(); // Call the leaving method of the current screen
-	if (m_screenList) {
-		m_screenList->Destroy();
-		m_screenList.reset();
-	}
+	if (m_screenList) m_screenList->Destroy(), m_screenList.reset();
 	SDL_DestroyRenderer(renderer);
 	TTF_CloseFont(font);
 	DestroySDL();

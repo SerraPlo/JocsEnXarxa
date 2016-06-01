@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{412fab64-c231-4412-bd64-b9b2231309fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,17 +61,41 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\shaders\main.frag" />
-    <None Include="..\..\assets\shaders\main.vert" />
-    <None Include="..\..\assets\shaders\g_buffer.frag" />
-    <None Include="..\..\assets\shaders\g_buffer.vert" />
-    <None Include="..\..\assets\shaders\deferred_shading.frag" />
-    <None Include="..\..\assets\shaders\deferred_shading.vert" />
-    <None Include="..\..\assets\shaders\debug.vert" />
-    <None Include="..\..\assets\shaders\debug.frag" />
-    <None Include="..\..\assets\shaders\text.frag" />
-    <None Include="..\..\assets\shaders\text.vert" />
-    <None Include="..\..\assets\shaders\screen.frag" />
-    <None Include="..\..\assets\shaders\screen.vert" />
+    <None Include="..\..\assets\shaders\text.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\debug.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\debug.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\deferred_shading.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\deferred_shading.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\g_buffer.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\g_buffer.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\main.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\main.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\screen.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\screen.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\text.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

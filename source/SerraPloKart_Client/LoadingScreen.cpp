@@ -23,10 +23,12 @@ void LoadingScreen::Destroy(void) {
 void LoadingScreen::OnEntry(void) {
 	SDL_SetRenderDrawColor(m_app->renderer, 0, 0, 0, 255);
 	SDL_StartTextInput();
+	m_counterSend = 0;
 }
 
 void LoadingScreen::OnExit(void) {
 	SDL_StopTextInput();
+	m_nickText.clear();
 }
 
 void LoadingScreen::Update(void) {
@@ -50,9 +52,25 @@ void LoadingScreen::Update(void) {
 		} else {
 			if (m_app->assetManager.Empty()) m_app->LoadAssets();
 			try {
-				if (clock() > m_counterSend + MS_RESEND_DELAY) m_counterSend = float(clock()), m_app->ChangeScreen(SCREEN_MULTIPLAYER),
-					m_app->mainSocket << UDPStream::packet << MSG_LOGIN << m_app->nick << m_app->serverAddress,
+				if (clock() > m_counterSend + MS_RESEND_NICK_DELAY) {
+					m_counterSend = float(clock());
+					m_app->mainSocket << UDPStream::packet << MSG_LOGIN << m_app->nick << m_app->serverAddress;
 					std::cout << "Nick sent. Waiting server response..." << std::endl;
+				}
+				int header;
+				m_app->mainSocket >> UDPStream::packet >> header;
+				switch (header) {
+					case MSG_ACCEPT: { // Set screen to multiplayer when server indicates so
+						std::cout << "Server accepted entry. Waiting for the other players..." << std::endl;
+						m_app->ChangeScreen(SCREEN_MULTIPLAYER);
+					} break;
+					case MSG_REFUSE: { // Leave to main menu if server is disconnected
+						std::cout << "Server refused entry. Full players capacity reached. Returning to main menu..." << std::endl;
+						m_app->nick.clear();
+						m_app->ChangeScreen(SCREEN_MENU);
+					} break;
+					default: break;
+				}
 			} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 				std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 			} catch (UDPStream::empty) {} //if the package is empty or have not received anything

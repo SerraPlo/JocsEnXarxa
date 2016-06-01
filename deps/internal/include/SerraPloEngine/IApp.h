@@ -3,11 +3,12 @@
 namespace SerraPlo {
 
 #define TARGET_FPS 120.0f
-#define MS_ALIVE_DELAY 5000
-#define MS_RESEND_DELAY 4000
+#define MS_ALIVE_DELAY 5000.0f
+#define MS_RESEND_NICK_DELAY 4000.0f
+#define MS_UPDATE_DELAY 100.0f
 
-	enum KEY_MESSAGE {
-		MSG_LOGIN, MSG_BEGIN, MSG_EXIT, MSG_ALIVE, MSG_UPDATE, MSG_NEW_PLAYER
+	enum MsgKey {
+		MSG_LOGIN, MSG_ACCEPT, MSG_REFUSE, MSG_BEGIN, MSG_EXIT, MSG_ALIVE, MSG_UPDATE
 	};
 
 	struct input10 {
@@ -23,8 +24,8 @@ namespace SerraPlo {
 	class IApp {
 	protected:
 		bool m_isRunning {true};			// Whether game is running or not
-		float m_aliveCounter {0.0f};
 	public:
+		float aliveCounter{ 0.0f };
 		float fps{ 0 };			// How many frames per second the game is running to
 		float deltaTime{ 0 };	// Difference between last frame and new frame
 

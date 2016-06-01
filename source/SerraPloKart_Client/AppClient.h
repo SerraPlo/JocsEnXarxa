@@ -19,11 +19,6 @@
 enum SreenType { SCREEN_MENU, SCREEN_LOADING, SCREEN_SINGLE_PLAYER, SCREEN_MULTIPLAYER }; ///TODO: bug order!
 
 class AppClient : public IApp {
-	struct Enemy {
-		std::string nick = "";
-		Transform targetTransform;
-		Transform transform;
-	};
 	///TODO: optimize to local
 	std::unique_ptr<MenuScreen> m_menuScreen;
 	std::unique_ptr<LoadingScreen> m_loadingScreen;
@@ -37,8 +32,6 @@ class AppClient : public IApp {
 
 	// Initialize everything related to game internals
 	void Init(void) override;
-	// General function to receive messages from server
-	void ProcessMsgs(void);
 	// Main update function of the game
 	void Update(void);
 	// Main draw function of the game
@@ -54,9 +47,7 @@ public:
 	AssetManager assetManager;
 	bool multiplayerMode = false; ///TODO: cutre
 
-	std::vector<Enemy> enemies;
 	std::string nick{ "" };
-	Transform myServTrans;
 
 	SDL_Renderer *renderer{ nullptr };
 	TTF_Font *font{ nullptr };

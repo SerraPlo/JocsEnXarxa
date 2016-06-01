@@ -18,12 +18,12 @@ namespace SerraPlo {
 
 	class CollisionManager {
 	public:
-		Box* boxs;
-		Circle* circles;
+		Box* boxs{nullptr};
+		Circle* circles{ nullptr };
 		int nBoxs;
 		int nCircles;
 		CollisionManager() = default;
-		~CollisionManager() { delete[] boxs; delete[] circles;};
+		~CollisionManager() { if (boxs != nullptr) delete[] boxs; if (circles != nullptr) delete[] circles;};
 		void InitStructures(std::string path);	
 		int CalculateCollision(glm::vec2 v[4]) const;
 	};

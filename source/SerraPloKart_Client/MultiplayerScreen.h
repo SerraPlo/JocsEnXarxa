@@ -4,9 +4,10 @@
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
 #include <SerraPloEngine/GLText.h>
+#include <SerraPloEngine/IAPhysics.h>
 #include "RendererList.h"
 #include <vector>
-#include <SerraPloEngine/IAPhysics.h>
+#include <map>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -27,9 +28,11 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
-	void UpdateEnemies(float dt);
 private:
 	void CheckInput(void);
+	void ProcessMsgs(void);
+	void UpdateEnemies(void);
+	void DoPhysics(void);
 
 	// Casted client main game pointer reference (IApp -> AppClient)
 	AppClient *m_app;
@@ -42,21 +45,30 @@ private:
 	// Camera
 	GLCamera m_camera;
 
-	// Game objects
+	// GameObjects renderer list
 	RendererList m_renderer;
-	GameObject m_player;
-	GameObject m_playerwheels[4];
-	GameObject m_enemies[MAX_ENEMIES];
-	GameObject m_enemyWheels[MAX_ENEMIES][4];
+
+	//Player
+	struct {
+		GameObject body;
+		GameObject wheels[4];
+		GLText nickIdentifier;
+	} m_player;
+
+	// Enemies
+	struct Enemy {
+		Transform targetTransform;
+		GameObject body;
+		GameObject wheels[4];
+		GLText nickIdentifier;
+	}; std::map<std::string, Enemy> m_enemies;
+
 	GameObject skybox;
 	GameObject circuit;
 	DebugObject debugCollisions;
+
 	GameObject debugIA1;
 	GameObject debugIA2;
-
-	// Text objects
-	GLText m_textNick; 
-	GLText m_textNickEnemies[MAX_ENEMIES];
 
 	//Game physics
 	CarPhysics m_carPhysics;
@@ -68,4 +80,6 @@ private:
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
 	SpotLight m_carLights;
+
+	Transform myServTrans;
 };
