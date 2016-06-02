@@ -13,14 +13,14 @@ namespace SerraPlo {
 		collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));
 		collisionDirection = { 0.0f,0.0f };
 		collisionForce = 0.0f; 
-		collisionCarDirection = { 0.0f,0.0f };
+		collisionCarDirection = glm::vec2(0.0f,0.0f);
 		collisionCarForce = 0.0f;
 	}
 
 	float CarPhysics::applySmoothSteer(float steerInput, float dt) {
-		if (abs(steerInput) > 0.001f) {	//  Move toward steering input
-			steer = clamp(steer + steerInput * dt * 3.0f, -1.0f, 1.0f); // -inp.right, inp.left);
-		} else {//return to 0
+		if (abs(steerInput) > 0.001f) {
+			steer = clamp(steer + steerInput * dt * 3.0f, -1.0f, 1.0f);
+		} else {
 			if (steer > 0.0f) steer = max(steer - dt * 3.0f, 0.0f);
 			else if (steer < 0.0f)	steer = min(steer + dt * 3.0f, 0.0f);
 		}return steer;
@@ -39,16 +39,14 @@ namespace SerraPlo {
 		float steerInput = 0.0f;
 		if (arrayK[2]) steerInput += -1.0f;
 		if (arrayK[3]) steerInput += 1.0f;
-		//  Perform filtering on steering...
 		if (smoothSteer) steer = applySmoothSteer(steerInput, dt);
 		else steer = steerInput;
 		if (safeSteer)	steer = applySafeSteer(steer);
-		//  Now set the actual steering angle
 		steerAngle = steer * cfg.maxSteer;
-		//std::cout << "steer: " << steer << "/ steerAngle: " << (steerAngle*180.0f) / M_PI << std::endl;
 	}
 
 	void CarPhysics::doPhysics(float deltaTime, glm::vec2 colCarVector) {
+		
 		front = glm::vec3(sin((transform->rotation.y*M_PI) / 180), 0.0f, cos((transform->rotation.y*M_PI) / 180));
 
 		float _brake = min(brake * BRAKE_FORCE + ebrake * cfg.eBrakeForce, BRAKE_FORCE);
@@ -61,9 +59,7 @@ namespace SerraPlo {
 		accel = totalForce / cfg.mass;  // forward/reverse accel
 
 		velocity += accel * deltaTime;
-
 		if (velocity < 0.5 && throttle == 0) velocity = 0.0f;
-
 		if (velocity > 0.0f) transform->rotation.y += -(float((steerAngle*180.0f) / M_PI))*1.5f *deltaTime;
 
 		if (collisionForce > 0.0f) collisionForce -= 100.0f*deltaTime;
@@ -76,17 +72,13 @@ namespace SerraPlo {
 			collisionCarDirection = colCarVector;
 			collisionCarForce = 40.0f;
 		}
-		
-
-		glm::vec2 newPos = glm::vec2((transform->position + front*velocity*deltaTime).x, (transform->position + front* velocity *deltaTime).z)+(collisionDirection*collisionForce+collisionCarDirection*collisionCarForce)*deltaTime;
+		glm::vec3 rawNewPos = transform->position + front*velocity*deltaTime;
+		glm::vec2 newPos = glm::vec2(rawNewPos.x, rawNewPos.z) + (collisionDirection*collisionForce + collisionCarDirection*collisionCarForce)*deltaTime;
 		glm::vec2 front2 = glm::normalize(glm::vec2(front.x, front.z));
 		glm::vec2 pFront2 = glm::vec2(-front2.y, front2.x);
 		positionsCol[0] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[1] = newPos + front2*2.0f - pFront2*1.25f;
 		positionsCol[2] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos + front2*2.0f - pFront2*1.25f;
 		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
-
-		//std::cout << "collision: " << collisions.CalculateCollision(positionsCol[0], positionsCol[1], positionsCol[2], positionsCol[3]) << std::endl;
-		//std::cout << positionsCol[0].x << "," << positionsCol[0].y<<std::endl;
 
 		if (collisions.CalculateCollision(positionsCol) == -1) {
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
@@ -104,16 +96,15 @@ namespace SerraPlo {
 			newPos = glm::vec2((transform->position + front* velocity *deltaTime).x, (transform->position + front* velocity *deltaTime).z) + collisionDirection*collisionForce*deltaTime;
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
 		}
-		//std::cout << "velocity: " << velocity*3.6f/5 << "km/h" << std::endl;//escala mapa a tenir en compte (5 = creible)
 	}
 
 	glm::vec2 CarPhysics::ColideCars(std::vector<glm::vec3> a){
-		glm::vec2 directionVec = {0.0f,0.0f};
+		glm::vec2 directionVec = {0.00f,0.00f};
 		float rad = 5.0f;
 		for (size_t i = 0; i < a.size(); i++) {
 			if (glm::length(a[i] - transform->position) <= rad) {
-				directionVec = glm::normalize(glm::vec2((transform->position- a[i]).x,(transform->position- a[i]).z));
-				std::cout << "coliding with : " << i << std::endl;
+				directionVec = glm::normalize(glm::vec2((transform->position - a[i]).x, (transform->position - a[i]).z));
+				//std::cout << "coliding with : " << i << std::endl;
 				break;
 			}
 		}
@@ -123,8 +114,5 @@ namespace SerraPlo {
 	void CarPhysics::Update(bool arrayK[5], float deltaTime, glm::vec2 colCarVector) {
 		processInput(arrayK, deltaTime);
 		doPhysics(deltaTime, colCarVector);
-		//std::cout << "position:[" << transform->position.x << "," << transform->position.y << "," << transform->position.z << "] -> speed:"<< absVel << std::endl;
-		//std::cout << "throttle: " << throttle << ", brake: " << brake << ", steerAngle: " << steerAngle << ", velocity_c.x: " << velocity_c.x << ", velocity_c.z: " << velocity_c.z << std::endl;
 	}
-
 }
