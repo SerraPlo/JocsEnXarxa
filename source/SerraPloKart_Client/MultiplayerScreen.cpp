@@ -89,7 +89,7 @@ void MultiplayerScreen::OnEntry(void) {
 	m_renderer.AddObject(&debugCollisions);
 
 	// Init IA debug
-	debugIA1.transform.position = { 200, 0, 115 };
+	/*debugIA1.transform.position = { 200, 0, 115 };
 	debugIA1.transform.rotation = { 0, -90, 0 };
 	debugIA1.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 	debugIA1.materialRef = &m_app->assetManager.FindMaterial("material_red");
@@ -102,7 +102,7 @@ void MultiplayerScreen::OnEntry(void) {
 	debugIA2.materialRef = &m_app->assetManager.FindMaterial("material_green");
 	debugIA2.materialRef->materialData[0].shininess = 50;
 	debugIA2.materialRef->materialData[0].specular = { 1,1,1 };
-	m_renderer.AddObject(&debugIA2);
+	m_renderer.AddObject(&debugIA2);*/
 
 	// Init camera
 	m_camera.Translate(m_player.body.transform.position + glm::vec3{35, 0, 0} + glm::vec3(0.0f, 15.0f, 0.0f));
@@ -217,10 +217,12 @@ void MultiplayerScreen::ProcessMsgs(void) {
 				m_renderer.SendStaticLightAttributes(m_mainProgram, m_camera);
 				std::cout << "Game begins!" << std::endl;
 			} break;
+
 			case MSG_ALIVE: { // Check if server stills active
 				//std::cout << "Server is alive" << std::endl;
 				m_app->aliveCounter = float(clock());
 			} break;
+
 			case MSG_UPDATE: {
 				for (int i = 0; i < m_enemies.size() + 1; ++i) {
 					std::string nick;
@@ -229,6 +231,7 @@ void MultiplayerScreen::ProcessMsgs(void) {
 					else m_app->mainSocket >> m_enemies[nick].targetTransform.position.x >> m_enemies[nick].targetTransform.position.z >> m_enemies[nick].targetTransform.rotation.y;
 				}
 			} break;
+
 			default: break;
 		}
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
@@ -243,6 +246,7 @@ void MultiplayerScreen::ProcessMsgs(void) {
 void MultiplayerScreen::UpdateEnemies(void) {
 	for (auto &enemy : m_enemies) {
 		//bad interpolation
+		//std::cout << "updated enemy: " << enemy.second.targetTransform.position.x << std::endl;
 		enemy.second.body.transform.position += (enemy.second.targetTransform.position - enemy.second.body.transform.position)/4.0f;
 		enemy.second.body.transform.rotation += (enemy.second.targetTransform.rotation - enemy.second.body.transform.rotation)/4.0f;
 		
@@ -266,8 +270,8 @@ void MultiplayerScreen::UpdateEnemies(void) {
 void MultiplayerScreen::DoPhysics(void) {
 	//input
 	static int m_inputCounter = 0;
-	static float ccX[10];
-	static float ccY[10];
+	static float colVecX[10];
+	static float colVecY[10];
 	static input10 m_in2send;
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
@@ -276,32 +280,26 @@ void MultiplayerScreen::DoPhysics(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
-
-	//Update
+	UpdateEnemies();
 	std::vector<glm::vec3> enemiesPos;
 	for (auto &enemy : m_enemies) {
-		enemiesPos.push_back(enemy.second.body.transform.position);
-	}
-	//std::cout << m_app->myServTrans.position.x << std::endl;
-	glm::vec2 vecColCar = m_carPhysics.ColideCars(enemiesPos);
-	if (glm::length(m_player.body.transform.position - myServTrans.position) >= 15.0f) {
-		m_player.body.transform.position = myServTrans.position;
-		std::cout << "///////////////////////////PositionCorrected" << std::endl;
-	}
+		if (enemy.first != m_app->nick) enemiesPos.push_back(enemy.second.body.transform.position);
+	}glm::vec2 vecColCar = m_carPhysics.ColideCars(enemiesPos);
+
 	m_carPhysics.Update(temp, gameApp->deltaTime, vecColCar);
-	
 	//Send to server
 	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
 	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];
+	colVecX[m_inputCounter] = vecColCar.x; colVecY[m_inputCounter] = vecColCar.y;
 	m_in2send.dt[m_inputCounter] = m_app->deltaTime;
-	ccX[m_inputCounter] = vecColCar.x; ccY[m_inputCounter] = vecColCar.y;
 	m_inputCounter++;
 	if (m_inputCounter >= 10) {//send cada 10 updates
 		m_inputCounter = 0;
-		m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << ccX << ccY << m_app->serverAddress;
-		//std::cout << m_player->transform.position.x <<","<< m_player->transform.position.z<< std::endl;
+		m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << colVecX << colVecY << m_in2send.dt << m_app->serverAddress;
 	}
 	//Extras position
+		//Enemies
+	
 		//Wheels
 	glm::vec3 perFront = glm::vec3(-m_carPhysics.front.z, 0.0f, m_carPhysics.front.x);
 	m_player.wheels[0].transform.position = m_player.body.transform.position + m_carPhysics.front*.5f + perFront*1.5f;
@@ -319,18 +317,13 @@ void MultiplayerScreen::DoPhysics(void) {
 		//text
 	m_player.nickIdentifier.position = m_player.body.transform.position + glm::vec3{ 0,4,0 };
 	m_player.nickIdentifier.rotation = m_player.body.transform.rotation;
-		//Enemies
-	UpdateEnemies();
-	
-	//ESC
+		//ESC
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
-
-	//Update car light position & direction
+		//Update car light position & direction
 	m_carLights.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
 	m_carLights.direction = m_carPhysics.front - glm::vec3{ 0,0.3f,0 };
-
-	//IA update
-	m_aiPhysics.Update(gameApp->deltaTime);
+		//IA update
+	//m_aiPhysics.Update(gameApp->deltaTime);
 }
 
 void MultiplayerScreen::Update() {

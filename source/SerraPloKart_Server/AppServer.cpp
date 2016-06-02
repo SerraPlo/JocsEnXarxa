@@ -54,18 +54,16 @@ void AppServer::Receive(void) {
 			} break;
 			case MSG_UPDATE: {
 				input10 input;
-				float ccX[10]; float ccY[10];
-				dispatcher >> input.w >> input.a >> input.s >> input.d >> ccX >> ccY >> input.dt;
+				float x[10]; float y[10];
+				dispatcher >> input.w >> input.a >> input.s >> input.d >> x >> y >> input.dt;
 				bool temp[5];
 				for (int i = 0; i < 10; i++) {
-					//memset(temp, false, 5);
 					temp[0] = input.w[i]; temp[1] = input.a[i];
 					temp[2] = input.s[i]; temp[3] = input.d[i];
 					temp[4] = false;
-					clientList[sender.hash]->carPhy.Update(temp, input.dt[i], glm::vec2(ccX[i], ccY[i]));
+					clientList[sender.hash]->carPhy.Update(temp, input.dt[i], glm::vec2(x[i],y[i]));
 				}
-				//std::cout << clientList[sender.hash].transform.position.x << "," << clientList[sender.hash].transform.position.z << std::endl;
-				//std::cout << clientList[sender.hash].transform.rotation.y << std::endl;
+				//std::cout << clientList[sender.hash]->transform.position.x <<std::endl;
 			}
 		}
 		if (clientList.empty()) std::cout << "All players disconnected." << std::endl;

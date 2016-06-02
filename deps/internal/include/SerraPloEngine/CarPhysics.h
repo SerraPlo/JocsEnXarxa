@@ -24,6 +24,7 @@ namespace SerraPlo {
 		glm::vec3 front;
 		float collisionForce;
 		glm::vec2 collisionDirection;
+		int collisionCD = 0;
 		float collisionCarForce;
 		glm::vec2 collisionCarDirection;
 		float accel = 0.0f;
