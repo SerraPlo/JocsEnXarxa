@@ -37,30 +37,34 @@ void SinglePlayerScreen::Build(void) {
 	}; m_aiPhysics.AddPath(&m_aiPath);
 
 	// Init game physics
-	m_carPhysics.AddTransform(&m_player.transform);
-	m_aiPhysics.AddAICar(&m_aiEnemies[0].transform, 0.55f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[1].transform, 0.6f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[2].transform, 0.7f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[3].transform, 0.8f, 200.0f * 60.0f);
+	m_carPhysics.AddTransform(&m_player.body.transform);
+	m_aiPhysics.AddAICar(&m_aiEnemies[0].body.transform, 0.85f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_aiEnemies[1].body.transform, 0.9f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_aiEnemies[2].body.transform, 1.2f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_aiEnemies[3].body.transform, 1.4f, 200.0f * 60.0f);
 	
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
+
+	// Init PowerUps
+	//powerUp.carPositions.push_back(&m_player.body.transform.position);
+	//for (int i = 0; i < MAX_AI_ENEMIES; ++i) powerUp.carPositions.push_back(&m_aiEnemies[i].body.transform.position);
 }
 
 void SinglePlayerScreen::Destroy(void) {
-
+	for (auto pu : powerUpList) delete pu;
 }
 
 void SinglePlayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Load player base kart model
-	m_player.transform.position = { 180, 0, 115 };
-	m_player.transform.rotation = { 0, -90, 0 };
-	m_player.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
-	m_player.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
-	m_player.materialRef->materialData[0].shininess = 50;
-	m_player.materialRef->materialData[0].specular = { 1,1,1 };
-	m_renderer.AddObject(&m_player);
+	m_player.body.transform.position = { 180, 0, 115 };
+	m_player.body.transform.rotation = { 0, -90, 0 };
+	m_player.body.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
+	m_player.body.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
+	m_player.body.materialRef->materialData[0].shininess = 50;
+	m_player.body.materialRef->materialData[0].specular = { 1,1,1 };
+	m_renderer.AddObject(&m_player.body);
 
 	/// TODO: set emissive color !! material parameters!
 	skybox.transform.position = { 0, -100, 0 };
@@ -112,7 +116,7 @@ void SinglePlayerScreen::OnEntry(void) {
 	m_spotLights[9].position = { 315, 8, 50 };
 	m_spotLights[10].position = { 308, 8, 90 };
 	m_spotLights[11].position = { 280, 8, 108 };
-	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i) {
+	for (int i = 0; i < MAX_STATIC_SPOT_LIGHTS; ++i) {
 		m_spotLights[i].direction = { 0, -1, 0 };
 		m_spotLights[i].ambient = { 1.0f, 1.0f, 1.0f };
 		m_spotLights[i].diffuse = { 1.0f, 1.0f, 0.7f };
@@ -125,33 +129,56 @@ void SinglePlayerScreen::OnEntry(void) {
 		m_renderer.AddLight(&m_spotLights[i]);
 	}
 
-	m_carLights.position = m_player.transform.position;
-	m_carLights.direction = { -1, 0, 0 };
-	m_carLights.ambient = { 1.0f, 1.0f, 1.0f };
-	m_carLights.diffuse = { 1.0f, 1.0f, 0.5f };
-	m_carLights.specular = { 1.0f, 1.0f, 1.0f };
-	m_carLights.constant = 1.0f;
-	m_carLights.linear = 0.027f;
-	m_carLights.quadratic = 0.0028f;
-	m_carLights.cutOff = glm::cos(glm::radians(30.0f));
-	m_carLights.outerCutOff = glm::cos(glm::radians(40.0f));
-	m_renderer.AddLight(&m_carLights, false);
+	m_player.light.position = m_player.body.transform.position;
+	m_player.light.direction = { -1, 0, 0 };
+	m_player.light.ambient = { 1.0f, 1.0f, 1.0f };
+	m_player.light.diffuse = { 1.0f, 1.0f, 0.5f };
+	m_player.light.specular = { 1.0f, 1.0f, 1.0f };
+	m_player.light.constant = 1.0f;
+	m_player.light.linear = 0.027f;
+	m_player.light.quadratic = 0.0028f;
+	m_player.light.cutOff = glm::cos(glm::radians(30.0f));
+	m_player.light.outerCutOff = glm::cos(glm::radians(40.0f));
+	m_renderer.AddLight(&m_player.light, false);
 
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
 
 	// Init IA enemies
-	m_aiEnemies[0].transform.position = { 180, 0, 115 };
-	m_aiEnemies[1].transform.position = { 180, 0, 105 };
-	m_aiEnemies[2].transform.position = { 200, 0, 115 };
-	m_aiEnemies[3].transform.position = { 200, 0, 105 };
+	m_aiEnemies[0].body.transform.position = { 180, 0, 115 };
+	m_aiEnemies[1].body.transform.position = { 180, 0, 105 };
+	m_aiEnemies[2].body.transform.position = { 200, 0, 115 };
+	m_aiEnemies[3].body.transform.position = { 200, 0, 105 };
 	for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
-		m_aiEnemies[i].meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
-		m_aiEnemies[i].materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
-		m_aiEnemies[i].materialRef->materialData[0].shininess = 50;
-		m_aiEnemies[i].materialRef->materialData[0].specular = { 1,1,1 };
-		m_renderer.AddObject(&m_aiEnemies[i]);
+		m_aiEnemies[i].body.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
+		m_aiEnemies[i].body.materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
+		m_aiEnemies[i].body.materialRef->materialData[0].shininess = 50;
+		m_aiEnemies[i].body.materialRef->materialData[0].specular = { 1,1,1 };
+		m_renderer.AddObject(&m_aiEnemies[i].body);
+
+		m_aiEnemies[i].light.ambient = { 1.0f, 1.0f, 1.0f };
+		m_aiEnemies[i].light.diffuse = { 1.0f, 1.0f, 0.5f };
+		m_aiEnemies[i].light.specular = { 1.0f, 1.0f, 1.0f };
+		m_aiEnemies[i].light.constant = 1.0f;
+		m_aiEnemies[i].light.linear = 0.027f;
+		m_aiEnemies[i].light.quadratic = 0.0028f;
+		m_aiEnemies[i].light.cutOff = glm::cos(glm::radians(30.0f));
+		m_aiEnemies[i].light.outerCutOff = glm::cos(glm::radians(40.0f));
+		m_renderer.AddLight(&m_aiEnemies[i].light, false);
 	}
+
+	// Init Item Box
+	itemBox.transform.position = { 140, 0, 110 };
+	itemBox.meshRef = &m_app->assetManager.FindMesh("mesh_item_box");
+	itemBox.materialRef = &m_app->assetManager.FindMaterial("material_item_box");
+	itemBox.materialRef->materialData[0].shininess = 100;
+	itemBox.materialRef->materialData[0].specular = { 1.5,1.5,1.5 };
+	m_renderer.AddObject(dynamic_cast<GameObject*>(&itemBox));
+
+	// Init power up list
+	PowerUp *newPU = new GreenShell;
+	newPU->meshRef = &m_app->assetManager.FindMesh("mesh_item_box");
+	powerUpList.push_back(newPU);
 
 	// Send light and material attributes to fragment shader
 	m_mainProgram.Bind();
@@ -166,7 +193,7 @@ void SinglePlayerScreen::OnExit(void) {
 }
 
 void SinglePlayerScreen::Update(void) {
-	//input
+	// Input update
 	static int m_inputCounter = 0;
 	static input10 m_in2send;
 	CheckInput();
@@ -177,41 +204,55 @@ void SinglePlayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_s)) temp[1] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_d)) temp[3] = true;
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
-	//Update
+
+	// Car physics update
 	m_carPhysics.Update(temp, gameApp->deltaTime, { 0.0f,0.0f });
-	//Send to server
-	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
-	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];
-	m_in2send.dt[m_inputCounter] = m_app->deltaTime;
-	m_inputCounter++;
-	if (m_inputCounter >= 10) {//send cada 10 updates
-		m_inputCounter = 0;
-		try {
-			m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << m_in2send.dt << m_app->serverAddress;
-		} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
-			std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
-		} catch (UDPStream::empty) {} //if the package is empty or have not received anything
-									  //std::cout << m_player->transform.position.x <<","<< m_player->transform.position.z<< std::endl;
-	}
-	//camera
-	///m_camera.Translate(m_player.transform.position - (m_carPhysics.front*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
-	///m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.transform.position);
 
-	//ESC
-	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
+	//Update car lights position & direction
+	m_player.light.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
+	m_player.light.direction = m_carPhysics.front - glm::vec3{ 0,0.3f,0 };
 
-	//Update car light position & direction
-	m_carLights.position = m_player.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
-	m_carLights.direction = m_carPhysics.front - glm::vec3{ 0,0.3f,0 };
-
-	//IA update
+	// IA update
 	m_aiPhysics.Update(gameApp->deltaTime);
-	glm::vec2 direction = glm::normalize(m_aiPhysics.aiCarArray[0].speed);
-	m_camera.Translate(m_aiEnemies[0].transform.position - (glm::vec3{ direction.x, 0, direction.y}*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
-	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].transform.position);
+	for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
+		glm::vec2 direction = glm::normalize(m_aiPhysics.aiCarArray[i].speed);
+		m_aiEnemies[i].light.position = m_aiEnemies[i].body.transform.position + glm::vec3{ direction.x, 0, direction.y }*2.0f + glm::vec3{ 0,1,0 };
+		m_aiEnemies[i].light.direction = glm::vec3{ direction.x, 0, direction.y } - glm::vec3{ 0,0.3f,0 };
+	}
 
-	m_minimapCamera.Translate({ m_aiEnemies[0].transform.position.x, 100, m_aiEnemies[0].transform.position.y });
-	m_minimapCamera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].transform.position);
+	// Main camera update
+	///m_camera.Translate(m_aiEnemies[0].body.transform.position - (m_carPhysics.front*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
+	///m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].body.transform.position);
+	m_camera.Translate(m_player.body.transform.position - (m_carPhysics.front*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
+	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.body.transform.position);
+
+	// Minimap camera update
+	//m_minimapCamera.Translate({ 140, 450, -2 });
+	m_minimapCamera.Translate({ 140, 200, -2 });
+	m_minimapCamera.SetTarget(glm::vec3{ 0,2,0 } +m_player.body.transform.position);
+
+	// PowerUp spawner update
+	if (clock() > itemBox.activeCounter + POWERUP_SPAWN_DELAY) {
+		itemBox.enabled = true;
+		itemBox.transform.position.y = 2.0f + sin(clock()*0.01f)*30.0f*m_app->deltaTime;
+		itemBox.transform.rotation.y = (clock() / 100) % 360;
+		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
+			if (glm::length(m_aiEnemies[i].body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) {
+				itemBox.activeCounter = clock();
+				itemBox.enabled = false;
+				m_aiEnemies[i].powerUp = powerUpList[int(rand()%powerUpList.size())];
+				break;
+			}
+		}
+		if (itemBox.enabled && glm::length(m_player.body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) {
+			itemBox.activeCounter = clock();
+			itemBox.enabled = false;
+			m_player.powerUp = powerUpList[int(rand() % powerUpList.size())];
+		}
+	}
+
+	// ESC
+	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
 }
 
 void SinglePlayerScreen::CheckInput(void) {
@@ -240,10 +281,7 @@ void SinglePlayerScreen::Draw(void) {
 	m_renderer.DrawObjects(m_mainProgram, m_camera);
 	m_renderer.DrawFramebuffer(m_mainProgram, m_screenProgram, m_minimapCamera);
 
-	if (RendererList::DEBUG_DRAW)
-		m_debugProgram.Bind(),
-		m_renderer.DrawDebug(m_debugProgram, m_camera),
-		m_debugProgram.Unbind();
+	if (RendererList::DEBUG_DRAW) m_renderer.DrawDebug(m_debugProgram, m_camera);
 
 	m_app->window.swapBuffer(); // Swap OpenGL buffers if double-buffering is supported
 }

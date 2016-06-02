@@ -4,7 +4,7 @@
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
 #include <SerraPloEngine/GLText.h>
-#include <SerraPloEngine/IAPhysics.h>
+#include <SerraPloEngine/AIPhysics.h>
 #include "RendererList.h"
 #include <vector>
 #include <map>
@@ -63,6 +63,7 @@ private:
 		GLText nickIdentifier;
 	}; std::map<std::string, Enemy> m_enemies;
 
+	// Atrezzo
 	GameObject skybox;
 	GameObject circuit;
 	DebugObject debugCollisions;

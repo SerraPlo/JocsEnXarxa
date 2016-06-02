@@ -3,14 +3,19 @@
 #include <SerraPloEngine/ShaderProgram.h>
 #include <SerraPloEngine/GameObject.h>
 #include <SerraPloEngine/CarPhysics.h>
-#include <SerraPloEngine/IAPhysics.h>
+#include <SerraPloEngine/AIPhysics.h>
+#include <SerraPloEngine/PowerUp.h>
 #include "RendererList.h"
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
-#define MAX_POINT_LIGHTS 2
-#define MAX_SPOT_LIGHTS 12
 #define MAX_AI_ENEMIES 4
+#define MAX_POINT_LIGHTS 2
+#define MAX_STATIC_SPOT_LIGHTS 12
+#define MAX_DYNAMIC_SPOT_LIGHTS MAX_AI_ENEMIES + 1
+
+#define POWERUP_SPAWN_DELAY 5000
+#define POWERUP_DETECT_DISTANCE 5.0f
 
 class AppClient;
 class SinglePlayerScreen : public IScreen {
@@ -39,13 +44,33 @@ private:
 	GLCamera m_camera;
 	GLCamera m_minimapCamera;
 
-	// Game objects
+	// GameObjects renderer list
 	RendererList m_renderer;
-	GameObject m_player;
-	GameObject m_aiEnemies[MAX_AI_ENEMIES];
+
+	// Player
+	struct {
+		GameObject body;
+		GameObject wheels[4];
+		SpotLight light;
+		PowerUp *powerUp;
+	} m_player;
+
+	// AI Enemies
+	struct {
+		GameObject body;
+		GameObject wheels[4];
+		SpotLight light;
+		PowerUp *powerUp;
+	} m_aiEnemies[MAX_AI_ENEMIES];
+
+	// Atrezzo
 	GameObject skybox;
 	GameObject circuit;
 	DebugObject debugCollisions;
+
+	// Item Box & Power Ups
+	struct : GameObject { clock_t activeCounter{ 0 }; } itemBox;
+	std::vector<PowerUp*> powerUpList;
 
 	//Game physics
 	CarPhysics m_carPhysics;
@@ -55,6 +80,5 @@ private:
 	// Lights
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
-	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
-	SpotLight m_carLights;
+	SpotLight m_spotLights[MAX_STATIC_SPOT_LIGHTS];
 };

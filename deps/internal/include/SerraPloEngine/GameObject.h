@@ -10,6 +10,7 @@ namespace SerraPlo {
 		Transform transform;
 		GlobalMesh *meshRef;
 		GlobalMaterial *materialRef;
+		bool enabled{ true };
 	};
 
 	struct DebugObject {

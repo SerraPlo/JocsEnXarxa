@@ -280,25 +280,27 @@ void RendererList::DrawObjects(ShaderProgram & program, GLCamera & camera) {
 	// Set camera position as the viewer
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 	for (auto gameObject : m_objectList) {
-		SendDynamicLightAttributes(program, camera);
-		// Transform properties
-		Transform &transformTemp = gameObject->transform;
-		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
-		model = glm::scale(model, transformTemp.scale);
-		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
-			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
-			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].emissive));
-			glUniform1f(program.getUniformLocation("material.shininess"), gameObject->materialRef->materialData[i].shininess);
-			glBindVertexArray(gameObject->meshRef->meshData[i].vao);
-			glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		if (gameObject->enabled) {
+			SendDynamicLightAttributes(program, camera);
+			// Transform properties
+			Transform &transformTemp = gameObject->transform;
+			glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
+			model = glm::scale(model, transformTemp.scale);
+			glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+			for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
+				glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
+				glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].emissive));
+				glUniform1f(program.getUniformLocation("material.shininess"), gameObject->materialRef->materialData[i].shininess);
+				glBindVertexArray(gameObject->meshRef->meshData[i].vao);
+				glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+			}
+			glBindVertexArray(0);
 		}
-		glBindVertexArray(0);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(0);
@@ -316,25 +318,27 @@ void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProg
 	// Set camera position as the viewer
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 	for (auto gameObject : m_objectList) {
-		SendDynamicLightAttributes(program, camera);
-		// Transform properties
-		Transform &transformTemp = gameObject->transform;
-		glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
-		model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
-		model = glm::scale(model, transformTemp.scale);
-		glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
-		for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
-			glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
-			glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].emissive));
-			glUniform1f(program.getUniformLocation("material.shininess"), gameObject->materialRef->materialData[i].shininess);
-			glBindVertexArray(gameObject->meshRef->meshData[i].vao);
-			glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+		if (gameObject->enabled) {
+			SendDynamicLightAttributes(program, camera);
+			// Transform properties
+			Transform &transformTemp = gameObject->transform;
+			glm::mat4 model = glm::translate(glm::mat4(), transformTemp.position);
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.x), { 1,0,0 });
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.y), { 0,1,0 });
+			model = glm::rotate(model, glm::radians(transformTemp.rotation.z), { 0,0,1 });
+			model = glm::scale(model, transformTemp.scale);
+			glUniformMatrix4fv(program.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(model));
+			for (int i = 0; i < gameObject->meshRef->numMeshes; ++i) {
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, gameObject->materialRef->materialData[i].diffuse.id);
+				glUniform3fv(program.getUniformLocation("material.specular"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].specular));
+				glUniform3fv(program.getUniformLocation("material.emissive"), 1, glm::value_ptr(gameObject->materialRef->materialData[i].emissive));
+				glUniform1f(program.getUniformLocation("material.shininess"), gameObject->materialRef->materialData[i].shininess);
+				glBindVertexArray(gameObject->meshRef->meshData[i].vao);
+				glDrawElements(GL_TRIANGLES, gameObject->meshRef->meshData[i].numElements, GL_UNSIGNED_INT, nullptr);
+			}
+			glBindVertexArray(0);
 		}
-		glBindVertexArray(0);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(0);

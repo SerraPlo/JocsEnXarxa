@@ -35,6 +35,8 @@ void AppClient::LoadAssets(void) {
 	assetManager.LoadMesh("mesh_wheel", "models/kart/wheel.obj");
 	assetManager.LoadMesh("mesh_debug_collisions", "models/circuit_col/colisions.dae");
 	assetManager.LoadMesh("mesh_skybox", "models/skybox/skybox.obj");
+	assetManager.LoadMesh("mesh_item_box", "models/powerups/item_box.obj");
+	assetManager.LoadMesh("mesh_green_shell", "models/powerups/green_shell.obj");
 	std::cout << "Meshes loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();
 
@@ -52,6 +54,7 @@ void AppClient::LoadAssets(void) {
 	assetManager.LoadMaterial("material_green", "images/plch/green.jpg");
 	assetManager.LoadMaterial("material_blue", "images/plch/blue.jpg");
 	assetManager.LoadMaterial("material_skybox", "models/skybox/skybox_diffuse.jpg");
+	assetManager.LoadMaterial("material_item_box", "models/powerups/item_box.png");
 	std::cout << "Materials loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();
 

@@ -96,7 +96,10 @@
     <ClInclude Include="GLText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IAPhysics.h">
+    <ClInclude Include="PowerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIPhysics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,7 +137,7 @@
     <ClCompile Include="GLText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IAPhysics.cpp">
+    <ClCompile Include="AIPhysics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
