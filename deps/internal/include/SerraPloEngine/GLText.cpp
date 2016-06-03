@@ -66,6 +66,7 @@ namespace SerraPlo {
 	}
 
 	void GLText::Draw(ShaderProgram &program, GLCamera &camera) const {
+		program.Bind();
 		glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
 		glm::mat4 model;
 		model = glm::translate(model, position);

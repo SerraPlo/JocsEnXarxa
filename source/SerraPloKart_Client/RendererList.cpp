@@ -280,7 +280,7 @@ void RendererList::DrawObjects(ShaderProgram & program, GLCamera & camera) {
 	// Set camera position as the viewer
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 	for (auto gameObject : m_objectList) {
-		if (gameObject->enabled) {
+		if (gameObject != nullptr && gameObject->enabled) {
 			SendDynamicLightAttributes(program, camera);
 			// Transform properties
 			Transform &transformTemp = gameObject->transform;
@@ -318,7 +318,7 @@ void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProg
 	// Set camera position as the viewer
 	glUniform3fv(program.getUniformLocation("viewerPosition"), 1, glm::value_ptr(camera.position));
 	for (auto gameObject : m_objectList) {
-		if (gameObject->enabled) {
+		if (gameObject != nullptr && gameObject->enabled) {
 			SendDynamicLightAttributes(program, camera);
 			// Transform properties
 			Transform &transformTemp = gameObject->transform;

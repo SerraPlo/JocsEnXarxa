@@ -6,6 +6,7 @@
 #include <SerraPloEngine/AIPhysics.h>
 #include <SerraPloEngine/PowerUp.h>
 #include "RendererList.h"
+#include <SerraPloEngine/GLSprite.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -31,6 +32,7 @@ public:
 	void Draw(void) override;
 private:
 	void CheckInput(void);
+	PowerUp *GetRandPowerUp(bool isPlayer = false);
 
 	// Casted client main game pointer reference (IApp -> AppClient)
 	AppClient *m_app;
@@ -38,6 +40,7 @@ private:
 	// Shader programs
 	ShaderProgram m_mainProgram;
 	ShaderProgram m_screenProgram;
+	ShaderProgram m_GUIProgram;
 	ShaderProgram m_debugProgram;
 
 	// Camera
@@ -52,7 +55,9 @@ private:
 		GameObject body;
 		GameObject wheels[4];
 		SpotLight light;
-		PowerUp *powerUp;
+		PowerUp *powerUp = nullptr;
+		GLSprite itemSlot;
+		glm::vec3 front;
 	} m_player;
 
 	// AI Enemies
@@ -60,7 +65,8 @@ private:
 		GameObject body;
 		GameObject wheels[4];
 		SpotLight light;
-		PowerUp *powerUp;
+		PowerUp *powerUp = nullptr;
+		glm::vec3 front;
 	} m_aiEnemies[MAX_AI_ENEMIES];
 
 	// Atrezzo
@@ -69,8 +75,7 @@ private:
 	DebugObject debugCollisions;
 
 	// Item Box & Power Ups
-	struct : GameObject { clock_t activeCounter{ 0 }; } itemBox;
-	std::vector<PowerUp*> powerUpList;
+	struct : GameObject { float activeCounter{ 0 }; } itemBox;
 
 	//Game physics
 	CarPhysics m_carPhysics;

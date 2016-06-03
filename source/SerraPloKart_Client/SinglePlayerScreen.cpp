@@ -3,6 +3,7 @@
 #include <iostream>
 #include "SinglePlayerScreen.h"
 #include "AppClient.h"
+#include <ctime>
 
 #define FIXED_ASPECT_RATIO 16 / 9
 
@@ -17,6 +18,7 @@ void SinglePlayerScreen::Build(void) {
 	//Initialize main shaders
 	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
 	m_screenProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
+	m_GUIProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 
@@ -44,14 +46,11 @@ void SinglePlayerScreen::Build(void) {
 	m_aiPhysics.AddAICar(&m_aiEnemies[3].body.transform, 1.4f, 200.0f * 60.0f);
 	
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
-
-	// Init PowerUps
-	//powerUp.carPositions.push_back(&m_player.body.transform.position);
-	//for (int i = 0; i < MAX_AI_ENEMIES; ++i) powerUp.carPositions.push_back(&m_aiEnemies[i].body.transform.position);
 }
 
 void SinglePlayerScreen::Destroy(void) {
-	for (auto pu : powerUpList) delete pu;
+	if (m_player.powerUp != nullptr) delete m_player.powerUp;
+	for (int i = 0; i < MAX_AI_ENEMIES; ++i) if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp;
 }
 
 void SinglePlayerScreen::OnEntry(void) {
@@ -144,7 +143,7 @@ void SinglePlayerScreen::OnEntry(void) {
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
 
-	// Init IA enemies
+	// Init AI enemies
 	m_aiEnemies[0].body.transform.position = { 180, 0, 115 };
 	m_aiEnemies[1].body.transform.position = { 180, 0, 105 };
 	m_aiEnemies[2].body.transform.position = { 200, 0, 115 };
@@ -175,10 +174,9 @@ void SinglePlayerScreen::OnEntry(void) {
 	itemBox.materialRef->materialData[0].specular = { 1.5,1.5,1.5 };
 	m_renderer.AddObject(dynamic_cast<GameObject*>(&itemBox));
 
-	// Init power up list
-	PowerUp *newPU = new GreenShell;
-	newPU->meshRef = &m_app->assetManager.FindMesh("mesh_item_box");
-	powerUpList.push_back(newPU);
+	// Init player and enemies item slot
+	m_player.itemSlot.SetImage("images/slot_empty.jpg");
+	m_player.itemSlot.scale = glm::vec3{ .1f };
 
 	// Send light and material attributes to fragment shader
 	m_mainProgram.Bind();
@@ -192,10 +190,20 @@ void SinglePlayerScreen::OnExit(void) {
 	m_aiPhysics.Reset();
 }
 
+PowerUp *SinglePlayerScreen::GetRandPowerUp(bool isPlayer) {
+	switch (rand() % MAX_POWERUPS) { // Get random number for MAX_POWERUPS powerups
+		case 0: default: {
+			PowerUp *temp = new GreenShell; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_green_shell"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
+			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+			return temp;
+		} 
+	}
+}
+
 void SinglePlayerScreen::Update(void) {
 	// Input update
-	static int m_inputCounter = 0;
-	static input10 m_in2send;
 	CheckInput();
 	static bool temp[5];
 	memset(temp, false, 5); // reset all elements to false
@@ -207,6 +215,7 @@ void SinglePlayerScreen::Update(void) {
 
 	// Car physics update
 	m_carPhysics.Update(temp, gameApp->deltaTime, { 0.0f,0.0f });
+	m_player.front = m_carPhysics.front;
 
 	//Update car lights position & direction
 	m_player.light.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
@@ -216,8 +225,9 @@ void SinglePlayerScreen::Update(void) {
 	m_aiPhysics.Update(gameApp->deltaTime);
 	for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
 		glm::vec2 direction = glm::normalize(m_aiPhysics.aiCarArray[i].speed);
-		m_aiEnemies[i].light.position = m_aiEnemies[i].body.transform.position + glm::vec3{ direction.x, 0, direction.y }*2.0f + glm::vec3{ 0,1,0 };
-		m_aiEnemies[i].light.direction = glm::vec3{ direction.x, 0, direction.y } - glm::vec3{ 0,0.3f,0 };
+		m_aiEnemies[i].front = glm::vec3{ direction.x, 0, direction.y };
+		m_aiEnemies[i].light.position = m_aiEnemies[i].body.transform.position + m_aiEnemies[i].front*2.0f + glm::vec3{ 0,1,0 };
+		m_aiEnemies[i].light.direction = m_aiEnemies[i].front - glm::vec3{ 0,0.3f,0 };
 	}
 
 	// Main camera update
@@ -232,27 +242,42 @@ void SinglePlayerScreen::Update(void) {
 	m_minimapCamera.SetTarget(glm::vec3{ 0,2,0 } +m_player.body.transform.position);
 
 	// PowerUp spawner update
-	if (clock() > itemBox.activeCounter + POWERUP_SPAWN_DELAY) {
-		itemBox.enabled = true;
-		itemBox.transform.position.y = 2.0f + sin(clock()*0.01f)*30.0f*m_app->deltaTime;
-		itemBox.transform.rotation.y = (clock() / 100) % 360;
+	if (clock() > itemBox.activeCounter + POWERUP_SPAWN_DELAY) { // Check when item box spawns
+		itemBox.enabled = true; // Enable item box in world
+		itemBox.transform.position.y = 3.0f + sin(clock()*0.01f)*30.0f*m_app->deltaTime; // Update sinoidal Y movement
+		itemBox.transform.rotation.y = (clock() / 100) % 360; // Rotate continuously around Y
 		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
-			if (glm::length(m_aiEnemies[i].body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) {
-				itemBox.activeCounter = clock();
-				itemBox.enabled = false;
-				m_aiEnemies[i].powerUp = powerUpList[int(rand()%powerUpList.size())];
+			if (/*m_aiEnemies[i].powerUp == nullptr &&*/ // If the enemy doesn't have a powerup
+				glm::length(m_aiEnemies[i].body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If enemy collides with powerup
+				itemBox.activeCounter = clock(); // Reset counter to respawn item box
+				itemBox.enabled = false; // Disable item box to be renderer in the world
+				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
+				m_aiEnemies[i].powerUp = GetRandPowerUp(); // Get random powerup into enemy slot
+				m_aiEnemies[i].powerUp->Init(&m_aiEnemies[i].body.transform.position, &m_aiEnemies[i].front);
+				//m_renderer.AddObject(dynamic_cast<GameObject*>(m_aiEnemies[i].powerUp)); /// TODO: optimize to remove the previous ones
 				break;
 			}
 		}
-		if (itemBox.enabled && glm::length(m_player.body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) {
-			itemBox.activeCounter = clock();
-			itemBox.enabled = false;
-			m_player.powerUp = powerUpList[int(rand() % powerUpList.size())];
+		if (itemBox.enabled && /*m_player.powerUp == nullptr &&*/ // If item box exists in world and the player doesn't have a powerup
+			glm::length(m_player.body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If player collides with powerup
+			itemBox.activeCounter = clock(); // Reset counter to respawn item box
+			itemBox.enabled = false; // Disable item box to be renderer in the world
+			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
+			m_player.powerUp = GetRandPowerUp(true); // Get random powerup into player slot
+			m_player.powerUp->Init(&m_player.body.transform.position, &m_player.front);
+			//m_renderer.AddObject(dynamic_cast<GameObject*>(m_player.powerUp)); /// TODO: optimize to remove the previous ones
 		}
 	}
 
-	// ESC
-	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
+	// Player powerup update
+	if (m_player.powerUp != nullptr) m_player.powerUp->Update(m_app->deltaTime);// Update player power up if exists
+
+	// Enemies powerup updates
+	for (int i = 0; i < MAX_AI_ENEMIES; ++i) if (m_aiEnemies[i].powerUp != nullptr) m_aiEnemies[i].powerUp->Update(m_app->deltaTime); // Update player power up if exists
+
+	// Player item slot update
+	m_player.itemSlot.position = m_camera.position + m_player.front + glm::vec3{0, -0.025f, 0}; /// TODO: put on correct place
+	m_player.itemSlot.rotation.y = atan2f(m_player.front.x, m_player.front.z) * RAD2DEG;
 }
 
 void SinglePlayerScreen::CheckInput(void) {
@@ -272,6 +297,9 @@ void SinglePlayerScreen::CheckInput(void) {
 	}
 	if (m_app->inputManager.isKeyPressed(SDLK_e)) RendererList::DEBUG_DRAW = !RendererList::DEBUG_DRAW;
 	if (m_app->inputManager.isKeyPressed(SDLK_q)) RendererList::WIREFRAME_MODE = !RendererList::WIREFRAME_MODE;
+	if (m_app->inputManager.isKeyPressed(SDLK_SPACE)) // Activate player powerup
+		if (m_player.powerUp != nullptr) m_player.powerUp->Activate(), m_player.itemSlot.SetImage("images/slot_empty.jpg");
+	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU); // Exit game
 }
 
 void SinglePlayerScreen::Draw(void) {
@@ -280,6 +308,11 @@ void SinglePlayerScreen::Draw(void) {
 
 	m_renderer.DrawObjects(m_mainProgram, m_camera);
 	m_renderer.DrawFramebuffer(m_mainProgram, m_screenProgram, m_minimapCamera);
+
+	m_player.itemSlot.Draw(m_GUIProgram, m_camera);
+
+	if (m_player.powerUp != nullptr) m_player.powerUp->Draw(m_mainProgram, m_camera);
+	for (int i = 0; i < MAX_AI_ENEMIES; ++i) if (m_aiEnemies[i].powerUp != nullptr) m_aiEnemies[i].powerUp->Draw(m_mainProgram, m_camera);
 
 	if (RendererList::DEBUG_DRAW) m_renderer.DrawDebug(m_debugProgram, m_camera);
 

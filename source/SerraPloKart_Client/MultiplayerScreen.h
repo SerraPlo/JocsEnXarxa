@@ -48,7 +48,7 @@ private:
 	// GameObjects renderer list
 	RendererList m_renderer;
 
-	//Player
+	// Player
 	struct {
 		GameObject body;
 		GameObject wheels[4];

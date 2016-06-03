@@ -55,6 +55,7 @@ void AppClient::LoadAssets(void) {
 	assetManager.LoadMaterial("material_blue", "images/plch/blue.jpg");
 	assetManager.LoadMaterial("material_skybox", "models/skybox/skybox_diffuse.jpg");
 	assetManager.LoadMaterial("material_item_box", "models/powerups/item_box.png");
+	assetManager.LoadMaterial("material_green_shell", "models/powerups/green_shell.png");
 	std::cout << "Materials loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();
 

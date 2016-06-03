@@ -1,26 +1,32 @@
 #pragma once
 #include "GameObject.h"
-#include <ctime>
-#include <iostream>
-#include <glm/glm.hpp>
+#include "GLCamera.h"
 
 namespace SerraPlo {
 
+#define MAX_POWERUPS 1
+#define LIFETIME_DELAY 4000
+
+	class ShaderProgram;
+
 	struct PowerUp : GameObject {
-		virtual void Update() = 0;
+		float lifeTimeCounter = 0;
+		virtual void Init(glm::vec3 *pos, glm::vec3 *front) = 0;
+		virtual void Activate(void) = 0;
+		virtual void Update(float dt) = 0;
+		virtual void Draw(ShaderProgram & program, GLCamera & camera) = 0;
+		virtual ~PowerUp() = default;
 	};
 
 	struct GreenShell : PowerUp {
-		void Update() {
-			if (enabled) {
-
-			}
-		}
-	};
-
-	class PowerUpList {
-	public:
-		GreenShell greenShell;
+		glm::vec3 *carPos;
+		glm::vec3 *carFront;
+		glm::vec3 front;
+		float speed = 70.0f; ///TODO: change to player car trully speed
+		void Init(glm::vec3 *pos, glm::vec3 *front) override;
+		void Activate(void) override;
+		void Update(float dt) override;
+		void Draw(ShaderProgram & program, GLCamera & camera) override;
 	};
 
 }
