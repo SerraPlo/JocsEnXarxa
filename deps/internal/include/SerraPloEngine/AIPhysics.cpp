@@ -94,8 +94,10 @@ namespace SerraPlo {
 						aiCar.collisionDirection = glm::normalize(newPos - collisions.circles[i - collisions.nBoxs].c);
 						aiCar.collisionForce = 40.0f;
 					}
+					aiCar.transformRef->position = { (positionIA + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
+						0.0f, (positionIA + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 				}
-				aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
+				else aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
 					0.0f, (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 			} else {
 				aiCar.transformRef->rotation.y = (clock()) % 360;
