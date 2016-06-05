@@ -11,6 +11,7 @@ namespace SerraPlo {
 
 	CarPhysics::CarPhysics() {
 		collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));
+		collActive = true;
 		collisionDirection = { 0.0f,0.0f };
 		collisionForce = 0.0f; 
 		collisionCarDirection = glm::vec2(0.0f,0.0f);
@@ -79,10 +80,10 @@ namespace SerraPlo {
 		positionsCol[0] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[1] = newPos + front2*2.0f - pFront2*1.25f;
 		positionsCol[2] = newPos + front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos + front2*2.0f - pFront2*1.25f;
 		//positionsCol[2] = newPos - front2*2.0f + pFront2*1.25f;	positionsCol[3] = newPos - front2*2.0f - pFront2*1.25f;
-
-		if (collisions.CalculateCollision(positionsCol) == -1) {
+		//if (collActive) std::cout << true << std::endl;
+		if (collisions.CalculateCollision(positionsCol) == -1 || !collActive) {
 			transform->position = glm::vec3(newPos.x, 0.0f, newPos.y);
-		}else {
+		}else{
 			int i = collisions.CalculateCollision(positionsCol);
 			if (i < collisions.nBoxs) {
 				velocity = 0.0f;

@@ -20,7 +20,7 @@ class MultiplayerScreen : public IScreen {
 public:
 	explicit MultiplayerScreen() = default;
 	~MultiplayerScreen() = default;
-
+	Transform myServTrans;
 	void Build(void) override;
 	void Destroy(void) override;
 	void OnEntry(void) override;
@@ -82,5 +82,5 @@ private:
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
 	SpotLight m_carLights;
 
-	Transform myServTrans;
+	
 };

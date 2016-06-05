@@ -268,7 +268,12 @@ void MultiplayerScreen::UpdateEnemies(void) {
 }
 
 void MultiplayerScreen::DoPhysics(void) {
+	//std::cout << myServTrans.position.x << "/" << m_player.body.transform.position.x << std::endl;
 	//input
+	if (m_app->inputManager.isKeyPressed(SDLK_r)) {
+		m_carPhysics.collActive = !m_carPhysics.collActive;
+		std::cout << "collissions:" << m_carPhysics.collActive << std::endl;
+	}
 	static int m_inputCounter = 0;
 	static float colVecX[10];
 	static float colVecY[10];
@@ -285,8 +290,13 @@ void MultiplayerScreen::DoPhysics(void) {
 	for (auto &enemy : m_enemies) {
 		if (enemy.first != m_app->nick) enemiesPos.push_back(enemy.second.body.transform.position);
 	}glm::vec2 vecColCar = m_carPhysics.ColideCars(enemiesPos);
-
+	//update + corrections
 	m_carPhysics.Update(temp, gameApp->deltaTime, vecColCar);
+	if (glm::length(myServTrans.position - m_player.body.transform.position) > 10.0f+m_carPhysics.velocity) {
+		m_player.body.transform.position = myServTrans.position;
+		m_player.body.transform.rotation = myServTrans.rotation;
+		m_carPhysics.velocity = 0.0f;
+	}
 	//Send to server
 	m_in2send.w[m_inputCounter] = temp[0]; m_in2send.a[m_inputCounter] = temp[1];
 	m_in2send.s[m_inputCounter] = temp[2]; m_in2send.d[m_inputCounter] = temp[3];

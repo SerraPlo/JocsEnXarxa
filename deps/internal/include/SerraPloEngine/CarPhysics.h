@@ -19,6 +19,7 @@ namespace SerraPlo {
 
 	class CarPhysics {
 	public:
+		bool collActive;
 		CollisionManager collisions;
 		Transform *transform{ nullptr };
 		glm::vec3 front;
