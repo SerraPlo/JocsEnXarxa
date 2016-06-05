@@ -215,6 +215,7 @@ void MultiplayerScreen::ProcessMsgs(void) {
 					m_pointLights[i].ambient = { 0.3f, 1.0f, 0.3f },
 					m_pointLights[i].diffuse = { 0.5f, 1.0f, 0.5f };
 				m_renderer.SendStaticLightAttributes(m_mainProgram, m_camera);
+				m_app->aliveCounter = float(clock());
 				std::cout << "Game begins!" << std::endl;
 			} break;
 
@@ -238,8 +239,7 @@ void MultiplayerScreen::ProcessMsgs(void) {
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
 
-	/*if (clock() > m_aliveCounter + MS_ALIVE_DELAY+1000 && currentScreen->screenIndex == SCREEN_MULTIPLAYER)
-	std::cout << "Server closed. Disconecting..." << std::endl, nick.clear(), ChangeScreen(SCREEN_MENU);*/
+	if (clock() > m_app->aliveCounter + MS_ALIVE_DELAY+1000 && !m_enemies.empty()) std::cout << "Server closed. Disconecting..." << std::endl, m_app->nick.clear(), m_app->ChangeScreen(SCREEN_MENU);
 }
 
 
