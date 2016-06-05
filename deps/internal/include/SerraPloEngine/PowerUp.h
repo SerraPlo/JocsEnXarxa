@@ -18,6 +18,9 @@ namespace SerraPlo {
 		virtual ~PowerUp() = default;
 	};
 
+#define GREEN_SHELL_STUN_DISTANCE 5.0f
+#define GREEN_SHELL_STUN_DELAY 1000
+
 	struct GreenShell : PowerUp {
 		glm::vec3 *carPos;
 		glm::vec3 *carFront;

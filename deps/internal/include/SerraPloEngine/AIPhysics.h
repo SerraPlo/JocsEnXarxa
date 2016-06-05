@@ -14,11 +14,12 @@ namespace SerraPlo {
 		struct AICarPhysics {
 			Transform *playerRef;
 			Transform *transformRef;
-			glm::vec2 speed;
+			bool *stunned;
+			glm::vec2 speed = {};
 			float maxSpeed; // = 1.5f;
 			float maxSteerForce; // = 6.0f * 60.0f; // Normal
 			float mass;
-			int curPathNode;
+			int curPathNode = 0;
 			float collisionForce;
 			glm::vec2 collisionDirection;
 			int collisionCar;
@@ -35,8 +36,14 @@ namespace SerraPlo {
 		AIPhysics(){collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));}
 		~AIPhysics() = default;
 		void AddPath(std::vector<glm::vec2> *pathR) { aiPathRef = pathR; }
-		void AddAICar(Transform *playerRef, Transform *transformRef, float maxSpeed, float maxSteerForce, float mass = 800.0f) {
-			AICarPhysics aiCar = { playerRef, transformRef, {}, maxSpeed, maxSteerForce, mass, 0 };
+		void AddAICar(Transform *playerRef, Transform *transformRef, bool *stunned, float maxSpeed, float maxSteerForce, float mass = 800.0f) {
+			AICarPhysics aiCar;
+			aiCar.playerRef = playerRef;
+			aiCar.transformRef = transformRef;
+			aiCar.stunned = stunned;
+			aiCar.maxSpeed = maxSpeed;
+			aiCar.maxSteerForce = maxSteerForce;
+			aiCar.mass = mass;
 			aiCarArray.push_back(aiCar);
 		}
 		bool carColCalc(glm::vec3 a, glm::vec3 b);

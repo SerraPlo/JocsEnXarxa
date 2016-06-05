@@ -67,6 +67,8 @@ private:
 		SpotLight light;
 		PowerUp *powerUp = nullptr;
 		glm::vec3 front;
+		bool stunned = false;
+		float stunnedCounter = 0;
 	} m_aiEnemies[MAX_AI_ENEMIES];
 
 	// Atrezzo

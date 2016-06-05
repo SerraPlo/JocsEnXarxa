@@ -38,9 +38,9 @@ void MultiplayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA1.transform, 0.8f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA2.transform, 0.9f, 200.0f * 60.0f);
-	m_aiPhysics.AddPath(&m_aiPath);
+	//m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA1.transform, 0.8f, 200.0f * 60.0f);
+	//m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA2.transform, 0.9f, 200.0f * 60.0f);
+	//m_aiPhysics.AddPath(&m_aiPath);
 }
 
 void MultiplayerScreen::Destroy(void) {
@@ -218,12 +218,6 @@ void MultiplayerScreen::ProcessMsgs(void) {
 				m_app->aliveCounter = float(clock());
 				std::cout << "Game begins!" << std::endl;
 			} break;
-
-			case MSG_ALIVE: { // Check if server stills active
-				//std::cout << "Server is alive" << std::endl;
-				m_app->aliveCounter = float(clock());
-			} break;
-
 			case MSG_UPDATE: {
 				for (int i = 0; i < m_enemies.size() + 1; ++i) {
 					std::string nick;
@@ -232,7 +226,10 @@ void MultiplayerScreen::ProcessMsgs(void) {
 					else m_app->mainSocket >> m_enemies[nick].targetTransform.position.x >> m_enemies[nick].targetTransform.position.z >> m_enemies[nick].targetTransform.rotation.y;
 				}
 			} break;
-
+			case MSG_ALIVE: { // Check if server stills active
+				//std::cout << "Server is alive" << std::endl;
+				m_app->aliveCounter = float(clock());
+			} break;
 			default: break;
 		}
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read

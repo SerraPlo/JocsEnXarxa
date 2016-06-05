@@ -40,11 +40,11 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, 1.0f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, 1.2f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, 1.4f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, 1.6f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, 1.8f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, &m_aiEnemies[0].stunned, 1.0f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, &m_aiEnemies[1].stunned, 1.2f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, &m_aiEnemies[2].stunned, 1.4f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, &m_aiEnemies[3].stunned, 1.6f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, &m_aiEnemies[4].stunned, 1.8f, 200.0f * 60.0f);
 	
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
@@ -229,6 +229,7 @@ void SinglePlayerScreen::Update(void) {
 		m_aiEnemies[i].front = glm::vec3{ direction.x, 0, direction.y };
 		m_aiEnemies[i].light.position = m_aiEnemies[i].body.transform.position + m_aiEnemies[i].front*2.0f + glm::vec3{ 0,1,0 };
 		m_aiEnemies[i].light.direction = m_aiEnemies[i].front - glm::vec3{ 0,0.3f,0 };
+		if (m_aiEnemies[i].stunned && clock() > m_aiEnemies[i].stunnedCounter + GREEN_SHELL_STUN_DELAY) m_aiEnemies[i].stunned = false;
 	}
 
 	// Main camera update
@@ -271,7 +272,17 @@ void SinglePlayerScreen::Update(void) {
 	}
 
 	// Player powerup update
-	if (m_player.powerUp != nullptr) m_player.powerUp->Update(m_app->deltaTime);// Update player power up if exists
+	if (m_player.powerUp != nullptr && m_player.powerUp->enabled) {
+		m_player.powerUp->Update(m_app->deltaTime);// Update player power up if exists
+		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
+			if (glm::length(m_aiEnemies[i].body.transform.position - m_player.powerUp->transform.position) < GREEN_SHELL_STUN_DISTANCE) {
+				m_aiEnemies[i].stunned = true;
+				m_aiEnemies[i].stunnedCounter = clock();
+				m_player.powerUp->enabled = false;
+				break;
+			}
+		}
+	}
 
 	// Enemies powerup updates
 	for (int i = 0; i < MAX_AI_ENEMIES; ++i) if (m_aiEnemies[i].powerUp != nullptr) m_aiEnemies[i].powerUp->Update(m_app->deltaTime); // Update player power up if exists

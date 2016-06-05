@@ -3,7 +3,7 @@
 namespace SerraPlo {
 
 #define TARGET_FPS 120.0f
-#define MS_ALIVE_DELAY 5000.0f
+#define MS_ALIVE_DELAY 3000.0f
 #define MS_RESEND_NICK_DELAY 4000.0f
 #define MS_UPDATE_DELAY 100.0f
 
