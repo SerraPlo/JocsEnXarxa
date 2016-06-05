@@ -100,5 +100,6 @@
     <None Include="..\..\assets\shaders\main_mult.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

@@ -346,7 +346,7 @@ void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProg
 
 
 	glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
-	glViewport(screenWidth*0.6f, screenHeight*0.05f, screenWidth*0.35f, screenHeight*0.3f);
+	glViewport(GLsizei(screenWidth*0.6f), GLsizei(screenHeight*0.05f), GLsizei(screenWidth*0.35f), GLsizei(screenHeight*0.3f));
 
 	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
 								 // Positions   // TexCoords

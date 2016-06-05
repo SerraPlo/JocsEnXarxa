@@ -219,7 +219,7 @@ void MultiplayerScreen::ProcessMsgs(void) {
 				std::cout << "Game begins!" << std::endl;
 			} break;
 			case MSG_UPDATE: {
-				for (int i = 0; i < m_enemies.size() + 1; ++i) {
+				for (size_t i = 0; i < m_enemies.size() + 1; ++i) {
 					std::string nick;
 					m_app->mainSocket >> nick;
 					if (m_app->nick == nick) m_app->mainSocket >> myServTrans.position.x >> myServTrans.position.z >> myServTrans.rotation.y;

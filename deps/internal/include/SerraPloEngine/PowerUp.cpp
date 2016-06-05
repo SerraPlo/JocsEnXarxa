@@ -14,7 +14,7 @@ namespace SerraPlo {
 	}
 	void GreenShell::Activate(void) { // Activate item, start lifetime counter and set main attributes
 		if (!enabled) {
-			lifeTimeCounter = clock();
+			lifeTimeCounter = float(clock());
 			transform.position = glm::vec3{ carPos->x, 2, carPos->z };
 			front = *carFront;
 			enabled = true;
@@ -60,7 +60,7 @@ namespace SerraPlo {
 	}
 	void RedShell::Activate(void) { // Activate item, start lifetime counter and set main attributes
 		if (!enabled) {
-			lifeTimeCounter = clock();
+			lifeTimeCounter = float(clock());
 			transform.position = glm::vec3{ carPos->x, 2, carPos->z };
 			front = *carFront;
 			enabled = true;

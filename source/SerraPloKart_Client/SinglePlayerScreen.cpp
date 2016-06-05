@@ -210,7 +210,7 @@ void SinglePlayerScreen::Update(void) {
 
 	// Car physics update
 	glm::vec2 colVecAi = { 0.0f,0.0f };
-	for (int i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
+	for (size_t i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
 		if (m_aiPhysics.aiCarArray[i].collisionCar == -10)
 			colVecAi = glm::normalize(glm::vec2(m_player.body.transform.position.x, m_player.body.transform.position.z)
 				- glm::vec2(m_aiPhysics.aiCarArray[i].transformRef->position.x, m_aiPhysics.aiCarArray[i].transformRef->position.z));
@@ -262,11 +262,11 @@ void SinglePlayerScreen::Update(void) {
 		itemBox.enabled = true; // Enable item box in world
 		m_aiPhysics.boxOn = true;
 		itemBox.transform.position.y = 3.0f + sin(clock()*0.01f)*30.0f*m_app->deltaTime; // Update sinoidal Y movement
-		itemBox.transform.rotation.y = (clock() / 100) % 360; // Rotate continuously around Y
+		itemBox.transform.rotation.y = float((clock() / 100) % 360); // Rotate continuously around Y
 		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
 			if (/*m_aiEnemies[i].powerUp == nullptr &&*/ // If the enemy doesn't have a powerup
 				glm::length(m_aiEnemies[i].body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If enemy collides with powerup
-				itemBox.activeCounter = clock(); // Reset counter to respawn item box
+				itemBox.activeCounter = float(clock()); // Reset counter to respawn item box
 				itemBox.enabled = false; // Disable item box to be renderer in the world
 				m_aiPhysics.boxOn = false;
 				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
@@ -278,7 +278,7 @@ void SinglePlayerScreen::Update(void) {
 		}
 		if (itemBox.enabled && /*m_player.powerUp == nullptr &&*/ // If item box exists in world and the player doesn't have a powerup
 			glm::length(m_player.body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If player collides with powerup
-			itemBox.activeCounter = clock(); // Reset counter to respawn item box
+			itemBox.activeCounter = float(clock()); // Reset counter to respawn item box
 			itemBox.enabled = false; // Disable item box to be renderer in the world
 			m_aiPhysics.boxOn = false;
 			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
@@ -294,7 +294,7 @@ void SinglePlayerScreen::Update(void) {
 		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
 			if (glm::length(m_aiEnemies[i].body.transform.position - m_player.powerUp->transform.position) < GREEN_SHELL_STUN_DISTANCE) {
 				m_aiEnemies[i].stunned = true;
-				m_aiEnemies[i].stunnedCounter = clock();
+				m_aiEnemies[i].stunnedCounter = float(clock());
 				m_player.powerUp->enabled = false;
 				break;
 			}
@@ -306,7 +306,7 @@ void SinglePlayerScreen::Update(void) {
 
 	// Player item slot update
 	m_player.itemSlot.position = m_camera.position + m_player.front + glm::vec3{0, -0.025f, 0}; /// TODO: put on correct place
-	m_player.itemSlot.rotation.y = atan2f(m_player.front.x, m_player.front.z) * RAD2DEG;
+	m_player.itemSlot.rotation.y = float(atan2f(m_player.front.x, m_player.front.z) * RAD2DEG);
 }
 
 void SinglePlayerScreen::CheckInput(void) {

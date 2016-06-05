@@ -4,8 +4,8 @@
 
 void AppServer::Init(void) {
 	clientLists.resize(MAX_PARTIES);
-	memset(m_aliveCounter, float(clock()), MAX_PARTIES);
-	memset(m_counterUpdate, float(clock()), MAX_PARTIES);
+	memset(m_aliveCounter, int(clock()), MAX_PARTIES);
+	memset(m_counterUpdate, int(clock()), MAX_PARTIES);
 }
 
 void AppServer::Send(void) {

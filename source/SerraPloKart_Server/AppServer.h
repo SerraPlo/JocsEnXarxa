@@ -5,7 +5,7 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 
 #define PORT 5000
-#define MAX_PARTY_PLAYERS 2
+#define MAX_PARTY_PLAYERS 4
 #define MAX_PARTIES 3
 
 class AppServer : public IApp {

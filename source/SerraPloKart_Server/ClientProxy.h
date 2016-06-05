@@ -12,7 +12,7 @@ public:
 	CarPhysics carPhy;
 	ClientProxy() = default;
 	ClientProxy(sockaddr addr, const std::string &str, int clientListSize) : address(addr), nick(str) {
-		transform.position = { 180 + int(clientListSize / 2)*10, 0, 115 - (clientListSize % 2)*10 };
+		transform.position = { 180 + int(clientListSize / 2)*20, 0, 115 - (clientListSize % 2)*10 };
 		transform.rotation = { 0, -90, 0 };
 		carPhy.AddTransform(&transform);
 	};

@@ -33,12 +33,12 @@ namespace SerraPlo {
 		float angle{ .0f };
 		glm::vec3 posP = glm::vec3(0.0f,0.0f,0.0f);
 		if (playerOn) posP = aiCarArray[0].playerRef->position;
-		for (int i = 0; i < aiCarArray.size(); i++) aiCarArray[i].collisionCar = -1;
-		for (int i = 0; i < aiCarArray.size(); i++) {
+		for (size_t i = 0; i < aiCarArray.size(); i++) aiCarArray[i].collisionCar = -1;
+		for (size_t i = 0; i < aiCarArray.size(); i++) {
 			glm::vec3 posI = aiCarArray[i].transformRef->position;
 			if (carColCalc(posI, posP)) aiCarArray[i].collisionCar = -10;
 			else if(aiCarArray[i].collisionCar == -1){
-				for (int j = 0; j < aiCarArray.size()-i; j++) {
+				for (size_t j = 0; j < aiCarArray.size()-i; j++) {
 					if (i != j && carColCalc(posI, aiCarArray[j].transformRef->position)) {
 						aiCarArray[i].collisionCar = j; aiCarArray[j].collisionCar = i;
 						break;
@@ -122,7 +122,7 @@ namespace SerraPlo {
 				aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
 					0.0f,(newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 			} else {
-				aiCar.transformRef->rotation.y = (clock()) % 360;
+				aiCar.transformRef->rotation.y = float((clock()) % 360);
 			}
 		}
 	}
