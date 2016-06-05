@@ -214,7 +214,13 @@ void SinglePlayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 
 	// Car physics update
-	m_carPhysics.Update(temp, gameApp->deltaTime, { 0.0f,0.0f });
+	glm::vec2 colVecAi = { 0.0f,0.0f };
+	for (int i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
+		if (m_aiPhysics.aiCarArray[i].collisionCar == -10)
+			colVecAi = glm::normalize(glm::vec2(m_player.body.transform.position.x, m_player.body.transform.position.z)
+				- glm::vec2(m_aiPhysics.aiCarArray[i].transformRef->position.x, m_aiPhysics.aiCarArray[i].transformRef->position.z));
+	m_carPhysics.Update(temp, gameApp->deltaTime, colVecAi);
+	if(clock()>10000)m_aiPhysics.playerOn = true;
 	m_player.front = m_carPhysics.front;
 
 	//Update car lights position & direction

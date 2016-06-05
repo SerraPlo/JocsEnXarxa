@@ -19,7 +19,6 @@ namespace SerraPlo {
 			float maxSteerForce; // = 6.0f * 60.0f; // Normal
 			float mass;
 			int curPathNode;
-			
 			float collisionForce;
 			glm::vec2 collisionDirection;
 			int collisionCar;
@@ -27,10 +26,12 @@ namespace SerraPlo {
 			glm::vec2 collisionCarDirection;
 		};
 	public:
+
 		CollisionManager collisions;
 		glm::vec2 positionsCol[4];
 		std::vector<AICarPhysics> aiCarArray;
 		std::vector<glm::vec2> *aiPathRef;
+		bool playerOn = false;
 		AIPhysics(){collisions.InitStructures(GetPathToAsset("models/circuit_col/colisions.txt"));}
 		~AIPhysics() = default;
 		void AddPath(std::vector<glm::vec2> *pathR) { aiPathRef = pathR; }

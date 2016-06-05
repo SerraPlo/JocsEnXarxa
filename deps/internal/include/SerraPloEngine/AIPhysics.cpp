@@ -30,16 +30,21 @@ namespace SerraPlo {
 		glm::vec2 steeringForce{};
 		glm::vec2 acceleration{};
 		float angle{ .0f };
+		glm::vec3 posP = glm::vec3(0.0f,0.0f,0.0f);
+		if (playerOn) posP = aiCarArray[0].playerRef->position;
+		for (int i = 0; i < aiCarArray.size(); i++) aiCarArray[i].collisionCar = -1;
 		for (int i = 0; i < aiCarArray.size(); i++) {
 			glm::vec3 posI = aiCarArray[i].transformRef->position;
-			for (int j = 0; j < aiCarArray.size(); j++) {
-				if (i != j && carColCalc(posI, aiCarArray[j].transformRef->position))
-					aiCarArray[i].collisionCar = j;
-				else aiCarArray[i].collisionCar = -1;
+			if (carColCalc(posI, posP)) aiCarArray[i].collisionCar = -10;
+			else if(aiCarArray[i].collisionCar == -1){
+				for (int j = 0; j < aiCarArray.size()-i; j++) {
+					if (i != j && carColCalc(posI, aiCarArray[j].transformRef->position)) {
+						aiCarArray[i].collisionCar = j; aiCarArray[j].collisionCar = i;
+						break;
+					}
+					else aiCarArray[i].collisionCar = -1;
+				}
 			}
-			/*if (carColCalc(posI, aiCarArray[i].playerRef->position)) {
-				aiCarArray[i].collisionCar = -10;
-			}*/ // player WIP
 		}
 		for (auto &aiCar : aiCarArray) {
 			glm::vec2 positionIA = { aiCar.transformRef->position.x, aiCar.transformRef->position.z };
@@ -66,10 +71,20 @@ namespace SerraPlo {
 			glm::vec2 pFront = glm::vec2(-direction.y, direction.x);
 			positionsCol[0] = newPos + direction*2.0f + pFront*1.25f;	positionsCol[1] = newPos + direction*2.0f - pFront*1.25f;
 			positionsCol[2] = newPos + direction*2.0f + pFront*1.25f;	positionsCol[3] = newPos + direction*2.0f - pFront*1.25f;
+			if (aiCar.collisionCar >= 0) {
+				aiCar.speed /= 10.0f;
+				aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCarArray[aiCar.collisionCar].transformRef->position.x, aiCarArray[aiCar.collisionCar].transformRef->position.z));
+				aiCar.collisionCarForce = 40.0f;
+			}else if (aiCar.collisionCar == -10) {//player
+				aiCar.speed /= 10.0f;
+				aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCar.playerRef->position.x, aiCar.playerRef->position.z));
+				aiCar.collisionCarForce = 40.0f;
+			}
 			int i = collisions.CalculateCollision(positionsCol);
 			if (i != -1) {
+				aiCar.collisionCarForce = 0.0f;
 				if (i < collisions.nBoxs) {
-					aiCar.speed /= 4.0f;
+					aiCar.speed == glm::vec2(0.0f, 0.0f);
 					aiCar.collisionDirection = glm::normalize(positionIA - newPos);
 					aiCar.collisionForce = 40.0f;
 				}else {
@@ -78,17 +93,8 @@ namespace SerraPlo {
 					aiCar.collisionForce = 40.0f;
 				}
 			}
-			if (aiCar.collisionCar >= 0) {
-				aiCar.speed /= 4.0f;
-				aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCarArray[aiCar.collisionCar].transformRef->position.x, aiCarArray[aiCar.collisionCar].transformRef->position.z));
-				aiCar.collisionCarForce = 40.0f;
-			}
-			else if (aiCar.collisionCar == -10) {//player
-				aiCar.speed /= 4.0f;
-				aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCar.playerRef->position.x, aiCar.playerRef->position.z));
-				aiCar.collisionCarForce = 40.0f;
-			}
-			aiCar.transformRef->position = { (newPos + aiCar.collisionDirection*aiCar.collisionForce*deltaTime + aiCar.collisionCarDirection*aiCar.collisionCarForce*deltaTime).x,0.0f,(newPos + aiCar.collisionDirection*aiCar.collisionForce*deltaTime + aiCar.collisionCarDirection*aiCar.collisionCarForce*deltaTime).y };
+			aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
+				0.0f, (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 		}
 	}
 }
