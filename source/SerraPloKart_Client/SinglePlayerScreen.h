@@ -10,7 +10,7 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
-#define MAX_AI_ENEMIES 4
+#define MAX_AI_ENEMIES 5
 #define MAX_POINT_LIGHTS 2
 #define MAX_STATIC_SPOT_LIGHTS 12
 #define MAX_DYNAMIC_SPOT_LIGHTS MAX_AI_ENEMIES + 1

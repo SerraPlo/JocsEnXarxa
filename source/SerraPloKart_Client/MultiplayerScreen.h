@@ -11,9 +11,9 @@
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
-#define MAX_POINT_LIGHTS 2
-#define MAX_SPOT_LIGHTS 12
 #define MAX_ENEMIES 9
+#define MAX_POINT_LIGHTS 2
+#define MAX_SPOT_LIGHTS 12 // + 1 from player
 
 class AppClient;
 class MultiplayerScreen : public IScreen {
@@ -53,6 +53,7 @@ private:
 		GameObject body;
 		GameObject wheels[4];
 		GLText nickIdentifier;
+		SpotLight light;
 	} m_player;
 
 	// Enemies
@@ -80,7 +81,4 @@ private:
 	DirLight m_dirLight;
 	PointLight m_pointLights[MAX_POINT_LIGHTS];
 	SpotLight m_spotLights[MAX_SPOT_LIGHTS];
-	SpotLight m_carLights;
-
-	
 };

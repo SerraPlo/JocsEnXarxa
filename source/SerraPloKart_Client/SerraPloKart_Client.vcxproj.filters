@@ -82,9 +82,6 @@
     <None Include="..\..\assets\shaders\g_buffer.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\assets\shaders\main.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\..\assets\shaders\main.vert">
       <Filter>Shaders</Filter>
     </None>
@@ -95,6 +92,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\assets\shaders\text.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\main_single.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\main_mult.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

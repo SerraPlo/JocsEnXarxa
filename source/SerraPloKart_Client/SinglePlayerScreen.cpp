@@ -16,7 +16,7 @@ void SinglePlayerScreen::Build(void) {
 	m_minimapCamera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
 
 	//Initialize main shaders
-	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
+	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main_single.frag");
 	m_screenProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
 	m_GUIProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
 	//Initialize debug shaders
@@ -40,10 +40,11 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, 0.85f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, 0.9f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, 1.2f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, 1.4f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, 1.0f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, 1.2f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, 1.4f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, 1.6f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, 1.8f, 200.0f * 60.0f);
 	
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
@@ -144,17 +145,13 @@ void SinglePlayerScreen::OnEntry(void) {
 	glEnable(GL_LIGHT0); //Enable light #0
 
 	// Init AI enemies
-	m_aiEnemies[0].body.transform.position = { 180, 0, 115 };
-	m_aiEnemies[1].body.transform.position = { 180, 0, 105 };
-	m_aiEnemies[2].body.transform.position = { 200, 0, 115 };
-	m_aiEnemies[3].body.transform.position = { 200, 0, 105 };
 	for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
+		m_aiEnemies[i].body.transform.position = { 190 + int(i/2)*20, 0, 115 - int(i % 2) * 10 };
 		m_aiEnemies[i].body.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 		m_aiEnemies[i].body.materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
 		m_aiEnemies[i].body.materialRef->materialData[0].shininess = 50;
 		m_aiEnemies[i].body.materialRef->materialData[0].specular = { 1,1,1 };
 		m_renderer.AddObject(&m_aiEnemies[i].body);
-
 		m_aiEnemies[i].light.ambient = { 1.0f, 1.0f, 1.0f };
 		m_aiEnemies[i].light.diffuse = { 1.0f, 1.0f, 0.5f };
 		m_aiEnemies[i].light.specular = { 1.0f, 1.0f, 1.0f };
@@ -179,10 +176,8 @@ void SinglePlayerScreen::OnEntry(void) {
 	m_player.itemSlot.scale = glm::vec3{ .1f };
 
 	// Send light and material attributes to fragment shader
-	m_mainProgram.Bind();
 	m_renderer.SendStaticLightAttributes(m_mainProgram, m_camera);
 	m_renderer.SendMaterialAttributes(m_mainProgram, m_camera);
-	m_mainProgram.Unbind();
 }
 
 void SinglePlayerScreen::OnExit(void) {

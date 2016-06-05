@@ -15,7 +15,7 @@ void MultiplayerScreen::Build(void) {
 	m_camera.Resize(nw + (m_app->screenWidth - nw) / 2, m_app->screenHeight);
 
 	//Initialize main shaders
-	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main.frag");
+	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main_mult.frag");
 	m_textProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
@@ -155,17 +155,17 @@ void MultiplayerScreen::OnEntry(void) {
 		m_renderer.AddLight(&m_spotLights[i]);
 	}
 
-	m_carLights.position = m_player.body.transform.position;
-	m_carLights.direction = { -1, 0, 0 };
-	m_carLights.ambient = { 1.0f, 1.0f, 1.0f };
-	m_carLights.diffuse = { 1.0f, 1.0f, 0.5f };
-	m_carLights.specular = { 1.0f, 1.0f, 1.0f };
-	m_carLights.constant = 1.0f;
-	m_carLights.linear = 0.027f;
-	m_carLights.quadratic = 0.0028f;
-	m_carLights.cutOff = glm::cos(glm::radians(30.0f));
-	m_carLights.outerCutOff = glm::cos(glm::radians(40.0f));
-	m_renderer.AddLight(&m_carLights, false);
+	m_player.light.position = m_player.body.transform.position;
+	m_player.light.direction = { -1, 0, 0 };
+	m_player.light.ambient = { 1.0f, 1.0f, 1.0f };
+	m_player.light.diffuse = { 1.0f, 1.0f, 0.5f };
+	m_player.light.specular = { 1.0f, 1.0f, 1.0f };
+	m_player.light.constant = 1.0f;
+	m_player.light.linear = 0.027f;
+	m_player.light.quadratic = 0.0028f;
+	m_player.light.cutOff = glm::cos(glm::radians(30.0f));
+	m_player.light.outerCutOff = glm::cos(glm::radians(40.0f));
+	m_renderer.AddLight(&m_player.light, false);
 
 	glEnable(GL_LIGHTING); //Enable lighting
 	glEnable(GL_LIGHT0); //Enable light #0
@@ -330,8 +330,8 @@ void MultiplayerScreen::DoPhysics(void) {
 		//ESC
 	if (m_app->inputManager.isKeyPressed(SDLK_ESCAPE)) m_app->ChangeScreen(SCREEN_MENU);
 		//Update car light position & direction
-	m_carLights.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
-	m_carLights.direction = m_carPhysics.front - glm::vec3{ 0,0.3f,0 };
+	m_player.light.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
+	m_player.light.direction = m_carPhysics.front - glm::vec3{ 0,0.3f,0 };
 		//IA update
 	//m_aiPhysics.Update(gameApp->deltaTime);
 }
@@ -348,7 +348,6 @@ void MultiplayerScreen::Draw(void) {
 
 	m_renderer.DrawObjects(m_mainProgram, m_camera);
 
-	m_textProgram.Bind();
 	m_player.nickIdentifier.Draw(m_textProgram, m_camera);
 	for (auto &enemy : m_enemies) enemy.second.nickIdentifier.Draw(m_textProgram, m_camera);
 
