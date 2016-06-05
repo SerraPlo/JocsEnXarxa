@@ -38,8 +38,8 @@ void MultiplayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&debugIA1.transform, 0.8f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&debugIA2.transform, 0.9f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA1.transform, 0.8f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &debugIA2.transform, 0.9f, 200.0f * 60.0f);
 	m_aiPhysics.AddPath(&m_aiPath);
 }
 

@@ -40,10 +40,10 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&m_aiEnemies[0].body.transform, 0.85f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[1].body.transform, 0.9f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[2].body.transform, 1.2f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_aiEnemies[3].body.transform, 1.4f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, 0.85f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, 0.9f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, 1.2f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, 1.4f, 200.0f * 60.0f);
 	
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
