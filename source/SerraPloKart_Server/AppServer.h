@@ -6,11 +6,14 @@
 
 #define PORT 5000
 #define MAX_PARTY_PLAYERS 2
+#define MAX_PARTIES 3
 
 class AppServer : public IApp {
 	UDPStream dispatcher;
-	std::map<uint64_t, ClientProxy*> clientList;
-	float m_counterUpdate{ 0.0f };
+	std::vector<std::map<uint64_t, ClientProxy*>> clientLists;
+	int numberClientLists = 0;
+	float m_counterUpdate[MAX_PARTIES];
+	float m_aliveCounter[MAX_PARTIES];
 
 	explicit AppServer() : dispatcher(PORT) {};
 	AppServer(AppServer const&) = delete;

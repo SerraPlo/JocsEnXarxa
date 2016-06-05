@@ -126,7 +126,7 @@ void AppClient::Run(void) {
 }
 
 void AppClient::Exit(void) {
-	if (currentScreen->screenIndex == SCREEN_MULTIPLAYER) mainSocket << UDPStream::packet << MSG_EXIT << serverAddress;
+	if (currentScreen->screenIndex == SCREEN_MULTIPLAYER) mainSocket << UDPStream::packet << MSG_EXIT << multiPartyID << serverAddress;
 	currentScreen->OnExit(); // Call the leaving method of the current screen
 	if (m_screenList) m_screenList->Destroy(), m_screenList.reset();
 	SDL_DestroyRenderer(renderer);

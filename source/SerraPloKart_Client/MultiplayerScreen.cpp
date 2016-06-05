@@ -302,7 +302,7 @@ void MultiplayerScreen::DoPhysics(void) {
 	m_inputCounter++;
 	if (m_inputCounter >= 10) {//send cada 10 updates
 		m_inputCounter = 0;
-		m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << colVecX << colVecY << m_in2send.dt << m_app->serverAddress;
+		m_app->mainSocket << UDPStream::packet << MSG_UPDATE << m_app->multiPartyID << m_in2send.w << m_in2send.a << m_in2send.s << m_in2send.d << colVecX << colVecY << m_in2send.dt << m_app->serverAddress;
 	}
 	//Extras position
 		//Enemies

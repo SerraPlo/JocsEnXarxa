@@ -62,6 +62,7 @@ void LoadingScreen::Update(void) {
 				switch (header) {
 					case MSG_ACCEPT: { // Set screen to multiplayer when server indicates so
 						std::cout << "Server accepted entry. Waiting for the other players..." << std::endl;
+						m_app->mainSocket >> m_app->multiPartyID;
 						m_app->ChangeScreen(SCREEN_MULTIPLAYER);
 					} break;
 					case MSG_REFUSE: { // Leave to main menu if server is disconnected

@@ -46,6 +46,7 @@ public:
 	InputManager inputManager;	// Main instance of the input manager class
 	AssetManager assetManager;
 	bool multiplayerMode = false; ///TODO: cutre
+	int multiPartyID = -1;
 
 	std::string nick{ "" };
 

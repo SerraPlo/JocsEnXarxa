@@ -3,25 +3,29 @@
 #include <ctime>
 
 void AppServer::Init(void) {
-	aliveCounter = float(clock());
-	m_counterUpdate = float(clock());
+	clientLists.resize(MAX_PARTIES);
+	memset(m_aliveCounter, float(clock()), MAX_PARTIES);
+	memset(m_counterUpdate, float(clock()), MAX_PARTIES);
 }
 
-
 void AppServer::Send(void) {
-	// Alive counter to tell player that the server is working
-	if (clock() > aliveCounter + MS_ALIVE_DELAY && clientList.size() == MAX_PARTY_PLAYERS) {
-		//std::cout << "Sending alive..." << std::endl;
-		dispatcher << UDPStream::packet << MSG_ALIVE;
-		for (auto &client : clientList) dispatcher << client.second->address;
-		aliveCounter = float(clock());
-	}
-	// Update each player connected with the nick and the position of the other players
-	if (clock() > m_counterUpdate + MS_UPDATE_DELAY && clientList.size() == MAX_PARTY_PLAYERS) {
-		dispatcher << UDPStream::packet << MSG_UPDATE;
-		for (auto &client : clientList) dispatcher << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
-		for (auto &player : clientList) dispatcher << player.second->address;
-		m_counterUpdate = float(clock());
+	int i = 0;
+	for (auto &clientList : clientLists) {
+		// Alive counter to tell player that the server is working
+		if (clock() > m_aliveCounter[i] + MS_ALIVE_DELAY && clientList.size() == MAX_PARTY_PLAYERS) {
+			//std::cout << "Sending alive..." << std::endl;
+			dispatcher << UDPStream::packet << MSG_ALIVE;
+			for (auto &client : clientList) dispatcher << client.second->address;
+			m_aliveCounter[i] = float(clock());
+		}
+		// Update each player connected with the nick and the position of the other players
+		if (clock() > m_counterUpdate[i] + MS_UPDATE_DELAY && clientList.size() == MAX_PARTY_PLAYERS) {
+			dispatcher << UDPStream::packet << MSG_UPDATE;
+			for (auto &client : clientList) dispatcher << client.second->nick << client.second->transform.position.x << client.second->transform.position.z << client.second->transform.rotation.y;
+			for (auto &player : clientList) dispatcher << player.second->address;
+			m_counterUpdate[i] = float(clock());
+		}
+		++i;
 	}
 }
 
@@ -34,25 +38,31 @@ void AppServer::Receive(void) {
 			case MSG_LOGIN: {
 				std::string nick;
 				dispatcher >> nick; // Receive client nick and store it
-				if (clientList.size() != MAX_PARTY_PLAYERS) {
-					if (clientList.find(sender.hash) == clientList.end()) { // Check if player exists in client list
-						clientList[sender.hash] = new ClientProxy(sender, nick, clientList.size()); ///TODO: new placement constructor
+				if (clientLists[numberClientLists].size() != MAX_PARTY_PLAYERS) {
+					if (clientLists[numberClientLists].find(sender.hash) == clientLists[numberClientLists].end()) { // Check if player exists in client list
+						clientLists[numberClientLists][sender.hash] = new ClientProxy(sender, nick, clientLists[numberClientLists].size()); ///TODO: new placement constructor
 						std::cout << nick << " has logged in. Added to client database." << std::endl;
-						dispatcher << UDPStream::packet << MSG_ACCEPT << sender; // Let the new player connected enter the game
-						if (clientList.size() == MAX_PARTY_PLAYERS) { // Check if race begins
-							dispatcher << UDPStream::packet << MSG_BEGIN << int(clientList.size()); // Send player enemies size
-							for (auto &client : clientList) dispatcher << client.second->nick << client.second->transform.position << client.second->transform.rotation;
-							for (auto &player : clientList) dispatcher << player.second->address;
-							m_counterUpdate = float(clock());
+						dispatcher << UDPStream::packet << MSG_ACCEPT << numberClientLists << sender; // Let the new player connected enter the game
+						if (clientLists[numberClientLists].size() == MAX_PARTY_PLAYERS) { // Check if race begins
+							dispatcher << UDPStream::packet << MSG_BEGIN << int(clientLists[numberClientLists].size()); // Send player enemies size
+							for (auto &client : clientLists[numberClientLists]) dispatcher << client.second->nick << client.second->transform.position << client.second->transform.rotation;
+							for (auto &player : clientLists[numberClientLists]) dispatcher << player.second->address;
+							m_counterUpdate[numberClientLists] = float(clock());
+							m_aliveCounter[numberClientLists] = float(clock());
+							if (numberClientLists < MAX_PARTIES-1) ++numberClientLists;
 						}
 					}
 				} else dispatcher << UDPStream::packet << MSG_REFUSE << sender;
 			} break;
 			case MSG_EXIT: { // Remove from client list the player disconnected
-				std::cout << clientList[sender.hash]->nick << " has been disconnected." << std::endl;
-				clientList.erase(sender.hash);
+				int listID;
+				dispatcher >> listID;
+				std::cout << clientLists[listID][sender.hash]->nick << " has been disconnected." << std::endl;
+				clientLists[listID].erase(sender.hash);
 			} break;
 			case MSG_UPDATE: {
+				int listID;
+				dispatcher >> listID;
 				input10 input;
 				float x[10]; float y[10];
 				dispatcher >> input.w >> input.a >> input.s >> input.d >> x >> y >> input.dt;
@@ -61,12 +71,12 @@ void AppServer::Receive(void) {
 					temp[0] = input.w[i]; temp[1] = input.a[i];
 					temp[2] = input.s[i]; temp[3] = input.d[i];
 					temp[4] = false;
-					clientList[sender.hash]->carPhy.Update(temp, input.dt[i], glm::vec2(x[i],y[i]));
+					clientLists[listID][sender.hash]->carPhy.Update(temp, input.dt[i], glm::vec2(x[i],y[i]));
 				}
 				//std::cout << clientList[sender.hash]->transform.position.x <<std::endl;
 			}
 		}
-		if (clientList.empty()) std::cout << "All players disconnected." << std::endl;
+		//for (auto &clientList : clientLists) if (clientList.empty()) std::cout << "All players disconnected." << std::endl;
 	} catch (UDPStream::wrong) { //if the amount of packet data not corresponding to the amount of data that we are trying to read
 		std::cout << "--> ALERT: Wrongly serialized data received!" << std::endl;
 	} catch (UDPStream::empty) {} //if the package is empty or have not received anything
@@ -93,6 +103,6 @@ void AppServer::Run(void) {
 
 void AppServer::Destroy(void) {
 	dispatcher << UDPStream::packet << MSG_EXIT;
-	for (auto &client : clientList) dispatcher << client.second->address, delete client.second;
+	for (auto &clientList : clientLists) for (auto &client : clientList) dispatcher << client.second->address, delete client.second;
 	//m_isRunning = false; // Execution ends
 }
