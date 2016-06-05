@@ -27,7 +27,7 @@ namespace SerraPlo {
 			glm::vec2 collisionCarDirection;
 		};
 	public:
-
+		bool boxOn = true;
 		CollisionManager collisions;
 		glm::vec2 positionsCol[4];
 		std::vector<AICarPhysics> aiCarArray;

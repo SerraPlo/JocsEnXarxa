@@ -20,8 +20,20 @@ namespace SerraPlo {
 
 #define GREEN_SHELL_STUN_DISTANCE 5.0f
 #define GREEN_SHELL_STUN_DELAY 1000
+#define RED_SHELL_STUN_DISTANCE 5.0f
+#define RED_SHELL_STUN_DELAY 1000
 
 	struct GreenShell : PowerUp {
+		glm::vec3 *carPos;
+		glm::vec3 *carFront;
+		glm::vec3 front;
+		float speed = 70.0f; ///TODO: change to player car trully speed
+		void Init(glm::vec3 *pos, glm::vec3 *front) override;
+		void Activate(void) override;
+		void Update(float dt) override;
+		void Draw(ShaderProgram & program, GLCamera & camera) override;
+	};
+	struct RedShell : PowerUp {
 		glm::vec3 *carPos;
 		glm::vec3 *carFront;
 		glm::vec3 front;

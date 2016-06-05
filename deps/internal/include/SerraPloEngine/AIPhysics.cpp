@@ -56,8 +56,31 @@ namespace SerraPlo {
 					++aiCar.curPathNode; // Update targetSegment next time
 					if (aiCar.curPathNode >= int(aiPathRef->size())) aiCar.curPathNode = 0;
 				}
-				// Seek target segment
-				steeringForce = DoSteeringSeek(targetSegment, positionIA, aiCar.speed, aiCar.maxSpeed, aiCar.maxSteerForce);
+
+				if (glm::distance(positionIA, { 140, 110 }) < 30.0f && boxOn) {//recollir caixa
+					steeringForce = DoSteeringSeek({ 140, 110 }, positionIA, aiCar.speed, aiCar.maxSpeed, aiCar.maxSteerForce);
+				}else{//esquivar
+					bool flee = false;
+					static glm::vec2 fleePos = { 0.0f,0.0f };
+					if (playerOn) {
+						for (auto &aiCarro : aiCarArray) {
+							if (!flee && glm::distance(positionIA, { aiCarro.transformRef->position.x,aiCarro.transformRef->position.z }) < 50.0f) {
+								glm::vec2 temporalPos = positionIA - (glm::vec2(aiCarro.transformRef->position.x, aiCarro.transformRef->position.z)- positionIA);
+								if (glm::distance(positionIA, targetSegment) >= glm::distance(temporalPos, targetSegment)) {
+									flee = true;
+									fleePos = { aiCarro.transformRef->position.x,aiCarro.transformRef->position.z };
+									break;
+								}
+							}
+						}
+					}
+					if (flee) {
+						steeringForce = DoSteeringSeek(fleePos, positionIA, aiCar.speed, aiCar.maxSpeed, aiCar.maxSteerForce)*-1.0f;
+					}
+					steeringForce = DoSteeringSeek(targetSegment, positionIA, aiCar.speed, aiCar.maxSpeed, aiCar.maxSteerForce);//seguir cami
+				}
+				
+
 				acceleration = (steeringForce / aiCar.mass);
 				aiCar.speed += acceleration * deltaTime*0.1f;
 				newPos += aiCar.speed;
@@ -71,8 +94,6 @@ namespace SerraPlo {
 				if (aiCar.collisionCarForce > 0.0f) aiCar.collisionCarForce -= 100.0f*deltaTime;
 				else aiCar.collisionCarForce = 0.0f;
 				glm::vec2 pFront = glm::vec2(-direction.y, direction.x);
-				positionsCol[0] = newPos + direction*2.0f + pFront*1.25f;	positionsCol[1] = newPos + direction*2.0f - pFront*1.25f;
-				positionsCol[2] = newPos + direction*2.0f + pFront*1.25f;	positionsCol[3] = newPos + direction*2.0f - pFront*1.25f;
 				if (aiCar.collisionCar >= 0) {
 					aiCar.speed /= 10.0f;
 					aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCarArray[aiCar.collisionCar].transformRef->position.x, aiCarArray[aiCar.collisionCar].transformRef->position.z));
@@ -82,23 +103,24 @@ namespace SerraPlo {
 					aiCar.collisionCarDirection = glm::normalize(positionIA - glm::vec2(aiCar.playerRef->position.x, aiCar.playerRef->position.z));
 					aiCar.collisionCarForce = 40.0f;
 				}
+				glm::vec2 newPosT = newPos + aiCar.collisionDirection*aiCar.collisionForce*deltaTime;
+				positionsCol[0] = newPosT + direction*2.0f + pFront*1.25f;	positionsCol[1] = newPosT + direction*2.0f - pFront*1.25f;
+				positionsCol[2] = newPosT + direction*2.0f + pFront*1.25f;	positionsCol[3] = newPosT + direction*2.0f - pFront*1.25f;
 				int i = collisions.CalculateCollision(positionsCol);
 				if (i != -1) {
 					aiCar.collisionCarForce = 0.0f;
 					if (i < collisions.nBoxs) {
 						aiCar.speed == glm::vec2(0.0f, 0.0f);
-						aiCar.collisionDirection = glm::normalize(positionIA - newPos);
+						aiCar.collisionDirection = glm::normalize(positionIA - newPosT);
 						aiCar.collisionForce = 40.0f;
 					} else {
 						aiCar.speed /= 2.0f;
-						aiCar.collisionDirection = glm::normalize(newPos - collisions.circles[i - collisions.nBoxs].c);
+						aiCar.collisionDirection = glm::normalize(newPosT - collisions.circles[i - collisions.nBoxs].c);
 						aiCar.collisionForce = 40.0f;
 					}
-					aiCar.transformRef->position = { (positionIA + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
-						0.0f, (positionIA + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 				}
-				else aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
-					0.0f, (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
+				aiCar.transformRef->position = { (newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).x,
+					0.0f,(newPos + (aiCar.collisionDirection*aiCar.collisionForce + aiCar.collisionCarDirection*aiCar.collisionCarForce)*deltaTime).y };
 			} else {
 				aiCar.transformRef->rotation.y = (clock()) % 360;
 			}
