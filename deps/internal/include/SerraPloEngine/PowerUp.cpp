@@ -59,12 +59,12 @@ namespace SerraPlo {
 		carPos = pos;
 		carFront = front;
 		curPathNode = 0;
-		for (int i = 0; i < karts->size(); ++i) if (carPos == karts->at(i)) { karts->erase(karts->begin() + i); break; }
+		for (int i = 0; i < karts.size(); ++i) if (carPos == karts[i]) { karts.erase(karts.begin() + i); break; }
 	}
 	void RedShell::Activate(void) { // Activate item, start lifetime counter and set main attributes
 		if (!enabled) {
 			lifeTimeCounter = float(clock());
-			transform.position = glm::vec3{ carPos->x, 2, carPos->z };
+			transform.position = glm::vec3{ carPos->x, 4, carPos->z };
 			float minDist = 1000000.0f;
 			for (int i = 0; i < pathRef->size(); ++i) {
 				glm::vec2 iSegment = pathRef->at(i);
@@ -81,7 +81,7 @@ namespace SerraPlo {
 			float distToTarget = glm::distance(glm::vec2(transform.position.x, transform.position.z), targetSegment);
 			if (distToTarget < PATH_DISTANCE_DETECTION) ++curPathNode; if (curPathNode >= int(pathRef->size())) curPathNode = 0;
 			front = glm::normalize(glm::vec3(targetSegment.x, 0.0f, targetSegment.y) - transform.position);
-			for (auto kart : *karts) {
+			for (auto kart : karts) {
 				float distToCar = glm::length(transform.position - *kart);
 				if (distToCar >= 1.0f && distToCar < distToTarget) {
 					front = glm::normalize(*kart - transform.position);

@@ -25,7 +25,7 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init IA Path with 12 points for steering path following
 	m_aiPath = {
-		{ 180, 108 },
+		{ 150, 108 },
 		{ 40, 108 },
 		{ 10, 80 },
 		{ -3, 7 },
@@ -42,12 +42,18 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, &m_aiEnemies[0].stunned, 1.0f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, &m_aiEnemies[1].stunned, 1.2f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, &m_aiEnemies[2].stunned, 1.4f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, &m_aiEnemies[3].stunned, 1.6f, 200.0f * 60.0f);
-	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, &m_aiEnemies[4].stunned, 1.8f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, &m_aiEnemies[0].stunned, &m_aiEnemies[0].pointsDone, &m_aiEnemies[0].laps, 1.0f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[1].body.transform, &m_aiEnemies[1].stunned, &m_aiEnemies[1].pointsDone, &m_aiEnemies[1].laps, 1.2f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, &m_aiEnemies[2].stunned, &m_aiEnemies[2].pointsDone, &m_aiEnemies[2].laps, 1.4f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, &m_aiEnemies[3].stunned, &m_aiEnemies[3].pointsDone, &m_aiEnemies[3].laps, 1.6f, 200.0f * 60.0f);
+	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, &m_aiEnemies[4].stunned, &m_aiEnemies[4].pointsDone, &m_aiEnemies[4].laps, 1.8f, 200.0f * 60.0f);
 
+	m_rankingInfo.push_back(std::make_pair(0, &m_player.pointsDone));
+	m_rankingInfo.push_back(std::make_pair(1, &m_aiEnemies[0].pointsDone));
+	m_rankingInfo.push_back(std::make_pair(2, &m_aiEnemies[1].pointsDone));
+	m_rankingInfo.push_back(std::make_pair(3, &m_aiEnemies[2].pointsDone));
+	m_rankingInfo.push_back(std::make_pair(4, &m_aiEnemies[3].pointsDone));
+	m_rankingInfo.push_back(std::make_pair(5, &m_aiEnemies[4].pointsDone));
 	
 	m_kartsPos.push_back(&m_player.body.transform.position);
 	for (int i = 0; i < MAX_AI_ENEMIES; i++) m_kartsPos.push_back(&m_aiEnemies[i].body.transform.position);
@@ -64,7 +70,7 @@ void SinglePlayerScreen::OnEntry(void) {
 	//SDL_ShowCursor(0);
 
 	// Load player base kart model
-	m_player.body.transform.position = { 180, 0, 115 };
+	m_player.body.transform.position = { 230, 0, 115 };
 	m_player.body.transform.rotation = { 0, -90, 0 };
 	m_player.body.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 	m_player.body.materialRef = &m_app->assetManager.FindMaterial("material_kart_default");
@@ -152,7 +158,7 @@ void SinglePlayerScreen::OnEntry(void) {
 
 	// Init AI enemies
 	for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
-		m_aiEnemies[i].body.transform.position = { 190 + int(i/2)*20, 0, 115 - int(i % 2) * 10 };
+		m_aiEnemies[i].body.transform.position = { 190 + int(i/2)*25, 0, 115 - int(i % 2) * 10 };
 		m_aiEnemies[i].body.meshRef = &m_app->assetManager.FindMesh("mesh_kart_default");
 		m_aiEnemies[i].body.materialRef = &m_app->assetManager.FindMaterial("material_kart_0" + std::to_string(i));
 		m_aiEnemies[i].body.materialRef->materialData[0].shininess = 50;
@@ -170,7 +176,7 @@ void SinglePlayerScreen::OnEntry(void) {
 	}
 
 	// Init Item Box
-	itemBox.transform.position = { 140, 0, 110 };
+	itemBox.transform.position = { 140, 0, 108 };
 	itemBox.meshRef = &m_app->assetManager.FindMesh("mesh_item_box");
 	itemBox.materialRef = &m_app->assetManager.FindMaterial("material_item_box");
 	itemBox.materialRef->materialData[0].shininess = 100;
@@ -192,40 +198,60 @@ void SinglePlayerScreen::OnExit(void) {
 }
 
 PowerUp *SinglePlayerScreen::GetRandPowerUp(int ID) {
-	switch (2) { // Get random number for MAX_POWERUPS powerups
-		case 3: { // BULLET BILL
-			BulletBill *temp = new BulletBill; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_bullet_bill"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_bullet_bill"); // Assign material
-			if (ID == -1) {
-				temp->carEnabled = &m_player.body.enabled;
-				temp->carTransform = &m_player.body.transform;
-				m_player.itemSlot.SetImage("images/slot_bullet_bill.jpg"); // Assign image to item slot if is the player who gets the powerup
-			} else temp->carEnabled = &m_aiEnemies[ID].body.enabled, temp->carTransform = &m_aiEnemies[ID].body.transform;
-			temp->AddPath(&m_aiPath);
-			return dynamic_cast<PowerUp*>(temp);
-		} case 2: { // BANANA
-			PowerUp *temp = new Banana; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_banana"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_banana"); // Assign material
-			if (ID == -1) m_player.itemSlot.SetImage("images/slot_banana.jpg"); // Assign image to item slot if is the player who gets the powerup
-			return temp;
-		} case 1: { // GREEN SHELL
-			RedShell *temp = new RedShell; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_red_shell"); // Assign material
-			if (ID == -1) m_player.itemSlot.SetImage("images/slot_red_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
-			temp->AddPath(&m_aiPath);
-			temp->AddKarts(&m_kartsPos);
-			return dynamic_cast<PowerUp*>(temp);
-		} case 0: default: { // RED SHELL
-			PowerUp *temp = new GreenShell; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
-			if (ID == -1) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
-			return temp;
-		}
-	}
+	float pos = 0.5f;
+
+	float valGreen = 0.2 + (sqrt(pos) / 5)*2.5;
+	float valRed = (pow(pos, 2) / 5)*4.5;
+	float valBill = pow(pos, 5);
+	float valBanana = 1 - valRed;
+    float total = valGreen + valRed /*+ valBlue*/ + valBill + valBanana;
+
+    valGreen = (valGreen/total) * 1000;
+    valRed = (valRed / total) * 1000;
+    //valBlue = (valBlue/total) * 1000;
+    valBill = (valBill / total) * 1000;
+    valBanana = (valBanana / total) * 1000;
+    int random = rand() % 1000;
+
+    int pUp;
+    if (random <= valBill) pUp = 3;
+    else if (random <= valBill + valBanana) pUp =2;
+    else if (random <= valBill + valBanana + valGreen) pUp = 1;
+    else pUp = 0;
+    switch (pUp) { // Get random number for MAX_POWERUPS powerups
+        case 3: { // BULLET BILL
+            BulletBill *temp = new BulletBill; // Create green shell powerup
+            temp->meshRef = &m_app->assetManager.FindMesh("mesh_bullet_bill"); // Assign mesh
+            temp->materialRef = &m_app->assetManager.FindMaterial("material_bullet_bill"); // Assign material
+            if (ID == -1) {
+                temp->carEnabled = &m_player.body.enabled;
+                temp->carTransform = &m_player.body.transform;
+                m_player.itemSlot.SetImage("images/slot_bullet_bill.jpg"); // Assign image to item slot if is the player who gets the powerup
+            } else temp->carEnabled = &m_aiEnemies[ID].body.enabled, temp->carTransform = &m_aiEnemies[ID].body.transform;
+            temp->AddPath(&m_aiPath);
+            return dynamic_cast<PowerUp*>(temp);
+        } case 2: { // BANANA
+            PowerUp *temp = new Banana; // Create green shell powerup
+            temp->meshRef = &m_app->assetManager.FindMesh("mesh_banana"); // Assign mesh
+            temp->materialRef = &m_app->assetManager.FindMaterial("material_banana"); // Assign material
+            if (ID == -1) m_player.itemSlot.SetImage("images/slot_banana.jpg"); // Assign image to item slot if is the player who gets the powerup
+            return temp;
+        } case 1: { // GREEN SHELL
+            RedShell *temp = new RedShell; // Create green shell powerup
+            temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
+            temp->materialRef = &m_app->assetManager.FindMaterial("material_red_shell"); // Assign material
+            if (ID == -1) m_player.itemSlot.SetImage("images/slot_red_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+            temp->AddPath(&m_aiPath);
+            temp->AddKarts(m_kartsPos);
+            return dynamic_cast<PowerUp*>(temp);
+        } case 0: default: { // RED SHELL
+            PowerUp *temp = new GreenShell; // Create green shell powerup
+            temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
+            temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
+            if (ID == -1) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+            return temp;
+        }
+    }
 }
 
 void SinglePlayerScreen::Update(void) {
@@ -242,6 +268,15 @@ void SinglePlayerScreen::Update(void) {
 	// Car physics update
 	if (m_player.stunned) m_player.body.transform.rotation.y = float((clock()) % 360);
 	else {
+		glm::vec2 targetSegment = m_aiPath.at(m_player.curPathNode); // Find Current segment to target
+		glm::vec2 pos2D{ m_player.body.transform.position.x, m_player.body.transform.position.z };
+		int detectDistance = 20.0f;
+		if (m_player.curPathNode > 9 && m_player.curPathNode < 13) detectDistance = 40.0f;
+		if (glm::distance(pos2D, targetSegment) < detectDistance) { // Are we near enough targetSegment
+			if (!m_player.curPathNode) ++m_player.laps;
+			++m_player.curPathNode; ++m_player.pointsDone;  // Update targetSegment and car score
+			if (m_player.curPathNode >= int(m_aiPath.size())) m_player.curPathNode = 0;
+		}
 		glm::vec2 colVecAi = { 0.0f,0.0f };
 		for (size_t i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
 			if (m_aiPhysics.aiCarArray[i].collisionCar == -10)
@@ -281,8 +316,6 @@ void SinglePlayerScreen::Update(void) {
 	}
 
 	// Main camera update
-	///m_camera.Translate(m_aiEnemies[0].body.transform.position - (m_carPhysics.front*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
-	///m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_aiEnemies[0].body.transform.position);
 	m_camera.Translate(m_player.body.transform.position - (m_carPhysics.front*35.0f) + glm::vec3(0.0f, 15.0f, 0.0f));
 	m_camera.SetTarget(glm::vec3{ 0,2,0 } +m_player.body.transform.position);
 
@@ -302,6 +335,8 @@ void SinglePlayerScreen::Update(void) {
 				glm::length(m_aiEnemies[i].body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If enemy collides with powerup
 				itemBox.activeCounter = float(clock()); // Reset counter to respawn item box
 				itemBox.enabled = false; // Disable item box to be renderer in the world
+				auto newPos = m_aiPath[size_t(rand() % m_aiPath.size())];
+				itemBox.transform.position = { newPos.x, 0, newPos.y };
 				m_aiPhysics.boxOn = false;
 				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
 				m_aiEnemies[i].powerUp = GetRandPowerUp(i); // Get random powerup into enemy slot
@@ -313,6 +348,8 @@ void SinglePlayerScreen::Update(void) {
 			glm::length(m_player.body.transform.position - itemBox.transform.position) < POWERUP_DETECT_DISTANCE) { // If player collides with powerup
 			itemBox.activeCounter = float(clock()); // Reset counter to respawn item box
 			itemBox.enabled = false; // Disable item box to be renderer in the world
+			auto newPos = m_aiPath[size_t(rand() % m_aiPath.size())];
+			itemBox.transform.position = { newPos.x, 0, newPos.y };
 			m_aiPhysics.boxOn = false;
 			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
 			m_player.powerUp = GetRandPowerUp(); // Get random powerup into player slot
@@ -350,6 +387,23 @@ void SinglePlayerScreen::Update(void) {
 	// Player item slot update
 	m_player.itemSlot.position = m_camera.position + m_player.front + glm::vec3{0, -0.025f, 0}; /// TODO: put on correct place
 	m_player.itemSlot.rotation.y = float(atan2f(m_player.front.x, m_player.front.z) * RAD2DEG);
+	
+	if (clock() > m_rankingCounter + 1000) {
+		std::sort(m_rankingInfo.begin(), m_rankingInfo.end(), [](const auto &lhs, auto &rhs) -> bool
+		{
+			return (*lhs.second > *rhs.second);
+		});
+		m_rankingCounter = clock();
+		std::cout << "----------- RANKING -----------" << std::endl;
+		int i = 0;
+		for (auto &info : m_rankingInfo) {
+			std::cout << ++i << ". ";
+			if (info.first == 0) std::cout << "Player   ";
+			else std::cout << "IA " << info.first << "     ";
+			std::cout << "Score: " << *info.second << " - Laps: " << int((*info.second)/14) << std::endl;
+		}
+		std::cout << "-------------------------------" << std::endl;
+	}
 }
 
 void SinglePlayerScreen::CheckInput(void) {

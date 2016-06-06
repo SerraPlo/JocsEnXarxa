@@ -48,8 +48,8 @@ namespace SerraPlo {
 		std::vector<glm::vec2> *pathRef;
 		void AddPath(std::vector<glm::vec2> *pathR) { pathRef = pathR; }
 		int curPathNode = 0;
-		std::vector<glm::vec3*> *karts;
-		void AddKarts(std::vector<glm::vec3*> *k) { karts = k; }
+		std::vector<glm::vec3*> karts;
+		void AddKarts(std::vector<glm::vec3*> k) { karts = k; }
 	};
 
 	struct Banana : PowerUp {

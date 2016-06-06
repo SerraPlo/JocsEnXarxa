@@ -53,7 +53,8 @@ namespace SerraPlo {
 				glm::vec2 newPos = { aiCar.transformRef->position.x, aiCar.transformRef->position.z };
 				glm::vec2 targetSegment = aiPathRef->at(aiCar.curPathNode); // Find Current segment to target
 				if (glm::distance(positionIA, targetSegment) < PATH_DISTANCE_DETECTION) { // Are we near enough targetSegment
-					++aiCar.curPathNode; // Update targetSegment next time
+					if (!aiCar.curPathNode) ++(*aiCar.laps);
+					++aiCar.curPathNode; ++(*aiCar.pointsDone);  // Update targetSegment and car score
 					if (aiCar.curPathNode >= int(aiPathRef->size())) aiCar.curPathNode = 0;
 				}
 

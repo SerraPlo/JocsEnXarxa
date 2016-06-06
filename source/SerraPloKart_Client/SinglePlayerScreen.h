@@ -7,6 +7,7 @@
 #include <SerraPloEngine/PowerUp.h>
 #include "RendererList.h"
 #include <SerraPloEngine/GLSprite.h>
+#include <SerraPloEngine/GLText.h>
 #pragma comment(lib, "SerraPloEngine.lib")
 using namespace SerraPlo;
 
@@ -60,6 +61,9 @@ private:
 		glm::vec3 front;
 		bool stunned = false;
 		float stunnedCounter = 0;
+		int pointsDone = 0;
+		int laps = -1;
+		int curPathNode = 0;
 	} m_player;
 
 	// AI Enemies
@@ -71,9 +75,13 @@ private:
 		glm::vec3 front;
 		bool stunned = false;
 		float stunnedCounter = 0;
+		int pointsDone = 0;
+		int laps = -1;
 	} m_aiEnemies[MAX_AI_ENEMIES];
 
 	std::vector<glm::vec3*> m_kartsPos;
+	std::vector<std::pair<int, int*>> m_rankingInfo;
+	float m_rankingCounter = 0;
 
 	// Atrezzo
 	GameObject skybox;
