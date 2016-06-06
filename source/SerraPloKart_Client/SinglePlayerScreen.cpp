@@ -192,7 +192,7 @@ void SinglePlayerScreen::OnExit(void) {
 }
 
 PowerUp *SinglePlayerScreen::GetRandPowerUp(int ID) {
-	switch (/*rand() % MAX_POWERUPS*/3) { // Get random number for MAX_POWERUPS powerups
+	switch (2) { // Get random number for MAX_POWERUPS powerups
 		case 3: { // BULLET BILL
 			BulletBill *temp = new BulletBill; // Create green shell powerup
 			temp->meshRef = &m_app->assetManager.FindMesh("mesh_bullet_bill"); // Assign mesh
@@ -240,14 +240,18 @@ void SinglePlayerScreen::Update(void) {
 	if (m_app->inputManager.isKeyDown(SDLK_SPACE)) temp[4] = true;
 
 	// Car physics update
-	glm::vec2 colVecAi = { 0.0f,0.0f };
-	for (size_t i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
-		if (m_aiPhysics.aiCarArray[i].collisionCar == -10)
-			colVecAi = glm::normalize(glm::vec2(m_player.body.transform.position.x, m_player.body.transform.position.z)
-				- glm::vec2(m_aiPhysics.aiCarArray[i].transformRef->position.x, m_aiPhysics.aiCarArray[i].transformRef->position.z));
-	m_carPhysics.Update(temp, gameApp->deltaTime, colVecAi);
-	if(clock()>10000)m_aiPhysics.playerOn = true;
-	m_player.front = m_carPhysics.front;
+	if (m_player.stunned) m_player.body.transform.rotation.y = float((clock()) % 360);
+	else {
+		glm::vec2 colVecAi = { 0.0f,0.0f };
+		for (size_t i = 0; i<m_aiPhysics.aiCarArray.size(); i++)
+			if (m_aiPhysics.aiCarArray[i].collisionCar == -10)
+				colVecAi = glm::normalize(glm::vec2(m_player.body.transform.position.x, m_player.body.transform.position.z)
+										  - glm::vec2(m_aiPhysics.aiCarArray[i].transformRef->position.x, m_aiPhysics.aiCarArray[i].transformRef->position.z));
+		m_carPhysics.Update(temp, gameApp->deltaTime, colVecAi);
+		if (clock()>10000)m_aiPhysics.playerOn = true;
+		m_player.front = m_carPhysics.front;
+	}
+	if (m_player.stunned && clock() > m_player.stunnedCounter + GREEN_SHELL_STUN_DELAY) m_player.stunned = false;
 
 	//Update car lights position & direction
 	m_player.light.position = m_player.body.transform.position + m_carPhysics.front*2.0f + glm::vec3{ 0,1,0 };
@@ -324,13 +328,24 @@ void SinglePlayerScreen::Update(void) {
 				m_aiEnemies[i].stunned = true;
 				m_aiEnemies[i].stunnedCounter = float(clock());
 				m_player.powerUp->enabled = false;
+				m_player.body.enabled = true;
 				break;
 			}
 		}
 	}
 
 	// Enemies powerup updates
-	for (int i = 0; i < MAX_AI_ENEMIES; ++i) if (m_aiEnemies[i].powerUp != nullptr) m_aiEnemies[i].powerUp->Update(m_app->deltaTime); // Update player power up if exists
+	for (int i = 0; i < MAX_AI_ENEMIES; ++i) 
+		if (m_aiEnemies[i].powerUp != nullptr && m_aiEnemies[i].powerUp->enabled) {
+		m_aiEnemies[i].powerUp->Update(m_app->deltaTime); // Update player power up if exists
+		if (glm::length(m_player.body.transform.position - m_aiEnemies[i].powerUp->transform.position) < SHELL_STUN_DISTANCE) {
+			m_player.stunned = true;
+			m_player.stunnedCounter = float(clock());
+			m_aiEnemies[i].powerUp->enabled = false;
+			m_aiEnemies[i].body.enabled = true;
+			break;
+		}
+	}
 
 	// Player item slot update
 	m_player.itemSlot.position = m_camera.position + m_player.front + glm::vec3{0, -0.025f, 0}; /// TODO: put on correct place

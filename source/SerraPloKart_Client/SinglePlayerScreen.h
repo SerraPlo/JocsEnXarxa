@@ -58,6 +58,8 @@ private:
 		PowerUp *powerUp = nullptr;
 		GLSprite itemSlot;
 		glm::vec3 front;
+		bool stunned = false;
+		float stunnedCounter = 0;
 	} m_player;
 
 	// AI Enemies
