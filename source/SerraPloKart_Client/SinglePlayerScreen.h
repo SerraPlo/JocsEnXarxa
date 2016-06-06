@@ -32,7 +32,7 @@ public:
 	void Draw(void) override;
 private:
 	void CheckInput(void);
-	PowerUp *GetRandPowerUp(bool isPlayer = false);
+	PowerUp *GetRandPowerUp(int ID = -1);
 
 	// Casted client main game pointer reference (IApp -> AppClient)
 	AppClient *m_app;

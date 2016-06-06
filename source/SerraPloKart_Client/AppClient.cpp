@@ -37,6 +37,8 @@ void AppClient::LoadAssets(void) {
 	assetManager.LoadMesh("mesh_skybox", "models/skybox/skybox.obj");
 	assetManager.LoadMesh("mesh_item_box", "models/powerups/item_box.obj");
 	assetManager.LoadMesh("mesh_shell", "models/powerups/green_shell.obj");
+	assetManager.LoadMesh("mesh_banana", "models/powerups/banana.obj");
+	assetManager.LoadMesh("mesh_bullet_bill", "models/powerups/bullet_bill.obj");
 	std::cout << "Meshes loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();
 
@@ -57,6 +59,8 @@ void AppClient::LoadAssets(void) {
 	assetManager.LoadMaterial("material_item_box", "models/powerups/item_box.png");
 	assetManager.LoadMaterial("material_green_shell", "models/powerups/green_shell.png");
 	assetManager.LoadMaterial("material_red_shell", "models/powerups/red_shell.png");
+	assetManager.LoadMaterial("material_banana", "models/powerups/banana.png");
+	assetManager.LoadMaterial("material_bullet_bill", "models/powerups/bullet_bill.jpg");
 	std::cout << "Materials loaded (" << ((clock() - bench) / 1000.0f) << " seconds)" << std::endl;
 	bench = clock();
 

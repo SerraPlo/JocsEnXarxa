@@ -191,22 +191,39 @@ void SinglePlayerScreen::OnExit(void) {
 	m_aiPhysics.Reset();
 }
 
-PowerUp *SinglePlayerScreen::GetRandPowerUp(bool isPlayer) {
-	switch (rand() % MAX_POWERUPS) { // Get random number for MAX_POWERUPS powerups
-		case 1: {
-			PowerUp *temp = new GreenShell; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
-			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+PowerUp *SinglePlayerScreen::GetRandPowerUp(int ID) {
+	switch (/*rand() % MAX_POWERUPS*/3) { // Get random number for MAX_POWERUPS powerups
+		case 3: { // BULLET BILL
+			BulletBill *temp = new BulletBill; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_bullet_bill"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_bullet_bill"); // Assign material
+			if (ID == -1) {
+				temp->carEnabled = &m_player.body.enabled;
+				temp->carTransform = &m_player.body.transform;
+				m_player.itemSlot.SetImage("images/slot_bullet_bill.jpg"); // Assign image to item slot if is the player who gets the powerup
+			} else temp->carEnabled = &m_aiEnemies[ID].body.enabled, temp->carTransform = &m_aiEnemies[ID].body.transform;
+			temp->AddPath(&m_aiPath);
+			return dynamic_cast<PowerUp*>(temp);
+		} case 2: { // BANANA
+			PowerUp *temp = new Banana; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_banana"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_banana"); // Assign material
+			if (ID == -1) m_player.itemSlot.SetImage("images/slot_banana.jpg"); // Assign image to item slot if is the player who gets the powerup
 			return temp;
-		} case 0: default: {
+		} case 1: { // GREEN SHELL
 			RedShell *temp = new RedShell; // Create green shell powerup
 			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
 			temp->materialRef = &m_app->assetManager.FindMaterial("material_red_shell"); // Assign material
-			if (isPlayer) m_player.itemSlot.SetImage("images/slot_red_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+			if (ID == -1) m_player.itemSlot.SetImage("images/slot_red_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
 			temp->AddPath(&m_aiPath);
 			temp->AddKarts(&m_kartsPos);
 			return dynamic_cast<PowerUp*>(temp);
+		} case 0: default: { // RED SHELL
+			PowerUp *temp = new GreenShell; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
+			if (ID == -1) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+			return temp;
 		}
 	}
 }
@@ -283,9 +300,8 @@ void SinglePlayerScreen::Update(void) {
 				itemBox.enabled = false; // Disable item box to be renderer in the world
 				m_aiPhysics.boxOn = false;
 				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
-				m_aiEnemies[i].powerUp = GetRandPowerUp(); // Get random powerup into enemy slot
+				m_aiEnemies[i].powerUp = GetRandPowerUp(i); // Get random powerup into enemy slot
 				m_aiEnemies[i].powerUp->Init(&m_aiEnemies[i].body.transform.position, &m_aiEnemies[i].front);
-				//m_aiEnemies[i].powerUp->AddPath(&m_aiPath);
 				break;
 			}
 		}
@@ -295,7 +311,7 @@ void SinglePlayerScreen::Update(void) {
 			itemBox.enabled = false; // Disable item box to be renderer in the world
 			m_aiPhysics.boxOn = false;
 			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
-			m_player.powerUp = GetRandPowerUp(true); // Get random powerup into player slot
+			m_player.powerUp = GetRandPowerUp(); // Get random powerup into player slot
 			m_player.powerUp->Init(&m_player.body.transform.position, &m_player.front);
 		}
 	}
