@@ -38,6 +38,8 @@ void SinglePlayerScreen::Build(void) {
 		{ 280, 108 }
 	}; m_aiPhysics.AddPath(&m_aiPath);
 
+
+
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, &m_aiEnemies[0].stunned, 1.0f, 200.0f * 60.0f);
@@ -46,6 +48,9 @@ void SinglePlayerScreen::Build(void) {
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, &m_aiEnemies[3].stunned, 1.6f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, &m_aiEnemies[4].stunned, 1.8f, 200.0f * 60.0f);
 	
+	m_kartsPos.push_back(&m_player.body.transform.position);
+	for (int i = 0; i < 5;i++) m_kartsPos.push_back(&m_aiEnemies[i].body.transform.position);
+
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
 
@@ -186,14 +191,23 @@ void SinglePlayerScreen::OnExit(void) {
 }
 
 PowerUp *SinglePlayerScreen::GetRandPowerUp(bool isPlayer) {
-	switch (rand() % MAX_POWERUPS) { // Get random number for MAX_POWERUPS powerups
-		case 0: default: {
+	switch (rand() % MAX_POWERUPS ) { // Get random number for MAX_POWERUPS powerups
+		case 0: {
+			std::cout << "GREEN" << std::endl;
 			PowerUp *temp = new GreenShell; // Create green shell powerup
 			temp->meshRef = &m_app->assetManager.FindMesh("mesh_green_shell"); // Assign mesh
 			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
 			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
 			return temp;
-		} 
+		}
+		case 1: default: {
+			std::cout << "RED" << std::endl;
+			PowerUp *temp = new RedShell; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_green_shell"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
+			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+			return temp;
+		}
 	}
 }
 
@@ -272,6 +286,7 @@ void SinglePlayerScreen::Update(void) {
 				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
 				m_aiEnemies[i].powerUp = GetRandPowerUp(); // Get random powerup into enemy slot
 				m_aiEnemies[i].powerUp->Init(&m_aiEnemies[i].body.transform.position, &m_aiEnemies[i].front);
+				m_aiEnemies[i].powerUp->AddPath(&m_aiPath);
 				//m_renderer.AddObject(dynamic_cast<GameObject*>(m_aiEnemies[i].powerUp)); /// TODO: optimize to remove the previous ones
 				break;
 			}
@@ -284,6 +299,8 @@ void SinglePlayerScreen::Update(void) {
 			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
 			m_player.powerUp = GetRandPowerUp(true); // Get random powerup into player slot
 			m_player.powerUp->Init(&m_player.body.transform.position, &m_player.front);
+			m_player.powerUp->AddPath(&m_aiPath);
+			m_player.powerUp->AddKarts(m_kartsPos);
 			//m_renderer.AddObject(dynamic_cast<GameObject*>(m_player.powerUp)); /// TODO: optimize to remove the previous ones
 		}
 	}

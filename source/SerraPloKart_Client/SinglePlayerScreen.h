@@ -71,6 +71,8 @@ private:
 		float stunnedCounter = 0;
 	} m_aiEnemies[MAX_AI_ENEMIES];
 
+	std::vector<glm::vec3*> m_kartsPos;
+
 	// Atrezzo
 	GameObject skybox;
 	GameObject circuit;

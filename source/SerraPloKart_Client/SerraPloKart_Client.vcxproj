@@ -170,7 +170,7 @@
     <None Include="..\..\assets\shaders\main.vert" />
     <None Include="..\..\assets\shaders\text.frag" />
     <None Include="..\..\assets\shaders\text.vert" />
-    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,6 @@
 #include "PowerUp.h"
 #include "ShaderProgram.h"
+#include "PathLoader.h"
 #include <ctime>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
@@ -62,12 +63,38 @@ namespace SerraPlo {
 		if (!enabled) {
 			lifeTimeCounter = float(clock());
 			transform.position = glm::vec3{ carPos->x, 2, carPos->z };
+			float minDist = 1000000.0f;
+			for (int i = 0; i < pathRef->size(); i++) {
+				glm::vec2 iSegment = pathRef->at(i);
+				if (glm::length(glm::distance(iSegment, glm::vec2(transform.position.x, transform.position.z))) <= minDist) {
+					minDist = glm::length(glm::distance(iSegment, glm::vec2(transform.position.x, transform.position.z)));
+					curPathNode = i + 1;
+				}
+			}
 			front = *carFront;
 			enabled = true;
 		}
 	}
 	void RedShell::Update(float dt) {
-		if (enabled && clock() < lifeTimeCounter + LIFETIME_DELAY) transform.position += front*speed*dt; // Update while lifetime has not ended
+		if (enabled && clock() < lifeTimeCounter + LIFETIME_DELAY) {
+			glm::vec2 targetSegment = pathRef->at(curPathNode); // Find Current segment to target
+			float distToTarget = glm::distance(glm::vec2(transform.position.x, transform.position.z), targetSegment);
+			if (distToTarget < PATH_DISTANCE_DETECTION) { // Are we near enough targetSegment
+				++curPathNode; // Update targetSegment next time
+				if (curPathNode >= int(pathRef->size())) curPathNode = 0;
+			}
+			int aim = -1;
+			for (int i = 0; i < karts.size(); i++) {
+				float distToCar = glm::length(transform.position - *karts[i]);
+				if (distToCar >= 1.0f && distToCar < distToTarget) {
+					aim = i;
+					break;
+				}
+			}
+			if (aim == -1) {front = glm::normalize(glm::vec3(targetSegment.x, 0.0f, targetSegment.y) - transform.position);}
+			else {front = glm::normalize(*karts[aim] - transform.position);}
+			transform.position += front*speed*dt; // Update while lifetime has not ended
+		}
 		else enabled = false; // Disable powerup when lifetems ends
 	}
 	void RedShell::Draw(ShaderProgram & program, GLCamera & camera) {
