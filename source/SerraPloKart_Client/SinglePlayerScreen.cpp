@@ -8,6 +8,7 @@
 #define FIXED_ASPECT_RATIO 16 / 9
 
 void SinglePlayerScreen::Build(void) {
+	srand(unsigned(time(nullptr)));
 	m_app = dynamic_cast<AppClient*>(gameApp);
 
 	// Initialize camera with viewport dimensions
@@ -24,6 +25,7 @@ void SinglePlayerScreen::Build(void) {
 
 	// Init IA Path with 12 points for steering path following
 	m_aiPath = {
+		{ 180, 108 },
 		{ 40, 108 },
 		{ 10, 80 },
 		{ -3, 7 },
@@ -38,8 +40,6 @@ void SinglePlayerScreen::Build(void) {
 		{ 280, 108 }
 	}; m_aiPhysics.AddPath(&m_aiPath);
 
-
-
 	// Init game physics
 	m_carPhysics.AddTransform(&m_player.body.transform);
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[0].body.transform, &m_aiEnemies[0].stunned, 1.0f, 200.0f * 60.0f);
@@ -47,9 +47,10 @@ void SinglePlayerScreen::Build(void) {
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[2].body.transform, &m_aiEnemies[2].stunned, 1.4f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[3].body.transform, &m_aiEnemies[3].stunned, 1.6f, 200.0f * 60.0f);
 	m_aiPhysics.AddAICar(&m_player.body.transform, &m_aiEnemies[4].body.transform, &m_aiEnemies[4].stunned, 1.8f, 200.0f * 60.0f);
+
 	
 	m_kartsPos.push_back(&m_player.body.transform.position);
-	for (int i = 0; i < 5;i++) m_kartsPos.push_back(&m_aiEnemies[i].body.transform.position);
+	for (int i = 0; i < MAX_AI_ENEMIES; i++) m_kartsPos.push_back(&m_aiEnemies[i].body.transform.position);
 
 	m_renderer.InitFramebuffer(m_app->screenWidth, m_app->screenHeight);
 }
@@ -191,22 +192,21 @@ void SinglePlayerScreen::OnExit(void) {
 }
 
 PowerUp *SinglePlayerScreen::GetRandPowerUp(bool isPlayer) {
-	switch (rand() % MAX_POWERUPS ) { // Get random number for MAX_POWERUPS powerups
-		case 0: {
-			std::cout << "GREEN" << std::endl;
+	switch (rand() % MAX_POWERUPS) { // Get random number for MAX_POWERUPS powerups
+		case 1: {
 			PowerUp *temp = new GreenShell; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_green_shell"); // Assign mesh
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
 			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
 			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
 			return temp;
-		}
-		case 1: default: {
-			std::cout << "RED" << std::endl;
-			PowerUp *temp = new RedShell; // Create green shell powerup
-			temp->meshRef = &m_app->assetManager.FindMesh("mesh_green_shell"); // Assign mesh
-			temp->materialRef = &m_app->assetManager.FindMaterial("material_green_shell"); // Assign material
-			if (isPlayer) m_player.itemSlot.SetImage("images/slot_green_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
-			return temp;
+		} case 0: default: {
+			RedShell *temp = new RedShell; // Create green shell powerup
+			temp->meshRef = &m_app->assetManager.FindMesh("mesh_shell"); // Assign mesh
+			temp->materialRef = &m_app->assetManager.FindMaterial("material_red_shell"); // Assign material
+			if (isPlayer) m_player.itemSlot.SetImage("images/slot_red_shell.jpg"); // Assign image to item slot if is the player who gets the powerup
+			temp->AddPath(&m_aiPath);
+			temp->AddKarts(&m_kartsPos);
+			return dynamic_cast<PowerUp*>(temp);
 		}
 	}
 }
@@ -244,17 +244,16 @@ void SinglePlayerScreen::Update(void) {
 		m_aiEnemies[i].light.position = m_aiEnemies[i].body.transform.position + m_aiEnemies[i].front*2.0f + glm::vec3{ 0,1,0 };
 		m_aiEnemies[i].light.direction = m_aiEnemies[i].front - glm::vec3{ 0,0.3f,0 };
 		if (!m_aiEnemies[i].stunned) {
-			if (m_aiEnemies[i].powerUp!=nullptr) {
-				/*for (int j = 0; j < MAX_AI_ENEMIES; ++j) {
-					if (j != i) {
-						if (glm::distance(m_aiEnemies[i].body.transform.position, m_aiEnemies[j].body.transform.position)<=150.0f) {
-							if (acos(glm::dot(m_aiEnemies[i].front, m_aiEnemies[j].front))) {*/
-								//m_aiEnemies[i].powerUp->Activate();
-								/*break;
-							}
+			if (m_aiEnemies[i].powerUp != nullptr && !m_aiEnemies[i].powerUp->enabled) {
+				for (int j = 0; j < m_kartsPos.size(); ++j) {
+					if (j != i + 1) {//player is 0
+						if (glm::distance(*m_kartsPos[j], m_aiEnemies[i].body.transform.position) <= 100.0f 
+							&& acos(glm::dot(m_aiEnemies[i].front, (*m_kartsPos[j] - m_aiEnemies[i].body.transform.position))) <= 0.5f) {
+							//std::cout << acos(glm::dot(m_aiEnemies[i].front, (*m_kartsPos[j] - m_aiEnemies[i].body.transform.position))) << std::endl;
+							m_aiEnemies[i].powerUp->Activate();
 						}
 					}
-				}*/
+				}
 			}
 		}
 		if (m_aiEnemies[i].stunned && clock() > m_aiEnemies[i].stunnedCounter + GREEN_SHELL_STUN_DELAY) m_aiEnemies[i].stunned = false;
@@ -286,8 +285,7 @@ void SinglePlayerScreen::Update(void) {
 				if (m_aiEnemies[i].powerUp != nullptr) delete m_aiEnemies[i].powerUp; /// TODO optimize: Delete previous powerup if exists
 				m_aiEnemies[i].powerUp = GetRandPowerUp(); // Get random powerup into enemy slot
 				m_aiEnemies[i].powerUp->Init(&m_aiEnemies[i].body.transform.position, &m_aiEnemies[i].front);
-				m_aiEnemies[i].powerUp->AddPath(&m_aiPath);
-				//m_renderer.AddObject(dynamic_cast<GameObject*>(m_aiEnemies[i].powerUp)); /// TODO: optimize to remove the previous ones
+				//m_aiEnemies[i].powerUp->AddPath(&m_aiPath);
 				break;
 			}
 		}
@@ -299,9 +297,6 @@ void SinglePlayerScreen::Update(void) {
 			if (m_player.powerUp != nullptr) delete m_player.powerUp; /// TODO optimize: Delete previous powerup if exists
 			m_player.powerUp = GetRandPowerUp(true); // Get random powerup into player slot
 			m_player.powerUp->Init(&m_player.body.transform.position, &m_player.front);
-			m_player.powerUp->AddPath(&m_aiPath);
-			m_player.powerUp->AddKarts(m_kartsPos);
-			//m_renderer.AddObject(dynamic_cast<GameObject*>(m_player.powerUp)); /// TODO: optimize to remove the previous ones
 		}
 	}
 
@@ -309,7 +304,7 @@ void SinglePlayerScreen::Update(void) {
 	if (m_player.powerUp != nullptr && m_player.powerUp->enabled) {
 		m_player.powerUp->Update(m_app->deltaTime);// Update player power up if exists
 		for (int i = 0; i < MAX_AI_ENEMIES; ++i) {
-			if (glm::length(m_aiEnemies[i].body.transform.position - m_player.powerUp->transform.position) < GREEN_SHELL_STUN_DISTANCE) {
+			if (glm::length(m_aiEnemies[i].body.transform.position - m_player.powerUp->transform.position) < SHELL_STUN_DISTANCE) {
 				m_aiEnemies[i].stunned = true;
 				m_aiEnemies[i].stunnedCounter = float(clock());
 				m_player.powerUp->enabled = false;
