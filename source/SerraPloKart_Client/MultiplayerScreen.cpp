@@ -16,7 +16,7 @@ void MultiplayerScreen::Build(void) {
 
 	//Initialize main shaders
 	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main_mult.frag");
-	m_textProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
+	m_textProgram.LoadShaders("shaders/simple.vert", "shaders/simple.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 

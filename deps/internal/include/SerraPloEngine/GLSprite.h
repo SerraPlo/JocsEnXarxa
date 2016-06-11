@@ -10,7 +10,7 @@ namespace SerraPlo {
 	class GLSprite {
 	public:
 		GLTexture texture;
-		GLuint vao, vbo, ebo;
+		GLuint vao, vbo;
 		glm::vec3 position{ 0,0,0 };
 		glm::vec3 rotation{ 0,0,0 };
 		glm::vec3 scale{ 1,1,1 };

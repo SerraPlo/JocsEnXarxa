@@ -40,7 +40,6 @@ private:
 
 	// Shader programs
 	ShaderProgram m_mainProgram;
-	ShaderProgram m_screenProgram;
 	ShaderProgram m_GUIProgram;
 	ShaderProgram m_debugProgram;
 

@@ -159,17 +159,17 @@
   <ItemGroup>
     <None Include="..\..\assets\shaders\deferred_shading.frag" />
     <None Include="..\..\assets\shaders\deferred_shading.vert" />
+    <None Include="..\..\assets\shaders\GUI.frag" />
+    <None Include="..\..\assets\shaders\GUI.vert" />
     <None Include="..\..\assets\shaders\main_mult.frag" />
     <None Include="..\..\assets\shaders\main_single.frag" />
-    <None Include="..\..\assets\shaders\screen.frag" />
-    <None Include="..\..\assets\shaders\screen.vert" />
+    <None Include="..\..\assets\shaders\simple.frag" />
+    <None Include="..\..\assets\shaders\simple.vert" />
     <None Include="..\..\assets\shaders\g_buffer.frag" />
     <None Include="..\..\assets\shaders\g_buffer.vert" />
     <None Include="..\..\assets\shaders\debug.frag" />
     <None Include="..\..\assets\shaders\debug.vert" />
     <None Include="..\..\assets\shaders\main.vert" />
-    <None Include="..\..\assets\shaders\text.frag" />
-    <None Include="..\..\assets\shaders\text.vert" />
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

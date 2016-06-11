@@ -311,7 +311,6 @@ void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProg
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	glViewport(0, 0, screenWidth, screenHeight);
 	program.Bind();
 	// Send camera matrix to shader (projection + view)
 	glUniformMatrix4fv(program.getUniformLocation("camera"), 1, GL_FALSE, glm::value_ptr(camera.PVMatrix()));
@@ -346,38 +345,43 @@ void RendererList::DrawFramebuffer(ShaderProgram &program, ShaderProgram &fbProg
 
 
 	glDisable(GL_DEPTH_TEST); // We don't care about depth information when rendering a single quad
-	glViewport(GLsizei(screenWidth*0.6f), GLsizei(screenHeight*0.05f), GLsizei(screenWidth*0.35f), GLsizei(screenHeight*0.3f));
 
-	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-								 // Positions   // TexCoords
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		1.0f, -1.0f,  1.0f, 0.0f,
+	GLfloat vertices[6][4] = {
+		{ 650.0f,     25.0f + 160,   0.0, 0.0 },
+		{ 650.0f,     25.0f,       0.0, 1.0 },
+		{ 650.0f + 240, 25.0f,       1.0, 1.0 },
 
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		1.0f, -1.0f,  1.0f, 0.0f,
-		1.0f,  1.0f,  1.0f, 1.0f
+		{ 650.0f,     25.0f + 160,   0.0, 0.0 },
+		{ 650.0f + 240, 25.0f,       1.0, 1.0 },
+		{ 650.0f + 240, 25.0f + 160,   1.0, 0.0 }
 	};
 	// Setup screen VAO
 	if (!quadVAO) {
+		///Create VAO
 		glGenVertexArrays(1, &quadVAO);
-		glGenBuffers(1, &quadVBO);
 		glBindVertexArray(quadVAO);
+		///Create VBO
+		glGenBuffers(1, &quadVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
 		glBindVertexArray(0);
 	}
 	fbProgram.Bind();
-	glBindVertexArray(quadVAO);
+	glUniformMatrix4fv(fbProgram.getUniformLocation("projection"), 1, GL_FALSE, glm::value_ptr(camera.ComputeOrthographicProjection()));
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer); // Use the color attachment texture as the texture of the quad plane
+
+	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 
-	glViewport(0, 0, screenWidth, screenHeight);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	///glDrawElementsInstanced(GL_TRIANGLES, meshData[i].numElements, GL_UNSIGNED_INT, nullptr, 1); //TODO

@@ -18,8 +18,7 @@ void SinglePlayerScreen::Build(void) {
 
 	//Initialize main shaders
 	m_mainProgram.LoadShaders("shaders/main.vert", "shaders/main_single.frag");
-	m_screenProgram.LoadShaders("shaders/screen.vert", "shaders/screen.frag");
-	m_GUIProgram.LoadShaders("shaders/text.vert", "shaders/text.frag");
+	m_GUIProgram.LoadShaders("shaders/GUI.vert", "shaders/GUI.frag");
 	//Initialize debug shaders
 	m_debugProgram.LoadShaders("shaders/debug.vert", "shaders/debug.frag");
 
@@ -218,7 +217,7 @@ PowerUp *SinglePlayerScreen::GetRandPowerUp(int ID) {
     else if (random <= valBill + valBanana) pUp =2;
     else if (random <= valBill + valBanana + valGreen) pUp = 1;
     else pUp = 0;
-    switch (pUp) { // Get random number for MAX_POWERUPS powerups
+    switch (0) { // Get random number for MAX_POWERUPS powerups
         case 3: { // BULLET BILL
             BulletBill *temp = new BulletBill; // Create green shell powerup
             temp->meshRef = &m_app->assetManager.FindMesh("mesh_bullet_bill"); // Assign mesh
@@ -433,7 +432,7 @@ void SinglePlayerScreen::Draw(void) {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	m_renderer.DrawObjects(m_mainProgram, m_camera);
-	m_renderer.DrawFramebuffer(m_mainProgram, m_screenProgram, m_minimapCamera);
+	m_renderer.DrawFramebuffer(m_mainProgram, m_GUIProgram, m_minimapCamera);
 
 	m_player.itemSlot.Draw(m_GUIProgram, m_camera);
 

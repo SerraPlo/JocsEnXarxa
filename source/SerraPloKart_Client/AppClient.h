@@ -11,8 +11,8 @@
 #include "MultiplayerScreen.h"
 #include "SinglePlayerScreen.h"
 
-#define INIT_SCREEN_WIDTH 600
-#define INIT_SCREEN_HEIGHT 450
+#define INIT_SCREEN_WIDTH 800
+#define INIT_SCREEN_HEIGHT 600
 #define IP_PORT "127.0.0.1:5000"
 #define FONT_SIZE 70
 

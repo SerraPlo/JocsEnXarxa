@@ -61,9 +61,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\assets\shaders\text.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\..\assets\shaders\debug.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -85,21 +82,24 @@
     <None Include="..\..\assets\shaders\main.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\assets\shaders\screen.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\assets\shaders\screen.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\assets\shaders\text.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\..\assets\shaders\main_single.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\assets\shaders\main_mult.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="..\..\assets\shaders\GUI.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\GUI.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\simple.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\assets\shaders\simple.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

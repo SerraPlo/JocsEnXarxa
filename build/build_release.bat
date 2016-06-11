@@ -7,5 +7,3 @@ start SerraPloKart_Client.exe
 start SerraPloKart_Client.exe
 start SerraPloKart_Client.exe
 start SerraPloKart_Client.exe
-start SerraPloKart_Client.exe
-start SerraPloKart_Client.exe
